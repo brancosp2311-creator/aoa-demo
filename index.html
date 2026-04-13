@@ -8,9 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--g:#13C063;--gd:#0a8a45;--gl:#e8faf1;--bk:#111;--g1:#f7f7f5;--g2:#ebebea;--g3:#d0d0cd;--g4:#888;--wh:#fff;--tx:#111}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0ee;color:var(--tx);font-size:13px;min-height:100vh}
-.wrap{max-width:960px;margin:0 auto;padding:16px}
-
-/* HEADER */
+.wrap{max-width:980px;margin:0 auto;padding:16px}
 .hdr{background:var(--bk);display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-radius:10px 10px 0 0}
 .hdr-l{display:flex;align-items:center;gap:14px}
 .logo-box{background:var(--g);border-radius:9px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -18,36 +16,27 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0ee;color:var(--tx);
 .hdr-t h2{color:#fff;font-size:14px;font-weight:700}
 .hdr-t p{color:#777;font-size:10px;margin-top:2px}
 .hdr-r{text-align:right}
-.v-badge{background:var(--g);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase}
+.v-badge{background:var(--g);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:.5px}
 .copy{color:#555;font-size:9px;margin-top:4px;line-height:1.4}
-
-/* TABS */
 .tabs{display:flex;background:#1c1c1c;border-bottom:2px solid var(--g2)}
 .tab{padding:10px 16px;font-size:12px;font-weight:600;color:#666;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;letter-spacing:.3px;white-space:nowrap}
 .tab.active{color:var(--g);border-bottom-color:var(--g)}
 .tab:hover:not(.active){color:#ccc}
 .cnt{background:var(--g);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;margin-left:4px;vertical-align:middle}
-
-/* PANELS */
 .panel{display:none;padding:18px 20px;background:var(--g1)}
 .panel.active{display:block}
-
-/* COLLAPSIBLE */
 .csec{margin-bottom:14px}
 .ctitle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:7px 0;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--bk);border-bottom:1.5px solid var(--g3)}
 .cbody{padding-top:10px}
 .arr{transition:transform .2s;font-size:9px;color:var(--g4)}
 .collapsed .arr{transform:rotate(-90deg)}
 .collapsed .cbody{display:none}
-
-/* GRID / FIELDS */
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
 .f{display:flex;flex-direction:column;gap:4px}
 .f label{font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px}
 .f input,.f select,.f textarea{border:1.5px solid var(--g3);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--tx);background:var(--wh);width:100%;font-family:inherit;transition:border .15s}
 .f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--g)}
-.f textarea{resize:vertical;min-height:60px}
+.f textarea{resize:none;overflow:hidden;min-height:48px}
 .full{grid-column:1/-1}
 .rgroup{display:flex;gap:18px;align-items:center;padding:7px 0}
 .rgroup label{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
@@ -55,62 +44,90 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0ee;color:var(--tx);
 select{font-family:inherit}
 select option[disabled]{color:#aaa;font-style:italic}
 
+/* FAVORITOS */
+.fav-wrap{background:var(--wh);border:1.5px solid var(--g);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.fav-head{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--gd);margin-bottom:8px}
+.fav-grid{display:flex;flex-wrap:wrap;gap:6px;min-height:28px}
+.fav-chip{background:var(--gl);border:1.5px solid var(--g);border-radius:20px;padding:4px 12px 4px 10px;font-size:11px;font-weight:700;color:var(--gd);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.fav-chip:hover{background:var(--g);color:#fff}
+.fav-chip .fav-x{font-size:10px;opacity:.7;cursor:pointer}
+.fav-chip .fav-x:hover{opacity:1}
+.fav-empty{color:var(--g4);font-size:11px;font-style:italic}
+
 /* ACTIVITY CARDS */
-.act-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.act-top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .stitle{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--bk);border-bottom:1.5px solid var(--g3);padding-bottom:5px;margin-bottom:12px}
-.btn-add{background:var(--bk);color:#fff;border:none;padding:7px 13px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:background .15s;font-family:inherit}
+.btn-add{background:var(--bk);color:#fff;border:none;padding:7px 13px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit}
 .btn-add:hover{background:#333}
-.act-card{background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:12px 14px;margin-bottom:10px;transition:border-color .15s}
+.act-card{background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:12px 14px;margin-bottom:0;transition:border-color .15s}
+.act-card+.act-card{margin-top:10px}
 .act-card:hover{border-color:var(--g)}
 .act-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .act-badge{background:var(--gl);color:var(--gd);font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn-rm{background:none;border:1.5px solid var(--g3);color:var(--g4);width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .btn-rm:hover{border-color:var(--bk);color:var(--bk)}
+.btn-star{background:none;border:1.5px solid var(--g3);color:#cca000;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.btn-star:hover{border-color:#cca000;background:#fffbe6}
 .ag{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ag .full{grid-column:1/-1}
+.act-footer{display:flex;justify-content:center;padding-top:10px;margin-top:10px;border-top:1px solid var(--g2)}
+.btn-add-here{background:none;border:1.5px dashed var(--g3);color:var(--g4);padding:5px 18px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;width:100%}
+.btn-add-here:hover{border-color:var(--g);color:var(--gd);background:var(--gl)}
+.acts-container{display:flex;flex-direction:column;gap:10px}
 
-/* CASCADING SELECTS */
-.cascade-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
-
-/* ABAR */
-.abar{display:flex;gap:8px;padding:14px 20px;background:var(--g2);border-top:1.5px solid var(--g3);border-radius:0 0 10px 10px;align-items:center;flex-wrap:wrap}
-.btn-p{background:var(--bk);color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.2px;transition:background .15s;flex:1;font-family:inherit;min-width:140px}
+.abar{display:flex;gap:8px;padding:14px 20px;background:var(--g2);border-top:1.5px solid var(--g3);border-radius:0 0 10px 10px;align-items:center}
+.btn-p{background:var(--bk);color:#fff;border:none;padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;flex:1;font-family:inherit}
 .btn-p:hover{background:#2a2a2a}
 .btn-p.green{background:var(--g)}
 .btn-p.green:hover{background:var(--gd)}
 .btn-s{background:var(--wh);color:var(--tx);border:1.5px solid var(--g3);padding:9px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit}
 .btn-s:hover{border-color:var(--bk)}
-
-/* STATUS */
 .smsg{padding:9px 12px;border-radius:6px;font-size:12px;font-weight:600;margin-bottom:10px;display:none}
 .smsg.ok{background:#e8faf1;color:#0a5c2e;border:1.5px solid #a5dbbf}
 .smsg.err{background:#fff0f0;color:#7a1010;border:1.5px solid #f5a9a9}
 .smsg.load{background:#f0f6ff;color:#1a3a7a;border:1.5px solid #a9c4f5}
-
-/* INFO */
 .icard{background:var(--gl);border:1.5px solid #b8e8d0;border-radius:7px;padding:10px 12px;font-size:11px;color:var(--gd);margin-bottom:12px;line-height:1.6}
 .icard strong{font-weight:800}
-
-/* PREVIEW */
 .prev{background:var(--wh);border:1.5px solid var(--g3);border-radius:7px;padding:14px;font-size:11px;line-height:1.7;white-space:pre-wrap;max-height:260px;overflow-y:auto;font-family:'Courier New',monospace;color:var(--tx)}
-
-/* EMPTY */
 .empty{text-align:center;color:var(--g4);padding:28px;font-size:12px}
-
-/* FOOT */
 .foot{text-align:center;font-size:10px;color:var(--g4);padding:7px 16px;border-top:1px solid var(--g3);background:var(--wh);border-radius:0 0 10px 10px}
-
 .main-wrap{border-radius:10px;border:1.5px solid var(--g3);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.sub-note{font-size:9px;color:var(--g4);text-transform:none;letter-spacing:0;font-weight:400;margin-left:4px}
 
-/* SECTION LABEL */
-.sect-label{font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+/* BP SELECTOR */
+.bp-search-wrap{position:relative;margin-bottom:10px}
+.bp-input{border:1.5px solid var(--g3);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--tx);background:var(--wh);width:100%;font-family:inherit;transition:border .15s}
+.bp-input:focus{outline:none;border-color:var(--g)}
+.bp-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--wh);border:1.5px solid var(--g);border-radius:6px;z-index:999;max-height:220px;overflow-y:auto;box-shadow:0 4px 14px rgba(0,0,0,.12);display:none}
+.bp-dropdown.open{display:block}
+.bp-opt{padding:8px 12px;cursor:pointer;font-size:12px;color:var(--tx);border-bottom:1px solid var(--g2);transition:background .1s}
+.bp-opt:last-child{border-bottom:none}
+.bp-opt:hover,.bp-opt.focused{background:var(--gl)}
+.bp-opt .bp-num{font-size:10px;color:var(--g4);margin-left:6px}
+.bp-selected{background:var(--gl);border:1.5px solid var(--g);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--gd);font-weight:600;display:none;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bp-selected.show{display:flex}
+.bp-clear{background:none;border:none;cursor:pointer;color:var(--g4);font-size:14px;padding:0 2px}
+.bp-clear:hover{color:var(--bk)}
+
+/* PARTICIPANT CHIPS */
+.part-wrap{margin-bottom:14px}
+.part-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:6px;background:var(--wh);border:1.5px solid var(--g3);border-radius:6px;align-items:flex-start;transition:border .15s}
+.part-chips:focus-within{border-color:var(--g)}
+.part-chip{background:#f0f0ee;border:1.5px solid var(--g3);border-radius:16px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.part-chip .ch-cargo{color:var(--g4);font-weight:400;font-size:10px}
+.part-chip .ch-del{background:none;border:none;cursor:pointer;color:var(--g4);font-size:12px;line-height:1;padding:0;margin-left:2px}
+.part-chip .ch-del:hover{color:#c00}
+.part-add-row{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-top:8px;align-items:end}
+.part-add-row input{border:1.5px solid var(--g3);border-radius:6px;padding:6px 8px;font-size:11px;color:var(--tx);background:var(--wh);font-family:inherit;width:100%;transition:border .15s}
+.part-add-row input:focus{outline:none;border-color:var(--g)}
+.btn-part-add{background:var(--g);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
+.btn-part-add:hover{background:var(--gd)}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="main-wrap">
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-l">
     <div class="logo-box"><span>achs</span></div>
@@ -120,12 +137,11 @@ select option[disabled]{color:#aaa;font-style:italic}
     </div>
   </div>
   <div class="hdr-r">
-    <div class="v-badge">v3.0</div>
+    <div class="v-badge">v4.0</div>
     <div class="copy">© 2026 Branco Sandoval Palma · ACHS<br>Todos los derechos reservados · Uso interno exclusivo</div>
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="showTab('datos',this)">Datos Generales</div>
   <div class="tab" onclick="showTab('acts',this)">Actividades <span class="cnt" id="cnt">0</span></div>
@@ -138,9 +154,28 @@ select option[disabled]{color:#aaa;font-style:italic}
   <div class="csec" id="sec-emp">
     <div class="ctitle" onclick="tog('emp')">Empresa <span class="arr">▼</span></div>
     <div class="cbody">
+
+      <!-- BP SELECTOR -->
+      <div class="f" style="margin-bottom:10px;">
+        <label>Buscar Centro / BP</label>
+        <div class="bp-search-wrap">
+          <input class="bp-input" id="bp-search" placeholder="Escribe nombre o número BP..." autocomplete="off"
+            oninput="bpFilter()" onkeydown="bpKey(event)" onfocus="bpOpen()" />
+          <div class="bp-dropdown" id="bp-dd"></div>
+        </div>
+        <div class="bp-selected" id="bp-selected">
+          <span id="bp-selected-txt"></span>
+          <button class="bp-clear" onclick="bpClear()" title="Cambiar centro">✕</button>
+        </div>
+      </div>
+
       <div class="g2">
-        <div class="f full"><label>Razón Social</label><input id="razon" value="SERVICIO DE SALUD METROPOLITANO ORIENTE"/></div>
-        <div class="f"><label>BP Empresa</label><input id="bp" value="2000294182"/></div>
+        <div class="f full">
+          <label>Razón Social</label>
+          <input id="razon" value="" placeholder="Se rellena al seleccionar un BP..."/>
+          <span id="razon-sub" style="display:none;font-size:11px;font-weight:700;color:var(--gd);margin-top:3px;padding:3px 8px;background:var(--gl);border-radius:4px;border:1px solid #b8e8d0;">▶ Centro: </span>
+        </div>
+        <div class="f"><label>BP Empresa</label><input id="bp" value="" readonly style="background:#f5f5f3;color:#555;"/></div>
         <div class="f"><label>Fecha Asesoría</label><input type="date" id="fecha_a"/></div>
         <div class="f full"><label>Modalidad</label>
           <div class="rgroup">
@@ -149,22 +184,35 @@ select option[disabled]{color:#aaa;font-style:italic}
           </div>
         </div>
         <div class="f full"><label>Objetivo de la Asesoría</label>
-          <textarea id="obj" rows="3">Fortalecer el seguimiento preventivo y técnico del Hospital del Salvador, abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.</textarea>
+          <textarea id="obj" oninput="ar(this)" style="overflow:hidden;min-height:60px;">Fortalecer el seguimiento preventivo y técnico del Hospital del Salvador, abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.</textarea>
         </div>
       </div>
     </div>
   </div>
+
   <div class="csec" id="sec-part">
     <div class="ctitle" onclick="tog('part')">Participantes <span class="arr">▼</span></div>
     <div class="cbody">
-      <div class="g2">
-        <div class="f"><label>Participante 1 – Nombre</label><input id="p1n" value="Aida Espinosa"/></div>
-        <div class="f"><label>Participante 1 – Cargo</label><input id="p1c" value="Jefatura institucional HDS"/></div>
-        <div class="f"><label>Participante 2 – Nombre</label><input id="p2n" value="Francisco Manriquez"/></div>
-        <div class="f"><label>Participante 2 – Cargo</label><input id="p2c" value="Referente institucional HDS"/></div>
-        <div class="f"><label>Experto ACHS – Nombre</label><input id="enombre" value="Branco Sandoval Palma"/></div>
-        <div class="f"><label>Experto ACHS – RUT</label><input id="erut" value="18151247-4"/></div>
-        <div class="f full"><label>Experto ACHS – Email</label><input id="eemail" value="bmsandovalp@achs.cl"/></div>
+
+      <!-- CHIPS PARTICIPANTES -->
+      <div class="part-wrap">
+        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Participantes de la empresa</div>
+        <div class="part-chips" id="part-chips-empresa"></div>
+        <div class="part-add-row">
+          <input id="pnew-nombre" placeholder="Nombre del participante"/>
+          <input id="pnew-cargo" placeholder="Cargo"/>
+          <button class="btn-part-add" onclick="addParticipante()">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- EXPERTO ACHS (fijo) -->
+      <div style="background:var(--gl);border:1.5px solid var(--g);border-radius:6px;padding:10px 12px;margin-top:6px;">
+        <div style="font-size:10px;font-weight:800;color:var(--gd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Experto en Prevención ACHS</div>
+        <div class="g2">
+          <div class="f"><label>Nombre</label><input id="enombre" value="Branco Sandoval Palma"/></div>
+          <div class="f"><label>RUT</label><input id="erut" value="18151247-4"/></div>
+          <div class="f full"><label>Email</label><input id="eemail" value="bmsandovalp@achs.cl"/></div>
+        </div>
       </div>
     </div>
   </div>
@@ -172,15 +220,20 @@ select option[disabled]{color:#aaa;font-style:italic}
 
 <!-- TAB ACTIVIDADES -->
 <div class="panel" id="tab-acts">
-  <div class="icard">
-    <strong>Biblioteca ACHS integrada:</strong> 902 actividades organizadas en 3 filtros cascada: Tipo de Asesoría → Motivo → Submotivo. Los datos provienen directamente de tu archivo biblioteca.xlsx sin modificaciones.
+  <!-- ACCESO RÁPIDO -->
+  <div class="fav-wrap">
+    <div class="fav-head">⭐ Acceso Rápido — Favoritos</div>
+    <div class="fav-grid" id="fav-grid">
+      <span class="fav-empty">Guarda favoritos con ☆ en cada actividad para acceso rápido aquí.</span>
+    </div>
   </div>
-  <div class="act-hdr">
+
+  <div class="act-top-bar">
     <div class="stitle" style="margin:0;border:none;">Actividades registradas</div>
-    <button class="btn-add" onclick="addAct()">+ Agregar Actividad</button>
+    <button class="btn-add" onclick="addAct()">+ Nueva Actividad</button>
   </div>
-  <div id="acts-wrap"></div>
-  <div class="empty" id="empty-msg">Sin actividades. Haz clic en "+ Agregar Actividad".</div>
+  <div class="acts-container" id="acts-wrap"></div>
+  <div class="empty" id="empty-msg">Sin actividades. Usa "+ Nueva Actividad" o un favorito.</div>
 </div>
 
 <!-- TAB FIRMAS -->
@@ -201,311 +254,457 @@ select option[disabled]{color:#aaa;font-style:italic}
 <!-- TAB GENERAR -->
 <div class="panel" id="tab-gen">
   <div class="smsg" id="smsg"></div>
-  <div class="icard"><strong>Genera el documento AOA en PDF</strong> con logo ACHS, estructura oficial y todas tus actividades. Al hacer clic se abre una ventana lista para imprimir — elige "Guardar como PDF" en el diálogo.</div>
+  <div class="icard"><strong>Genera el documento AOA en PDF.</strong> El cliente solo verá el Motivo como título — sin códigos internos (AAD, SOP, etc.). El Submotivo e ID son solo para uso interno.</div>
   <div class="stitle">Vista Previa</div>
   <div class="prev" id="prev">Haz clic en "Actualizar Vista Previa"</div>
   <div style="margin-top:8px;text-align:right;"><button class="btn-s" onclick="updPrev()">Actualizar Vista Previa</button></div>
 </div>
 
-<!-- ABAR -->
 <div class="abar">
   <button class="btn-s" onclick="resetF()">Limpiar</button>
   <button class="btn-p green" style="flex:2;" onclick="genPDF()">⬇ Generar PDF</button>
 </div>
-<div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v3.0 · Uso interno exclusivo</div>
-
-</div><!-- end main-wrap -->
-</div><!-- end wrap -->
+<div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v4.0 · Uso interno exclusivo</div>
+</div>
+</div>
 
 <script>
-// ═══════════════════════════════════════════════
-// BIBLIOTECA COMPLETA — 902 submotivos reales
-// ═══════════════════════════════════════════════
-const DB = {"Asesoría (ASE)":{"ACHS Gestión (AHG)":["Asesoría Estructura Organizativa  (AHG03)","Reconocimiento SST (AHG04)"],"Asesoría de Gestión (AGE)":["Asesoría de seguimiento para PYME (Remota) (AGE04)","Asesoría Gestión de Aspectos Legales - Digital (AGE05)","Asesoría Inicial de Prevención PYME  (AGE02)","Asesoría de seguimiento para PYME (Presencial) (AGE03)"],"Asesoría en Contingencias (CON)":["Asesoría Gripe Aviar (CON16)"],"Asesorías Sectoriales (ASS)":["Asesoría a buzos profesionales (ASS02)","Asesoría Centros de contacto o llamadas (ASS01)","Ev. Ruido de fondo para Centros de contacto o llamadas (ASS03)","Ev. De Iluminación para Centros de contacto o llamadas (ASS04)","Ev. De ergonomía para Centros de contacto o llamadas (ASS05)","Ev. De calidad de aire  para Centros de contacto o llamadas (ASS06)","Sistema de Gestión de la Seguridad y Salud en el Trabajo para Faenas Portuarias (ASS07)"],"Comité Paritario de Higiene y Seguridad (PPE)":["Ejecución de Auditoría certificación de CPHS (PPE02)","Presentación y postulación de certificación de CPHS (PPE01)","Asesoría de certificación para CPHS (PPE03)","Verificación y control Plan de acción CPHS (PPE04)"],"Ejecución y Seguimiento (EYS)":["Asesoría de Roles críticos y habilitación de plataforma (EYS1000)","Asesoría inicial CPHS muellaje (EYS22)","Asesoría investigación de accidentes y enfermedades profesionales CPHS muellaje (EYS23)","Asesoría operativización CPHS muellaje (EYS24)","Asistencia a empresas que presentan servicios de limpieza y remoción de escombros en incendios forestales (EYS31)","Asesoría Gestión de riesgos de emergencia - Foco Altas temperaturas AT/ATE (EYS28)","Asesoría Gestión de riesgos de emergencia - Foco Incendios forestales (EYS29)","Asesoría en preparación y respuestas para altas temperaturas AT/ATE (EYS30)"],"Gestión de Aspectos Legales (GAL)":["Asesoría en normativas de sst (GAL01)","Lista de verificación Aspectos Legales  (GAL03)","Asesoría protocolos MINSAL (GAL02)"],"Gestión de Contratistas (PGC)":["Asesoría de diagnóstico y asignación de responsables (PGC01)","Asesoría de identificación de procesos y definición de requisitos de SST (PGC02)","Asesoría de Reglamento especial y Programa Preventivo de SST (PGC03)"],"Gestión En SST (GSS)":["Asesoría departamento prevención de riesgo (GSS03)","Asesoría en gestión de contratistas (GSS04)","Asesoría en seguridad industrial (GSS06)","Asesoría teletrabajo y trabajo a distancia (GSS07)","Perspectiva de género en Construcción (GSS15)","Charla Taller - Estándar (GSS05)","Programa preventivo seguridad en máquinas, equipos y herramientas motrices (PPSMEHM)","Seguimiento asesoría en seguridad industrial (GSS09)","Observación/Inspección (Hasta 5) (GSS10)","Verificación y Control PPSMEHM (GSS11)","Observación/Inspección (Desde 6) (GSS12)","Charla Taller - Requerimiento comercial / solicitud cliente  (GSS13)","Actividad de relacionamiento - Cambio de equipo (GSS14)"],"Asesoría Gestión SST Portuario (GSP)":["Formulario único de fiscalización - FUF Portuario (GSP01)"],"Modelo de Asesorías Integral (MAI)":["Diagnóstico y Plan de Prevención (MAI12)","Políticas SST (MAI01)","Verificación y Control Compromisos SST (MAI02)","Objetivos de SST (MAI03)","Verificación y Control Objetivos SST (MAI04)","Propuesta Técnica, Organización Funciones y Responsabilidades (MAI05)","Verificación y Control Organización Funciones y Responsabilidades (MAI06)","Medición y Seguimiento de SST (MAI07)","Seguimiento - Asesoría Medición y Seguimiento (MAI08)","Asesoría de Auditoría Interna (MAI09)","Programa Anual y Planes de Auditoría Interna (MAI10)","Ejecución y Plan de Acción de Auditorías Internas (MAI11)","Seguimiento - Auditoría Interna (MAI13)","Asesoría de Revisión por la Dirección (MAI14)","Ejecución Revisión por la Dirección (MAI15)","Seguimiento - Revisión por la dirección (MAI16)"],"Gestión Seguridad Laboral (GSL)":["Asesoría Violencia Tipo II (desde usuarios o clientes) (GSL01)","Asesoría prevención de riesgo de suicidio en lugares de trabajo (GSL02)"],"Plan de Prevención y Acuerdo de Colaboración (PDP)":["Plan de Prevención final (PDP02)"],"Asesoría Gestión de Aspectos Legales (AAR)":["Presentación de actualización D.S. 67 (AAR01)","Generación y/o actualización D.S. 67 (AAR02)"],"Acuerdo de colaboración (ADC)":["Firma de acuerdo de colaboración (ADC01)","Generación de acuerdo de colaboración (ADC02)","Modificación de actividades en acuerdo de colaboración (ADC03)","Verificación y control de actividades en acuerdo de colaboración (ADC04)"],"Asesoría IPER (AIP)":["Entendimiento de SST y Proceso IPER (AIP01)"],"Asistencia en SST (ASR)":["Jornadas preventivas (ASR01)"],"Auditorías de seguridad y salud ocupacional (AUR)":["Aplicación de auditoría de seguridad y salud ocupacional (AUR01)"],"Asesoría Gestion de Riesgo en SST (GRS)":["Asesoría sectorial caída en altura (GRS07)","Asesoría sectorial caída en altura seguimiento (GRS08)","Asesoría sectoriales muellaje (GRS06)","Prescripción de medidas para proceso GDR (GRS09)","Verificación de prescripción para proceso GDR (GRS10)"],"Asesoría Gestión En SST (ARR)":["Reunión con dirigentes sindicales (ARR02)","Reunión con Gerencia o Directivos (ARR03)","Gestión de ingreso de casos médicos (ARR04)","Sensibilización del modelo Dekra (ARR05)","Asesoría en el diagnóstico de gestión LGF - Dekra (ARR06)","Asesoría en la definición de roles - Dekra (ARR07)","Asesoría para la guía en gestión de eventos y calculo de índice - Dekra (ARR08)","Practica de Verificación de Controles Críticos (VCC) - Dekra (ARR09)","Revisión de indicadores del proceso LGF - Dekra (ARR10)","Asesoría en normativa de SST en Plataformas Digitales (ARR11)","Verificación y Control de Medidas en Plataformas Digitales (ARR12)","Asesoria en medidas preventivas para trabajos de reconocimiento, limpieza y remoción de escombros (ARR13)"],"Gestión del riesgo de emergencia (GRE)":["Asesoría para la implementación de extintores de incendio (GRE01)"],"Proceso de Evaluación DS67 (PEV)":["Difusión y entrega de kit (PEV01)","Asistencia Tecnica (PEV02)","Segunda verificación y control por incumplimiento de medidas (PEV03)"],"Gestión del riesgo (GDR)":["Verificación del cumplimiento muellaje (GDR02)","Prescripción por brecha muellaje (GDR03)","Prescripción inicial muellaje (GDR04)","Informe de cumplimiento muellaje (GDR05)","Revisión MIPER muellaje (GDR06)"],"Asistencia Técnica (ATE)":["Diagnostico de sustancias químicas (ATE01)","Asistencia en cumplimiento de Decreto 43 (ATE02)","Asistencia en reconocimiento de agentes cancerígenos (ATE03)","Asistencia en desarrollo de plan de emergencias químicas (ATE04)","Asesoría: Carga de Combustible (ATE05)"],"Asesoría en Plan Integral de Seguridad Escolar (PIE)":["Presentación de PISE (PIE01)","Conformación de Comité de Seguridad Escolar (PIE02)","Diagnóstico de amenazas y vulnerabilidad (PIE03)","Planificación de medidas y planes de respuesta (PIE04)","Apoyo en simulacro y seguimiento (PIE05)","Certificación y ceremonia (PIE06)","Verificación y control de implementación del PISE (PIE07)"],"Estrategia educacional-violencia (EEV)":["Sensibilización (EEV01)","Seguimiento y ejecución (EEV02)","Revisión de requisitos violencia (EEV03)"],"Estrategia educacional-sobrecarga laboral (EEL)":["Sensibilización (EEL01)","Seguimiento y ejecución (EEL02)","Revisión de requisitos sobrecarga laboral (EEL03)"],"Estrategia educacional- sobreesfuerzo vocal (EES)":["Sensibilización (EES01)","Seguimiento y ejecución (EES02)","Revisión de requisitos sobrecarga vocal (EES03)"],"Estrategia educacional- desplazamiento operacional (EED)":["Sensibilización (EED01)","Seguimiento y ejecución (EED02)","Revisión de requisitos sobrecarga laboral (EED03)"],"Asesoría mordedura de perros (AMP)":["Difusión de material técnico y entendimiento de la asesoría (AMP01)"],"Protocolo exposición a Metales y Metaloides (PMM)":["Asesoría en la difusión (PMM01)"],"Asesoría de Gestión regulatoria (GRG)":["Asesoría Decreto 44 (GRG02)"],"Riesgos Críticos (RCT)":["Asesoría control de Riesgos críticos - Diagnóstico (RCT01)","Asesoría Puesta en marcha control de Riesgos críticos (RCT02)","Verificación control de Riesgos críticos (RCT03)"],"Asesoría exposición a ácido sulfhídrico (EAS)":["Asesoría exposición a ácido sulfhídrico (EAS01)","Evaluación de medidas ácido sulfhídrico (EAS02)","Verificación y control ácido sulfhídrico (EAS03)"],"Reclasificación de empresa - D.S. 110 (RDE)":["Correcta asignación de tasa y CIIU (RDE01)"],"Teleoperadores (TLP)":["Presentación y Sensibilización Teleoperadores (TLP01)","Apoyo evaluación teleoperadores (TLP02)","Verificación y control teleoperadores (TLP03)"]},"Campaña (CAM)":{"Campaña Achs (CMP)":["Difusión campaña (CMP01)","Seguimiento - VyC Campaña (CMP02)"]},"Enfermedad Profesional (VAM)":{"Asesoría en Prevención de Enfermedades Profesionales (APE)":["Asesoría en Prevención de Enfermedades Profesionales (APE01)"],"Enfermedad profesional (EPS)":["Notificación a autoridad Post-calificación EP (EPS04)","Prescripción de medidas Post-calificación EP (EPS01)","Verificación de medidas prescritas Post-calificación EP (EPS05)","Regularización de prescripción de medidas Post-calificación EP (EPS06)","Regularización de verificación de medidas prescritas Post-calificación EP (EPS07)"],"Recomendaciones RECA (RRE)":["Revisión de las recomendaciones RECA (RRE01)"]},"Gestión Táctica Preventiva (GTP)":{"Intervención Táctica Accidentabilidad ITA (ITA)":["Gestión de accidentes - incidentes (ITA105)","Observación e inspección en procesos críticos (ITA103)","Seguimiento Gestión de accidentes - incidentes (ITA106)","Seguimiento Observación e inspección en procesos críticos (ITA104)","Difusión de Material Preventivo ACHS (ITA111)","Acompañamiento de acciones preventivas (ITA125)","Verificación y control (ITA126)","Persuasión de estándar de gestión y entrega de Kit (ITA127)","Evaluación en terreno y definición del plan de acción en sucursales críticas (ITA128)","Sensibilización Accidentabilidad PYME (ITA129)","Seguimiento Accidentabilidad PYME (ITA130)"],"Modelo de gestión Focalizado en Accidentabilidad (MFA)":["Asesoría de Gestión Focalizada en Accidentabilidad (MFA01)","Identificación de peligros y Evaluación de riesgos focalizada en accidentabilidad (presencial) (MFA03)","Identificación de peligros y Evaluación de riesgos focalizada en accidentabilidad (remota) (MFA02)","Seguimiento focalizado en accidentabilidad (MFA04)"],"Plan de Capacitación (PCA)":["Elaboración y presentación de Plan de Capacitación (PCA01)"],"Prescripción y verificación de medidas (PVM)":["Prescripción de medidas (PVM01)","Verificación de medidas prescritas (PVM02)"],"Rga":["Informe para calificar mecanismo lesional (RGA02)","Informe para calificar (RGA01)","Informe para calificar Remoto (RGA03)","Informe para calificar RALF (RGA04)"]},"Higiene y ergonomía (HYE)":{"Agentes Biologicos (AGB)":["Ev Cualitativa (AGB01)","Traspaso OAL Evaluaciones Cualitativas (AGB20)","Verificación Y Control (AGB03)","Identificación de Peligro (AGB02)","Evaluación e identificación negativa (AGB99)"],"Agentes provocan dermatitis (APD)":["Asistencia Técnica (APD06)","Ev Cualitativa (APD04)","Traspaso OAL Evaluaciones Cualitativas (APD20)","Verificación Y Control (APD21)","Evaluación e identificación negativa (APD99)"],"Asbesto (ASB)":["Asistencia Técnica (ASB07)","Ev Cualitativa (ASB04)","Identificación de Peligro (ASB01)","Traspaso OAL Evaluaciones Cualitativas (ASB20)","Verificación Y Control (ASB11)","Evaluación e identificación negativa (ASB99)"],"Calor (CAL)":["Asistencia Técnica (CAL04)","Ev Cualitativa (CAL03)","Identificación de Peligro (CAL01)","Traspaso OAL Evaluaciones Cualitativas (CAL20)","Verificación Y Control (CAL08)","Evaluación e identificación negativa (CAL99)"],"Citostáticos (CTS)":["Asistencia Técnica (CTS05)","Asesoría Difusión y Sensibilización (CTS02)","Ev Cualitativa (CTS04)","Identificación de Peligro (CTS01)","Traspaso OAL Evaluaciones Cualitativas (CTS20)","Verificación Y Control (CTS08)","Evaluación e identificación negativa (CTS99)"],"EP en estudio (EPE)":["Evaluación puesto de trabajo (EPE02)","Historia Ocupacional (EPE01)","Prescripción de medidas empresa se opone a HO y/o EPT (EPE03)","Verificación de medidas prescritas empresa se opone a HO y/o EPT (EPE04)"],"Ergonomía oficinas (ERO)":["Verificación y control (ERO03)"],"Fatiga Laboral (FAT)":["Evaluación Cualitativa (FAT02)","Identificación de Peligro (FAT01)"],"Fiebre Q (FIQ)":["Asistencia Técnica - Difusión del protocolo (FIQ06)","Caracterización del Riesgo (FIQ03)","Ev Cualitativa (FIQ02)","Traspaso OAL Evaluaciones Cualitativas (FIQ20)","Verificación y Control (FIQ04)","Evaluación e identificación negativa (FIQ99)"],"Frío (FRI)":["Asistencia Técnica (FRI04)","Ev Cualitativa (FRI03)","Identificación de Peligro (FRI01)","Traspaso OAL Evaluaciones Cualitativas (FRI20)","Verificación Y Control (FRI08)","Evaluación e identificación negativa (FRI99)"],"Hiperbaria (HIE)":["Asistencia Técnica (HIE06)","Difusión - Entrega de Kit Apoyo Protocolo (HIE02)","Asesoría de Evaluación Cualitativa (HIE04)","Identificación de Peligro (HIE01)","Traspaso OAL Evaluaciones Cualitativas (HIE09)","Verificación Y Control (HIE08)","Asesoría de Implementación de Medidas (HIE11)","Evaluación e identificación negativa (HIE99)"],"Hipobaria (HIO)":["Ev Cualitativa (HIO04)","Verificación Y Control (HIO07)","Asesoría Plan de Acción Hipobaria (HIO10)","Asistencia Técnica (HIO05)","Asesoría en la Identificación de Peligro (HIO09)","Evaluación e identificación negativa (HIO99)","Asesoría en la Planificación y Difusión (HIO02)","Traspaso OAL Evaluaciones Cualitativas (HIO11)"],"Iluminación (ILU)":["Asistencia Técnica (ILU02)","Ev Cualitativa (ILU01)","Traspaso OAL Evaluaciones Cualitativas (ILU20)","Verificación Y Control (ILU06)","Planificación y Organización (ILU04)","Evaluación e identificación negativa (ILU99)"],"Metales pesados (MPS)":["Asistencia Técnica (MPS06)","Asesoría Evaluación Cualitativa (MPS04)","Asesoría en la Identificación de Peligro y Caracterización del Riesgo (MPS01)","Traspaso OAL Evaluaciones Cualitativas (MPS20)","Verificación Y Control (MPS10)","Asesoría Plan de Acción (MPS11)","Evaluación e identificación negativa (MPS99)"],"Micobacterium tuberculoso (TBC)":["Difusión - Entrega de Kit Apoyo Protocolo (TBC01)","Ev Cualitativa (TBC04)","Identificación de Peligro (TBC02)","Traspaso OAL Evaluaciones Cualitativas (TBC20)","Verificación Y Control (TBC07)","Evaluación e identificación negativa (TBC99)"],"Otros agentes ergonómicos (OAE)":["Verificación Y Control (OAE05)"],"Otros agentes químicos (OAQ)":["Asistencia Técnica (OAQ05)","Ev Cualitativa (OAQ04)","Identificación de Peligro (OAQ01)","Traspaso OAL Evaluaciones Cualitativas (OAQ20)","Verificación Y Control (OAQ09)","Evaluación e identificación negativa (OAQ99)"],"Plaguicidas (PLA)":["Asesoría para disminuir intoxicaciones (PLA21)","Asistencia Técnica (PLA07)","Difusión - Entrega de Kit Apoyo Protocolo (PLA02)","Ev Cualitativa (PLA04)","Registro del plan de aplicación (PLA03)","Traspaso OAL Evaluaciones Cualitativas (PLA20)","Verificación Implementación Protocolo (PLA06)","Identificación de Peligro (PLA01)","Evaluación e identificación negativa (PLA99)"],"Radiaciones ionizantes (RIO)":["Asistencia Técnica (RIO04)","Ev Cualitativa (RIO03)","Identificación de Peligro (RIO01)","Traspaso OAL Evaluaciones Cualitativas (RIO20)","Verificación Y Control (RIO08)","Evaluación e identificación negativa (RIO99)"],"Radiación uv solar (RUV)":["Asistencia Técnica (RUV06)","Ev Cualitativa (RUV04)","Identificación de Peligro y Difusión de Protocolo (RUV08)","Traspaso OAL Evaluaciones Cualitativas (RUV20)","Verificación Y Control (RUV07)","Evaluación e identificación negativa (RUV99)"],"Empresas con presencia de Ruido (RUI)":["Gestión protocolo vigilancia ambiental Ruido (RUI98)","Asesoría en la Planificación y Difusión (RUI02)","Estudio Previo (RUI03)","Asesoría en la identificación de Peligro (RUI01)","Registro de la Ficha cualitativa (RUI11)","Registro del Estudio Previo (RUI13)","Tamizado + Screening (RUI06)","Traspaso OAL Evaluaciones Cualitativas (RUI20)","Verificación Y Control (RUI12)","Asesoría para prevenir la hipoacusia (RUI21)","Evaluación e identificación negativa (RUI99)","Asesoría en la elaboración de plan de acción y sistema de gestión (RUI16)","Tamizado (RUI22)"],"Sílice (SIL)":["Gestión protocolo vigilancia ambiental Sílice (SIL98)","Asistencia Técnica (SIL09)","Asesoría de difusión (SIL02)","Ev Cualitativa (SIL04)","Ev Cualitativa Rubro Construcción (SIL05)","Traspaso OAL Evaluaciones Cualitativas (SIL20)","Verificación Y Control (SIL15)","Asesoría en la Elaboración de Plan de Acción (SIL16)","Evaluación e identificación negativa (SIL99)","Asesoría en la Identificación de Peligro y Caracterización del Riesgo (SIL01)"],"Turnos (TUR)":["Evaluación Cualitativa (TUR01)"],"Sobreesfuerzo vocal (UIV)":["Asistencia Técnica (UIV02)","Ev Cualitativa (UIV01)","Traspaso OAL Evaluaciones Cualitativas (UIV20)","Verificación Y Control (UIV03)","Evaluación e identificación negativa (UIV99)","Sensibilización y organización (UIV05)","Vigilancia de la salud (UIV06)"],"Solicitud de nomina INE (INE)":["Solicitud de nomina INE e identificar trabajadores independientes (INE01)"],"Prevención de contagio por virus hanta (CVH)":["Asesoría de identificación de virus hanta (CVH01)","Verificación de medidas de prevención de virus hanta (CVH02)","Asesoría y difusión en virus hanta (CVH03)","Evaluación de medidas de prevención virus hanta (CVH04)"]},"Programa Propio (PPP)":{"Actividad administrativa (AAD)":["Generación de indicadores (AAD03)","Generar estadísticas y casuística (AAD01)","Habilitación y reportabilidad de Capacitación (AAD04)","Preparación de material de charla (AAD02)","Preparación y entrega de material físico (AAD05)","Riesgo de emergencia - Generación de informe y/o presentación de resultados simulacro (AAD06)","Gestión de Riesgo en SST - Generación de propuesta medidas para riesgos críticos (AAD07)","Protocolo Minsal - Generación de informe (AAD08)","Reunión de Trabajo (AAD09)","Presentación Resultados (AAD10)","Presentación de Venta FDT (AAD11)"],"Acuerdo de colaboración (ACO)":["Diagnóstico empresa (ACO01)","Firma de acuerdo de colaboración (ACO03)","Generación de acuerdo de colaboración (ACO02)","Modificación de actividades en acuerdo de colaboración (ACO06)","Verificación y control de actividades en acuerdo de colaboración (ACO04)","Verificación y control global de acuerdo de colaboración (ACO05)","Verificación y control de actividades en acuerdo de colaboración periodo 2 (ACO07)","Verificación y control de actividades en acuerdo de colaboración periodo 3 (ACO08)"],"Asesoría en riesgos de emergencia (ARE)":["Ejecución de simulacro (ARE03)","Generación de planes de emergencia y evacuación (ARE01)","Presentación de contexto de simulacro (ARE02)","Presentación de informe de resultados de simulacro (ARE05)","Realización actividades apoyo a gestión de riesgos de emergencia (ARE07)","Seguimiento de cumplimiento plan de acción de simulacro (ARE06)"],"Asesoría Gestion de Riesgo en SST (ARS)":["Construcción de MIPER (ARS04)","Presentación de medidas para riesgos críticos (ARS02)","Seguimiento de cumplimiento en medidas para riesgos críticos (ARS03)"],"Asesoría Gestión En SST (AGS)":["Asesoría departamento prevención de riesgo (AGS05)","Asesoría en gestión de contratistas (AGS06)","Asesoría en seguridad industrial (AGS02)","Asesoría teletrabajo y trabajo a distancia (AGS10)","Construcción plan de acción (AGS14)","Elaboración de material seguridad (AGS08)","Generar programa de capacitación (AGS11)","Metodología Dekra (AGS13)","Realización charla/taller (AGS03)","Revisión de material seguridad (AGS09)","Actividad de liderazgo visible (AGS12)","Seguimiento asesoría en seguridad industrial (AGS15)","Investigación accidente metodología árbol causal (AGS16)","Asistencia técnica a todos los ingresos y seguimiento telefonico por cada control (AGS17)"],"Asistencia en SST (ATS)":["Análisis de accidentes y acuerdo de medidas de control en focos críticos (ATS01)","Análisis casuístico de casos (ATS03)","Jornadas preventivas (ATS04)","Seguimiento de medidas de control en focos críticos (ATS02)"],"Comité Paritario de Higiene y Seguridad (CPH)":["Actividad práctica con CPHS (CPH05)","Asesoría en certificación de CPHS (CPH03)","Asesoría en elaboración de programa de trabajo (CPH04)","Asesoría en gestión de CPHS (CPH01)","Presentación de proceso de certificación (CPH02)"],"Intervención Táctica Accidentabilidad ITA (ITC)":["Aplicación de campaña preventiva (ITC108)","Generación de informe técnico de análisis casuístico (ITC109)","Identificación de peligros y evaluación de riesgos (ITC101)","Investigación de accidentes de incidentes (ITC105)","Inspección en procesos críticos (ITC103)","Seguimiento a acuerdos y medidas pendientes (ITC110)","Generación de plan tactico de accidentabilidad (ITC111)","Generación de resultados de Plan táctico (ITC112)","Realización charla o taller (= o <5) (ITC30)","Difusión de Material Preventivo (ITC31)","Observación en procesos críticos (ITC113)","Realización charla o taller (>5) (ITC32)"],"Soporte en SST (SOP)":["Reunión con área de prevención de riesgos (SOP01)","Reunión con dirigentes sindicales (SOP02)","Reunión con Gerencia o Directivos (SOP03)","Reunión con Jefaturas (SOP04)","Reunión con Recursos Humanos de la empresa (SOP09)"],"Gestión sello Ley Karín (GLK)":["Sensibilización y presentación (GLK01)","Asistencia Técnica (GLK02)","Verificación y cumplimiento Sello Ley Karin (GLK03)","Certificación de Gestión Sello Ley Karín Nivel 1 (GLK04)","Certificación de Gestión Sello Ley Karín Nivel 2 (GLK05)","Entrega de certificado - Ceremonia (GLK06)"]},"Gestiones en prevención (GEP)":{"Estrategia Sectorial Transversal (EST)":["Desplazamiento operacional - Transversal (EST01)","Máquinas motrices - Transversal (EST02)","Trabajo administrativo - Transversal (EST03)","Verificación y control - Estrategia sectorial Transversal (EST04)","Fatiga laboral - Transversal (EST05)","Conducción de vehículos livianos - Transversal (EST06)","Trabajo en altura mayor a 1,8 metros - Transversal (EST07)","Evaluación Trabajo en altura mayor a 1,8 metros - Transversal (EST08)","Seguridad en el MMC - control de accidentes (EST09)","Asesoría Trabajo en Izaje de cargas (EST12)","Asesoría Equipos para el Transporte de carga (EST14)"],"Sistema de gestión SST (SGS)":["Sensibilización y diagnóstico SGSST (SGS01)","Acompañamiento procesos del SGSST (SGS02)","Auditoría SG Regulatorio (SGS03)","Auditoría SG 45.001 (SGS04)","Gestión Preventiva - Requisitos legales (SGS05)","Gestión Preventiva - Riesgo de Desastres (SGS06)","Gestión Preventiva - Comité Paritario de Higiene y Seguridad (SGS07)","Gestión Preventiva - Contratistas (SGS08)","Gestión del Riesgo - MIPER (SGS11)","Gestión del Riesgo - Programa de trabajo preventivo (SGS12)","Evaluación de Desempeño - Medición y Seguimiento (SGS20)","Evaluación de Desempeño - Auditoría Interna (SGS21)","Evaluación de Desempeño - Revisión por la Dirección (SGS22)"],"Gestión de controles críticos (GCC)":["GCC - Diagnóstico Etapa 0 (GCC01)","GCC - Trabajo en altura física mayor o igual 1,8 metros (GCC02)","GCC - Trabajo en espacios confinados (GCC03)","GCC - Conducción de vehículos livianos (GCC04)","GCC - Trabajo con energía eléctrica (GCC05)","GCC - Trabajo con máquinas, equipos y herramientas motrices (GCC06)","GCC - Trabajo en excavaciones (GCC07)","GCC - Control de energías peligrosas (GCC08)","GCC - Verificación y control (GCC09)"],"Sello Bienestar (SBT)":["Asesorías Calidad de Vida - DS 44 (SBT01)","VyC Calidad de Vida - DS 44 (SBT02)","Sensibilización Sello Promueve bienestar (SBT03)","Seguimiento Sello promueve Bienestar (SBT04)","Reconocimiento Sello Promueve bienestar (SBT06)"],"Estrategia Sectorial Salud Pública y Privada (SPP)":["Manejo y traslado de pacientes Salud (SPP01)","Verificación y Control Manejo y traslado de pacientes Salud (SPP02)","Manejo de objetos cortopunzantes Salud (SPP03)","Verificación y Control Manejo de objetos cortopunzantes Salud (SPP04)","Dermatitis Salud (SPP05)","Verificación y Control Dermatitis Salud (SPP06)","Asesoría Exposición Agresiones y Amenazas en Salud (SPP07)","Verificación y Control Exposición Agresiones y Amenazas en Salud (SPP08)","Asesoría Sobrecarga Laboral en Salud pública y privada (SPP09)","Verificación y Control Sobrecarga en Salud pública y privada (SPP10)","Asesoría Violencia en Salud pública y privada (SPP11)","Verificación y Control en Salud pública y privada (SPP12)","Asesoría Desplazamiento operacional Salud (SPP13)","Verificación y control Desplazamiento operacional Salud (SPP14)"],"Ley 21.643 - Asesoría Ley Karin (ALK)":["Ley 21.643 - Asistencia inicial Ley Karin (ALK01)","Política Ley 21.643 (ALK02)","Protocolo prevención del acoso laboral, sexual y violencia (ALK03)","Procedimiento de denuncia e investigación (ALK04)","Asesoría Violencia en el trabajo por parte de clientes o usuarios (ALK08)","Asesoría para certificación Sello Ley Karin (ALK10)","Verificación Sello Ley Karin Nivel 1 (ALK06)","Verificación Sello Ley Karin Nivel 2 (ALK07)","Prescripción Ley Karin (ALK11)"],"Requerimientos DS44 (REQ)":["Asesoría Personas trabajadores especialmente sensibles: Embarazadas (REQ01)","Análisis puesto de trabajo Embarazadas (REQ02)","Requerimientos DS44 - Verificación y Control (REQ03)","Asesoría Personas trabajadores especialmente sensibles: Adulto Mayor (REQ04)","Asesoría Personas trabajadores especialmente sensibles: Adolescente (REQ06)"],"Investigación de enfermedad profesional (IEP)":["Análisis de causas EP Musculoesquelética (IEP01)","Apoyo empresa investigación Enfermedad profesional EP (IEP02)","Verificación de medidas EP Musculoesquelética (IEP03)"],"Sistema SHSYMAT sector público (SHS)":["Asesoría SHSYMAT Propuesta técnica (SHS01)","Asesoría en política SST SHSYMAT (SHS02)","Planificación y ejecución SHSYMAT (SHS03)","Verificación SHSYMAT (SHS04)","Mejora SHSYMAT (SHS05)","Reconocimiento SHSYMAT (SHS06)"]},"Psicosocial (RPSL)":{"Psicosocial protocolo (PRT)":["Gestión protocolo vigilancia ambiental Psicosocial (PRT98)","Difusión - Entrega de Kit Apoyo Protocolo (PRT20)","Asesoría Cda Protocolo (PRT21)","Resultados CEAL Protocolo (PRT22)","Asesoría Resultados Protocolo (PRT23)","Asistencia Técnica (PRT24)","Asesoría de planificación (PRT25)","Asesoría Habilitación CEAL (PRT26)","Asesoría Inicial Protocolo Instituciones Públicas (PRT27)"]},"Regulatorio (REG)":{"Investigación de accidentes SUSESO (IAS)":["Comunicación inicial y recolección de antecedentes iniciales (IAS001)","Recolección antecedentes (IAS003)","Informe de accidente y causas (IAS004)","Prescripción de medidas correctivas (IAS005)","Verificación de medidas correctivas (IAS006)","Segunda verificación de medidas correctivas (IAS007)","Informe de accidente abreviado (IAS009)"],"Programa Asistencia Cumplimiento (PAC)":["Entrega Certificado PAC (PAC02)","Inicio Asistencia Técnica (PAC01)","Seguimiento y Verificación (PAC03)"],"Trabajo a distancia (TRD)":["Evaluación puesto de trabajo para trabajo a distancia (TRD04)","Prescripción inicial para trabajo a distancia (TRD01)","Prescripción post revisión MIPER para trabajo a distancia (TRD03)","Revisión MIPER para trabajo a distancia (TRD02)"],"Prescripción (PRE)":["Prescripción fiscalización Psicosocial (PRE01)","Prescripción fiscalización Higiene (PRE02)","Prescripción fiscalización Ergonomía (PRE03)","Prescripción Grupo discusión por Riesgo Alto (PRE04)"],"Caída en Alturas (CEA)":["Presentación y Herramienta (CEA01)","Informe de Prescripción (CEA02)","Informe de Verificación y Control (CEA03)"],"Flujo DS67 (FDS)":["Validación Documentación DS 67 Interno (FDS01)"]},"Enfermedad Profesional (VAM)":{"Enfermedad profesional (EPS)":["Notificación a autoridad Post-calificación EP (EPS04)","Prescripción de medidas Post-calificación EP (EPS01)","Verificación de medidas prescritas Post-calificación EP (EPS05)","Regularización de prescripción de medidas Post-calificación EP (EPS06)"],"Recomendaciones RECA (RRE)":["Revisión de las recomendaciones RECA (RRE01)"],"Asesoría en Prevención de EP (APE)":["Asesoría en Prevención de Enfermedades Profesionales (APE01)"]},"Accidentabilidad (ACC)":{"Actividad de trayecto (ACT)":["Difusión - Entrega de Kit Apoyo trayecto (ACT01)"]},"Habilitación y Formación (HYF)":{"Habilitación (HAB)":["Curso Nuevos Auditores - Certificación CPHS (HAB08)","Train the Trainers (HAB01)","Charla Formativa (HAB02)","RALF (HAB03)","Habilitación Expertos - autoaprendizaje (HAB04)","Train the Trainers Comercial (HAB05)","Habilitación Autoaprendizaje (HAB07)","IPT (HAB06)","Acompañamiento Orientación Técnica Accidentabilidad (HAB09)"],"Malla Expertos (MAE)":["Curso genérico 0.5 horas (MAE01)","Curso genérico 1 horas (MAE02)","Psicosocial - Capacitación 16 horas y certificación (MAE03)"]},"Creación/seguimiento de programa trabajo (CSA)":{"Estrategia accidentabilidad (EAC)":["Gestión accidentes centro de trabajo (EAC01)","Confección/actualización de MIPER (EAC02)","Levantamiento de riesgos - Accidentabilidad (EAC03)","Levantamiento de riesgos - Violencia (EAC04)","Levantamiento de riesgos - Graves/Fatales (EAC05)","Verificación y control global (EAC06)","Elaboración Plan de trabajo Accidentabilidad (EAC00)"]}};
+// ══════════════════════════════════════════
+// DB — Tipos de Asesoría con Motivos y Submotivos
+// GIGE = solo FTG de PPP / RED = sin PPP
+// ══════════════════════════════════════════
+const DB = {
+  "GIGE — Programa Propio": {
+    "FDT Tradicional GIGE": ["Diagnóstico y Plan de Acción","Observación de exposiciones - Entrenamiento al equipo de ejecución","Observación de exposiciones - Modelamiento y Coaching","Observación de exposiciones - Verificación de la calidad","Observación de exposiciones - Evaluación de sostenibilidad","Sesiones de Seguridad - Entrenamiento al equipo de ejecución","Sesiones de Seguridad - Modelamiento y Coaching","Sesiones de Seguridad - Verificación de la calidad","Sesiones de Seguridad - Evaluación de sostenibilidad","Verificación de Controles Críticos - Entrenamiento","Verificación de Controles Críticos - Modelamiento y Coaching","Verificación de Controles Críticos - Verificación de la calidad","Verificación de Controles Críticos - Evaluación de sostenibilidad","Asistencia Técnica FDT GIGE","Diagnóstico y Plan de Acción GIGE","Entrega de resultados y Plan de acción del líder GIGE","Coaching en Terreno 1 GIGE","Coaching en Terreno 2 GIGE","Coaching en Terreno 3 GIGE","Evaluación de sostenibilidad - Informe al Líder del Sitio GIGE"]
+  },
+  "Programa Propio (PPP)": {
+    "Actividad administrativa": ["Generación de indicadores","Generar estadísticas y casuística","Habilitación y reportabilidad de Capacitación","Preparación de material de charla","Preparación y entrega de material físico","Riesgo de emergencia - Generación de informe","Gestión de Riesgo en SST - Propuesta medidas riesgos críticos","Protocolo Minsal - Generación de informe","Reunión de Trabajo","Presentación Resultados","Presentación de Venta FDT"],
+    "Acuerdo de colaboración": ["Diagnóstico empresa","Firma de acuerdo de colaboración","Generación de acuerdo de colaboración","Modificación de actividades en acuerdo de colaboración","Verificación y control de actividades en acuerdo de colaboración","Verificación y control global de acuerdo de colaboración","Verificación y control de actividades en acuerdo de colaboración periodo 2","Verificación y control de actividades en acuerdo de colaboración periodo 3"],
+    "Asesoría en riesgos de emergencia": ["Ejecución de simulacro","Generación de planes de emergencia y evacuación","Presentación de contexto de simulacro","Presentación de informe de resultados de simulacro","Realización actividades apoyo a gestión de riesgos de emergencia","Seguimiento de cumplimiento plan de acción de simulacro"],
+    "Asesoría Gestión de Riesgo en SST": ["Construcción de MIPER","Presentación de medidas para riesgos críticos","Seguimiento de cumplimiento en medidas para riesgos críticos"],
+    "Asesoría Gestión En SST": ["Asesoría departamento prevención de riesgo","Asesoría en gestión de contratistas","Asesoría en seguridad industrial","Asesoría teletrabajo y trabajo a distancia","Construcción plan de acción","Elaboración de material seguridad","Generar programa de capacitación","Metodología Dekra","Realización charla/taller","Revisión de material seguridad","Actividad de liderazgo visible","Seguimiento asesoría en seguridad industrial","Investigación accidente metodología árbol causal"],
+    "Asistencia en SST": ["Análisis de accidentes y acuerdo de medidas de control en focos críticos","Análisis casuístico de casos","Jornadas preventivas","Seguimiento de medidas de control en focos críticos"],
+    "Auditorías de seguridad y salud ocupacional": ["Aplicación de auditoría de seguridad y salud ocupacional","Informe de auditoría de seguridad y salud ocupacional","Presentación de herramienta de auditoría"],
+    "Comité Paritario de Higiene y Seguridad": ["Actividad práctica con CPHS","Asesoría en certificación de CPHS","Asesoría en elaboración de programa de trabajo","Asesoría en gestión de CPHS","Presentación de proceso de certificación"],
+    "Intervención Táctica Accidentabilidad ITA": ["Aplicación de campaña preventiva","Generación de informe técnico de análisis casuístico","Identificación de peligros y evaluación de riesgos","Investigación de accidentes de incidentes","Inspección en procesos críticos","Seguimiento a acuerdos y medidas pendientes","Generación de plan táctico de accidentabilidad","Generación de resultados de Plan táctico","Realización charla o taller","Difusión de Material Preventivo","Observación en procesos críticos"],
+    "Soporte en SST": ["Reunión con área de prevención de riesgos","Reunión con dirigentes sindicales","Reunión con Gerencia o Directivos","Reunión con Jefaturas","Reunión con Recursos Humanos de la empresa"],
+    "Gestión sello Ley Karín": ["Sensibilización y presentación","Asistencia Técnica","Verificación y cumplimiento Sello Ley Karin","Certificación de Gestión Sello Ley Karín Nivel 1","Certificación de Gestión Sello Ley Karín Nivel 2","Entrega de certificado - Ceremonia"],
+    "Asesoría Gestión de Aspectos Legales PPP": ["Asesoría en normativas de SST","Presentación de actualización D.S. 67","Generación y/o actualización D.S. 67"]
+  },
+  "RED — Todas las áreas (sin PPP)": {
+    "Análisis Casuístico y Accidentabilidad": ["Gestión de accidentes - incidentes","Observación e inspección en procesos críticos","Seguimiento Gestión de accidentes","Difusión de Material Preventivo ACHS","Acompañamiento de acciones preventivas","Verificación y control"],
+    "Prescripción y Verificación": ["Prescripción de medidas","Verificación de medidas prescritas"],
+    "Riesgos Críticos": ["GCC - Diagnóstico Etapa 0","GCC - Trabajo en altura física mayor o igual 1,8 metros","GCC - Trabajo en espacios confinados","GCC - Conducción de vehículos livianos","GCC - Trabajo con energía eléctrica","GCC - Trabajo con máquinas equipos y herramientas motrices","GCC - Trabajo en excavaciones","GCC - Control de energías peligrosas","GCC - Verificación y control"],
+    "Sistema de gestión SST": ["Sensibilización y diagnóstico SGSST","Acompañamiento procesos del SGSST","Auditoría SG Regulatorio","Auditoría SG 45.001","Gestión Preventiva - Requisitos legales","Gestión Preventiva - Riesgo de Desastres","Gestión Preventiva - Comité Paritario","Gestión del Riesgo - MIPER","Gestión del Riesgo - Programa de trabajo preventivo","Evaluación de Desempeño - Medición y Seguimiento","Evaluación de Desempeño - Auditoría Interna","Evaluación de Desempeño - Revisión por la Dirección"],
+    "Higiene Ocupacional - Ruido": ["Identificación de Peligro","Ev Cualitativa","Tamizado + Screening","Tamizado","Verificación Y Control","Asesoría para prevenir la hipoacusia","Gestión protocolo vigilancia ambiental Ruido","Evaluación e identificación negativa"],
+    "Higiene Ocupacional - Sílice": ["Identificación de Peligro y Caracterización del Riesgo","Ev Cualitativa","Ev Cualitativa Rubro Construcción","Verificación Y Control","Asesoría en la Elaboración de Plan de Acción","Gestión protocolo vigilancia ambiental Sílice","Evaluación e identificación negativa"],
+    "Higiene Ocupacional - Agentes Biológicos": ["Identificación de Peligro","Ev Cualitativa","Verificación Y Control","Evaluación e identificación negativa"],
+    "Higiene Ocupacional - Citostáticos": ["Identificación de Peligro","Asesoría Difusión y Sensibilización","Ev Cualitativa","Verificación Y Control","Evaluación e identificación negativa"],
+    "Psicosocial - Protocolo": ["Gestión protocolo vigilancia ambiental Psicosocial","Difusión - Entrega de Kit Apoyo Protocolo","Asesoría Resultados Protocolo","Asistencia Técnica Protocolo","Asesoría de planificación","Asesoría Habilitación CEAL","Asesoría Inicial Protocolo Instituciones Públicas"],
+    "Ley Karin": ["Asistencia inicial Ley Karin","Política Ley 21.643","Protocolo prevención del acoso laboral sexual y violencia","Procedimiento de denuncia e investigación","Asesoría para certificación Sello Ley Karin","Verificación Sello Ley Karin Nivel 1","Verificación Sello Ley Karin Nivel 2","Prescripción Ley Karin"],
+    "Enfermedad Profesional": ["Prescripción de medidas Post-calificación EP","Verificación de medidas prescritas Post-calificación EP","Asesoría en Prevención de Enfermedades Profesionales","Revisión de las recomendaciones RECA"],
+    "Ergonomía - Salud Pública y Privada": ["Manejo y traslado de pacientes Salud","Manejo de objetos cortopunzantes Salud","Dermatitis Salud","Asesoría Exposición Agresiones y Amenazas en Salud","Asesoría Sobrecarga Laboral en Salud","Asesoría Violencia en Salud","Asesoría Desplazamiento operacional Salud"],
+    "Fatiga y Turnos": ["Evaluación Cualitativa Fatiga Laboral","Identificación de Peligro Fatiga Laboral","Evaluación Cualitativa Turnos"],
+    "Sobreesfuerzo Vocal": ["Ev Cualitativa","Asistencia Técnica","Verificación Y Control","Sensibilización y organización","Vigilancia de la salud"]
+  },
+  "Asesoría (ASE)": {
+    "ACHS Gestión": ["Asesoría Estructura Organizativa","Reconocimiento SST"],
+    "Asesoría de Gestión PYME": ["Asesoría de seguimiento para PYME Remota","Asesoría Gestión de Aspectos Legales Digital","Asesoría Inicial de Prevención PYME","Asesoría de seguimiento para PYME Presencial"],
+    "Comité Paritario de Higiene y Seguridad": ["Ejecución de Auditoría certificación de CPHS","Presentación y postulación de certificación de CPHS","Asesoría de certificación para CPHS","Verificación y control Plan de acción CPHS"],
+    "Gestión de Aspectos Legales": ["Asesoría en normativas de SST","Lista de verificación Aspectos Legales","Asesoría protocolos MINSAL"],
+    "Gestión En SST": ["Asesoría departamento prevención de riesgo","Asesoría en gestión de contratistas","Asesoría en seguridad industrial","Charla Taller - Estándar","Programa preventivo seguridad en máquinas equipos y herramientas motrices","Observación/Inspección","Charla Taller - Requerimiento comercial"],
+    "Modelo de Asesorías Integral": ["Diagnóstico y Plan de Prevención","Políticas SST","Verificación y Control Compromisos SST","Objetivos de SST","Medición y Seguimiento de SST","Asesoría de Auditoría Interna","Asesoría de Revisión por la Dirección","Ejecución Revisión por la Dirección"],
+    "Gestión Seguridad Laboral": ["Asesoría Violencia Tipo II desde usuarios o clientes","Asesoría prevención de riesgo de suicidio en lugares de trabajo"],
+    "Acuerdo de colaboración": ["Firma de acuerdo de colaboración","Generación de acuerdo de colaboración","Modificación de actividades en acuerdo de colaboración","Verificación y control de actividades en acuerdo de colaboración"],
+    "Asesoría IPER": ["Entendimiento de SST y Proceso IPER"],
+    "Asesoría Gestión de Riesgo en SST": ["Asesoría sectorial caída en altura","Asesoría sectorial caída en altura seguimiento","Prescripción de medidas para proceso GDR","Verificación de prescripción para proceso GDR"],
+    "Proceso de Evaluación DS67": ["Difusión y entrega de kit","Asistencia Tecnica","Segunda verificación y control por incumplimiento de medidas"],
+    "Riesgos Críticos": ["Asesoría control de Riesgos críticos - Diagnóstico","Asesoría Puesta en marcha control de Riesgos críticos","Verificación control de Riesgos críticos"],
+    "Asesoría Decreto 44": ["Asesoría Decreto 44"]
+  },
+  "Gestiones en prevención (GEP)": {
+    "Estrategia Sectorial Salud Pública y Privada": ["Manejo y traslado de pacientes Salud","Verificación y Control Manejo y traslado de pacientes","Manejo de objetos cortopunzantes Salud","Verificación y Control objetos cortopunzantes","Dermatitis Salud","Verificación y Control Dermatitis Salud","Asesoría Exposición Agresiones y Amenazas en Salud","Verificación y Control Agresiones y Amenazas","Asesoría Sobrecarga Laboral en Salud","Verificación y Control Sobrecarga en Salud","Asesoría Violencia en Salud","Verificación y Control Violencia en Salud","Asesoría Desplazamiento operacional Salud","Verificación y control Desplazamiento operacional Salud"],
+    "Sistema de gestión SST": ["Sensibilización y diagnóstico SGSST","Acompañamiento procesos del SGSST","Auditoría SG Regulatorio","Auditoría SG 45.001","Gestión Preventiva - Requisitos legales","Gestión Preventiva - Riesgo de Desastres","Gestión Preventiva - Comité Paritario","Gestión Preventiva - Contratistas","Gestión del Riesgo - MIPER","Gestión del Riesgo - Programa de trabajo preventivo","Evaluación de Desempeño - Medición y Seguimiento","Evaluación de Desempeño - Auditoría Interna","Evaluación de Desempeño - Revisión por la Dirección"],
+    "Gestión de controles críticos": ["GCC - Diagnóstico Etapa 0","GCC - Trabajo en altura física mayor o igual 1,8 metros","GCC - Trabajo en espacios confinados","GCC - Conducción de vehículos livianos","GCC - Trabajo con energía eléctrica","GCC - Trabajo con máquinas equipos y herramientas motrices","GCC - Trabajo en excavaciones","GCC - Control de energías peligrosas","GCC - Verificación y control"],
+    "Ley 21.643 - Asesoría Ley Karin": ["Asistencia inicial Ley Karin","Política Ley 21.643","Protocolo prevención del acoso laboral sexual y violencia","Procedimiento de denuncia e investigación","Asesoría Violencia en el trabajo por parte de clientes o usuarios","Asesoría para certificación Sello Ley Karin","Verificación Sello Ley Karin Nivel 1","Verificación Sello Ley Karin Nivel 2","Prescripción Ley Karin"],
+    "Requerimientos DS44": ["Asesoría Personas especialmente sensibles: Embarazadas","Análisis puesto de trabajo Embarazadas","Requerimientos DS44 - Verificación y Control","Asesoría Personas especialmente sensibles: Adulto Mayor","Asesoría Personas especialmente sensibles: Adolescente"],
+    "Sello Bienestar DS44": ["Asesorías Calidad de Vida - DS 44","VyC Calidad de Vida - DS 44","Sensibilización Sello Promueve bienestar","Seguimiento Sello promueve Bienestar","Reconocimiento Sello Promueve bienestar"],
+    "Estrategia Sectorial Transversal": ["Desplazamiento operacional - Transversal","Máquinas motrices - Transversal","Trabajo administrativo - Transversal","Verificación y control Estrategia sectorial Transversal","Fatiga laboral - Transversal","Conducción de vehículos livianos - Transversal","Trabajo en altura mayor a 1,8 metros - Transversal"],
+    "Sistema SHSYMAT sector público": ["Asesoría SHSYMAT Propuesta técnica","Asesoría en política SST SHSYMAT","Planificación y ejecución SHSYMAT","Verificación SHSYMAT","Mejora SHSYMAT","Reconocimiento SHSYMAT"],
+    "Investigación de enfermedad profesional": ["Análisis de causas EP Musculoesquelética","Apoyo empresa investigación Enfermedad profesional","Verificación de medidas EP Musculoesquelética"],
+    "Estrategias sectoriales Municipalidades": ["Asesoría Conducción de vehículos Municipalidades","Verificación y Control Conducción de vehículos Municipalidades","Asesoría Violencia en Municipalidades","Verificación y Control Violencia en Municipalidades","Asesoría Sobrecarga Laboral en Municipalidades","Verificación y Control Sobrecarga en Municipalidades"]
+  },
+  "Higiene y ergonomía (HYE)": {
+    "Agentes Biologicos": ["Ev Cualitativa","Verificación Y Control","Identificación de Peligro","Evaluación e identificación negativa"],
+    "Citostáticos": ["Asistencia Técnica","Asesoría Difusión y Sensibilización","Ev Cualitativa","Identificación de Peligro","Verificación Y Control","Evaluación e identificación negativa"],
+    "EP en estudio": ["Evaluación puesto de trabajo","Historia Ocupacional","Prescripción de medidas empresa se opone a HO y/o EPT","Verificación de medidas prescritas empresa se opone a HO y/o EPT"],
+    "Fatiga Laboral": ["Evaluación Cualitativa","Identificación de Peligro"],
+    "Hiperbaria": ["Asistencia Técnica","Ev Cualitativa","Identificación de Peligro","Verificación Y Control","Asesoría de Implementación de Medidas","Evaluación e identificación negativa"],
+    "Iluminación": ["Asistencia Técnica","Ev Cualitativa","Verificación Y Control","Planificación y Organización","Evaluación e identificación negativa"],
+    "Ruido": ["Gestión protocolo vigilancia ambiental Ruido","Asesoría en la Planificación y Difusión","Estudio Previo","Asesoría en la identificación de Peligro","Tamizado + Screening","Verificación Y Control","Asesoría para prevenir la hipoacusia","Evaluación e identificación negativa","Tamizado"],
+    "Sílice": ["Gestión protocolo vigilancia ambiental Sílice","Asistencia Técnica","Asesoría de difusión","Ev Cualitativa","Ev Cualitativa Rubro Construcción","Verificación Y Control","Asesoría en la Elaboración de Plan de Acción","Evaluación e identificación negativa","Asesoría en la Identificación de Peligro y Caracterización del Riesgo"],
+    "Sobreesfuerzo vocal": ["Asistencia Técnica","Ev Cualitativa","Verificación Y Control","Evaluación e identificación negativa","Sensibilización y organización","Vigilancia de la salud"],
+    "Plaguicidas": ["Asistencia Técnica","Ev Cualitativa","Verificación Implementación Protocolo","Identificación de Peligro","Evaluación e identificación negativa"],
+    "Radiaciones ionizantes": ["Asistencia Técnica","Ev Cualitativa","Identificación de Peligro","Verificación Y Control","Evaluación e identificación negativa"],
+    "Radiación UV solar": ["Asistencia Técnica","Ev Cualitativa","Identificación de Peligro y Difusión de Protocolo","Verificación Y Control","Evaluación e identificación negativa"],
+    "Turnos": ["Evaluación Cualitativa"],
+    "Prevención virus hanta": ["Asesoría de identificación de virus hanta","Verificación de medidas de prevención de virus hanta","Asesoría y difusión en virus hanta"]
+  },
+  "Psicosocial (RPSL)": {
+    "Psicosocial protocolo": ["Gestión protocolo vigilancia ambiental Psicosocial","Difusión - Entrega de Kit Apoyo Protocolo","Asesoría Cda Protocolo","Resultados CEAL Protocolo","Asesoría Resultados Protocolo","Asistencia Técnica","Asesoría de planificación","Asesoría Habilitación CEAL","Asesoría Inicial Protocolo Instituciones Públicas"]
+  },
+  "Gestión Táctica Preventiva (GTP)": {
+    "Intervención Táctica Accidentabilidad ITA": ["Gestión de accidentes - incidentes","Observación e inspección en procesos críticos","Seguimiento Gestión de accidentes - incidentes","Difusión de Material Preventivo ACHS","Acompañamiento de acciones preventivas","Verificación y control"],
+    "Modelo de gestión Focalizado en Accidentabilidad": ["Asesoría de Gestión Focalizada en Accidentabilidad","Identificación de peligros y Evaluación de riesgos focalizada presencial","Identificación de peligros y Evaluación de riesgos focalizada remota","Seguimiento focalizado en accidentabilidad"],
+    "Prescripción y verificación de medidas": ["Prescripción de medidas","Verificación de medidas prescritas"],
+    "Informe de calificación (RGA)": ["Informe para calificar mecanismo lesional","Informe para calificar","Informe para calificar Remoto","Informe para calificar RALF"]
+  },
+  "Enfermedad Profesional (VAM)": {
+    "Asesoría en Prevención de Enfermedades Profesionales": ["Asesoría en Prevención de Enfermedades Profesionales"],
+    "Enfermedad profesional post-calificación": ["Notificación a autoridad Post-calificación EP","Prescripción de medidas Post-calificación EP","Verificación de medidas prescritas Post-calificación EP","Regularización de prescripción de medidas Post-calificación EP","Regularización de verificación de medidas prescritas Post-calificación EP"],
+    "Recomendaciones RECA": ["Revisión de las recomendaciones RECA"]
+  },
+  "Regulatorio (REG)": {
+    "Investigación de accidentes SUSESO": ["Comunicación inicial y recolección de antecedentes iniciales","Recolección antecedentes","Informe de accidente y causas","Prescripción de medidas correctivas","Verificación de medidas correctivas","Segunda verificación de medidas correctivas","Informe de accidente abreviado"],
+    "Programa Asistencia Cumplimiento": ["Entrega Certificado PAC","Inicio Asistencia Técnica","Seguimiento y Verificación"],
+    "Trabajo a distancia": ["Evaluación puesto de trabajo para trabajo a distancia","Prescripción inicial para trabajo a distancia","Prescripción post revisión MIPER para trabajo a distancia","Revisión MIPER para trabajo a distancia"],
+    "Prescripción regulatoria": ["Prescripción fiscalización Psicosocial","Prescripción fiscalización Higiene","Prescripción fiscalización Ergonomía","Prescripción Grupo discusión por Riesgo Alto"],
+    "Caída en Alturas": ["Presentación y Herramienta","Informe de Prescripción","Informe de Verificación y Control"]
+  },
+  "Campaña (CAM)": {
+    "Campaña ACHS": ["Difusión campaña","Seguimiento - VyC Campaña"]
+  }
+};
 
-let acts=[], acnt=0;
+// ── FAVORITOS ─────────────────────────────────────
+let favorites = [];
+try{ favorites = JSON.parse(localStorage.getItem('aoa_favs')||'[]'); }catch(e){}
 
-function today(){return new Date().toISOString().split('T')[0]}
-function fmtD(s){if(!s)return'';const[y,m,d]=s.split('-');return`${d}-${m}-${y}`}
+function saveFavs(){try{localStorage.setItem('aoa_favs',JSON.stringify(favorites))}catch(e){}}
 
-function buildTipoOpts(){
-  let h='<option value="" disabled selected>-- Selecciona Tipo de Asesoría --</option>';
-  Object.keys(DB).forEach(t=>{h+=`<option value="${t}">${t}</option>`});
-  return h;
+function renderFavs(){
+  const g=document.getElementById('fav-grid');
+  if(!favorites.length){
+    g.innerHTML='<span class="fav-empty">Guarda favoritos con ☆ en cada actividad para acceso rápido aquí.</span>';
+    return;
+  }
+  g.innerHTML=favorites.map(f=>`
+    <div class="fav-chip" onclick='loadFav(${JSON.stringify(f)})'>
+      ⭐ ${f.motivo}
+      <span class="fav-x" onclick="event.stopPropagation();delFav('${f.key}')">✕</span>
+    </div>`).join('');
 }
 
-function buildMotivoOpts(tipo){
-  if(!tipo||!DB[tipo]) return '<option value="" disabled selected>-- Selecciona Motivo --</option>';
-  let h='<option value="" disabled selected>-- Selecciona Motivo --</option>';
+function delFav(key){
+  favorites=favorites.filter(f=>f.key!==key);
+  saveFavs(); renderFavs();
+renderChips();
+  // update all star buttons
+  document.querySelectorAll('[data-favkey]').forEach(el=>{
+    if(el.getAttribute('data-favkey')===key) el.textContent='☆';
+  });
+}
+
+function toggleFav(id){
+  const tipo=document.getElementById('at'+id)?.value||'';
+  const mot=document.getElementById('am'+id)?.value||'';
+  if(!tipo||!mot){alert('Selecciona Tipo y Motivo primero.');return}
+  const key=tipo+'||'+mot;
+  const starEl=document.getElementById('fstar'+id);
+  const idx=favorites.findIndex(f=>f.key===key);
+  if(idx>-1){
+    favorites.splice(idx,1);
+    if(starEl) starEl.textContent='☆';
+  } else {
+    favorites.push({key,tipo,motivo:mot});
+    if(starEl) starEl.textContent='★';
+  }
+  saveFavs(); renderFavs();
+}
+
+function loadFav(fav){
+  const id=addAct();
+  setTimeout(()=>{
+    const ts=document.getElementById('at'+id);
+    if(ts){ts.value=fav.tipo;onTipoChange(id,()=>{
+      const ms=document.getElementById('am'+id);
+      if(ms&&fav.motivo){ms.value=fav.motivo;onMotivoChange(id);}
+    })}
+  },10);
+}
+
+// ── SELECTS ───────────────────────────────────────
+const SPECIAL=['GIGE — Programa Propio','RED — Todas las áreas (sin PPP)'];
+function bTipo(){
+  let h='<option value="" disabled selected>-- Tipo de Asesoría --</option>';
+  h+='<optgroup label="—— Programas especiales ——">';
+  SPECIAL.forEach(t=>{if(DB[t]) h+=`<option value="${t}">${t}</option>`;});
+  h+='</optgroup>';
+  h+='<optgroup label="—— Otras áreas ——">';
+  Object.keys(DB).forEach(t=>{if(!SPECIAL.includes(t)) h+=`<option value="${t}">${t}</option>`;});
+  h+='</optgroup>';
+  return h;
+}
+function bMotivo(tipo){
+  if(!tipo||!DB[tipo]) return '<option value="" disabled selected>-- Selecciona Tipo primero --</option>';
+  let h='<option value="" disabled selected>-- Motivo --</option>';
   Object.keys(DB[tipo]).forEach(m=>{h+=`<option value="${m}">${m}</option>`});
   return h;
 }
-
-function buildSubOpts(tipo,motivo){
-  if(!tipo||!motivo||!DB[tipo]||!DB[tipo][motivo]) return '<option value="" disabled selected>-- Selecciona Submotivo --</option>';
-  let h='<option value="" disabled selected>-- Selecciona Submotivo --</option>';
-  DB[tipo][motivo].forEach(s=>{h+=`<option value="${s}">${s}</option>`});
+function bSub(tipo,mot){
+  if(!tipo||!mot||!DB[tipo]||!DB[tipo][mot]) return '<option value="" disabled selected>-- Submotivo (opcional) --</option>';
+  let h='<option value="" disabled selected>-- Submotivo (opcional) --</option>';
+  DB[tipo][mot].forEach(s=>{h+=`<option value="${s}">${s}</option>`});
   return h;
 }
 
-function onTipoChange(id){
-  const tipo=document.getElementById('at'+id).value;
+function onTipoChange(id,cb){
+  const t=v('at'+id);
   const ms=document.getElementById('am'+id);
-  ms.innerHTML=buildMotivoOpts(tipo);
-  ms.disabled=!tipo;
+  ms.innerHTML=bMotivo(t); ms.disabled=!t;
   const ss=document.getElementById('as'+id);
-  ss.innerHTML='<option value="" disabled selected>-- Selecciona Submotivo --</option>';
-  ss.disabled=true;
-  updateBadge(id);
+  ss.innerHTML='<option value="" disabled selected>-- Submotivo (opcional) --</option>'; ss.disabled=true;
+  updBadge(id);
+  if(cb) cb();
 }
-
 function onMotivoChange(id){
-  const tipo=document.getElementById('at'+id).value;
-  const motivo=document.getElementById('am'+id).value;
+  const t=v('at'+id), m=v('am'+id);
   const ss=document.getElementById('as'+id);
-  ss.innerHTML=buildSubOpts(tipo,motivo);
-  ss.disabled=!motivo;
-  updateBadge(id);
+  ss.innerHTML=bSub(t,m); ss.disabled=!m;
+  updBadge(id);
+  // star sync
+  const key=t+'||'+m;
+  const star=document.getElementById('fstar'+id);
+  if(star) star.textContent=favorites.some(f=>f.key===key)?'★':'☆';
 }
-
 function onSubChange(id){
-  updateBadge(id);
-  const sub=document.getElementById('as'+id)?.value||'';
-  const mot=document.getElementById('am'+id)?.value||'';
+  updBadge(id);
+  const sub=v('as'+id);
   if(sub){
-    const desc=document.getElementById('ad'+id);
-    if(!desc.value.trim()||desc.value===desc.getAttribute('data-auto')){
-      // set description to submotivo text, mark as auto-set
-      desc.value=sub;
-      desc.setAttribute('data-auto',sub);
-      autoResize(desc);
-    }
+    const d=document.getElementById('ad'+id);
+    if(!d.value.trim()||d.value===d.getAttribute('data-a')){d.value=sub;d.setAttribute('data-a',sub);ar(d);}
   }
 }
-
-function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
-
-function updateBadge(id){
-  const mot=document.getElementById('am'+id)?.value||'';
+function updBadge(id){
+  const m=v('am'+id)||'';
   const bg=document.getElementById('abg'+id);
-  if(bg) bg.textContent=mot||'Nueva Actividad';
+  if(bg) bg.textContent=m||'Nueva Actividad';
 }
 
-function addAct(){
+// ── ACTIVIDADES ───────────────────────────────────
+let acts=[],acnt=0;
+
+function addAct(afterId){
   const id=++acnt;
   acts.push({id});
   document.getElementById('empty-msg').style.display='none';
   document.getElementById('cnt').textContent=acts.length;
-  const wrap=document.getElementById('acts-wrap');
-  const div=document.createElement('div');
-  div.className='act-card'; div.id='ac'+id;
-  div.innerHTML=`
+
+  const card=document.createElement('div');
+  card.className='act-card'; card.id='ac'+id;
+  card.innerHTML=`
     <div class="act-card-hdr">
       <span class="act-badge" id="abg${id}">Nueva Actividad</span>
-      <button class="btn-rm" onclick="rmAct(${id})">✕</button>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="btn-star" id="fstar${id}" title="Guardar como favorito" onclick="toggleFav(${id})" data-favkey="">☆</button>
+        <button class="btn-rm" onclick="rmAct(${id})">✕</button>
+      </div>
     </div>
     <div class="ag">
-      <div class="f full">
-        <label>Tipo de Asesoría</label>
-        <select id="at${id}" onchange="onTipoChange(${id})">${buildTipoOpts()}</select>
+      <div class="f full"><label>Tipo de Asesoría</label>
+        <select id="at${id}" onchange="onTipoChange(${id})">${bTipo()}</select>
       </div>
-      <div class="f full">
-        <label>Motivo</label>
+      <div class="f full"><label>Motivo</label>
         <select id="am${id}" onchange="onMotivoChange(${id})" disabled>
-          <option value="" disabled selected>-- Primero selecciona Tipo --</option>
+          <option value="" disabled selected>-- Selecciona Tipo primero --</option>
         </select>
       </div>
       <div class="f full">
-        <label>Submotivo</label>
+        <label>Submotivo <span class="sub-note">(opcional — uso interno, no aparece en PDF)</span></label>
         <select id="as${id}" onchange="onSubChange(${id})" disabled>
-          <option value="" disabled selected>-- Primero selecciona Motivo --</option>
+          <option value="" disabled selected>-- Submotivo (opcional) --</option>
         </select>
       </div>
       <div class="f"><label>ID Asesoría</label><input id="aid${id}" placeholder="Ej: 11605431"/></div>
-      <div class="f"><label>Fecha</label><input type="date" id="af${id}" value="${today()}"/></div>
-      <div class="f full"><label>Descripción / Tema Tratado</label><textarea id="ad${id}" rows="2" placeholder="Descripción de la actividad realizada..." oninput="autoResize(this)" style="overflow:hidden;"></textarea></div>
-      <div class="f full"><label>Acuerdo / Compromiso</label><textarea id="aa${id}" rows="2" oninput="autoResize(this)" style="overflow:hidden;">Se entrega AOA para gestión interna.</textarea></div>
+      <div class="f"><label>Fecha</label><input type="date" id="af${id}" value="${tod()}"/></div>
+      <div class="f full">
+        <label>Descripción</label>
+        <textarea id="ad${id}" placeholder="Descripción de la actividad realizada..." oninput="ar(this)" style="overflow:hidden;min-height:48px;"></textarea>
+      </div>
+      <div class="f full">
+        <label>Acuerdo / Compromiso</label>
+        <textarea id="aa${id}" oninput="ar(this)" style="overflow:hidden;min-height:36px;">Se entrega AOA para gestión interna.</textarea>
+      </div>
+    </div>
+    <div class="act-footer">
+      <button class="btn-add-here" onclick="addActAfter(${id})">+ Agregar actividad aquí debajo</button>
     </div>`;
-  wrap.appendChild(div);
+
+  const wrap=document.getElementById('acts-wrap');
+  if(afterId){
+    const ref=document.getElementById('ac'+afterId);
+    if(ref&&ref.nextSibling) wrap.insertBefore(card,ref.nextSibling);
+    else wrap.appendChild(card);
+  } else { wrap.appendChild(card); }
+  return id;
 }
 
+function addActAfter(aid){addAct(aid)}
+
 function rmAct(id){
-  const el=document.getElementById('ac'+id);
-  if(el) el.remove();
+  document.getElementById('ac'+id)?.remove();
   acts=acts.filter(a=>a.id!==id);
   document.getElementById('cnt').textContent=acts.length;
   if(!acts.length) document.getElementById('empty-msg').style.display='block';
 }
 
-function showTab(name,el){
+// ── UTILS ─────────────────────────────────────────
+function ar(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+function tod(){return new Date().toISOString().split('T')[0]}
+function fd(s){if(!s)return'';const[y,m,d]=s.split('-');return`${d}-${m}-${y}`}
+function v(id){return document.getElementById(id)?.value||''}
+function showTab(n,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  el.classList.add('active');
+  document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
 }
-
-function tog(name){document.getElementById('sec-'+name).classList.toggle('collapsed')}
+function tog(n){document.getElementById('sec-'+n).classList.toggle('collapsed')}
+function showS(msg,type){
+  const el=document.getElementById('smsg');
+  el.textContent=msg;el.className='smsg '+type;el.style.display='block';
+  if(type!=='load') setTimeout(()=>{el.style.display='none'},4500);
+}
 
 function gd(){
   return{
-    razon:document.getElementById('razon').value,
-    bp:document.getElementById('bp').value,
-    fecha_a:document.getElementById('fecha_a').value||today(),
+    razon:v('razon'),bp:v('bp'),
+    razon_sub:(document.getElementById('razon-sub')?.textContent||'').replace('▶ ','').trim(),
+    fecha_a:v('fecha_a')||tod(),
     mod:document.querySelector('input[name="mod"]:checked')?.value||'PRESENCIAL',
-    obj:document.getElementById('obj').value,
-    p1n:document.getElementById('p1n').value,
-    p1c:document.getElementById('p1c').value,
-    p2n:document.getElementById('p2n').value,
-    p2c:document.getElementById('p2c').value,
-    enombre:document.getElementById('enombre').value,
-    erut:document.getElementById('erut').value,
-    eemail:document.getElementById('eemail').value,
-    rnombre:document.getElementById('rnombre').value,
-    rrut:document.getElementById('rrut').value,
-    rcargo:document.getElementById('rcargo').value,
-    remail:document.getElementById('remail').value,
-    fcump:document.getElementById('fcump').value,
+    obj:v('obj'),
+    participantes: participantes.slice(), // array de {nombre, cargo}
+    enombre:v('enombre'),erut:v('erut'),eemail:v('eemail'),
+    rnombre:v('rnombre'),rrut:v('rrut'),rcargo:v('rcargo'),remail:v('remail'),
+    fcump:v('fcump'),
     acts:acts.map(a=>({
-      tipo:document.getElementById('at'+a.id)?.value||'',
-      motivo:document.getElementById('am'+a.id)?.value||'',
-      sub:document.getElementById('as'+a.id)?.value||'',
-      ida:document.getElementById('aid'+a.id)?.value||'',
-      fecha:document.getElementById('af'+a.id)?.value||'',
+      tipo:v('at'+a.id),
+      motivo:v('am'+a.id),          // usado en el PDF como título limpio
+      sub:v('as'+a.id),             // solo uso interno
+      ida:v('aid'+a.id),
+      fecha:v('af'+a.id),
       desc:document.getElementById('ad'+a.id)?.value||'',
-      acuer:document.getElementById('aa'+a.id)?.value||'',
+      acuer:document.getElementById('aa'+a.id)?.value||''
     }))
   };
 }
 
 function updPrev(){
   const d=gd();
-  let t=`=== AOA – ASESORÍA ORGANISMO ADMINISTRADOR ===\n`;
-  t+=`Empresa: ${d.razon} | BP: ${d.bp} | Modalidad: ${d.mod} | Fecha: ${fmtD(d.fecha_a)}\n\n`;
-  t+=`PARTICIPANTES:\n- ${d.p1n} | ${d.p1c}\n- ${d.p2n} | ${d.p2c}\n- ${d.enombre} | Experto en Prevención ACHS\n\n`;
-  t+=`OBJETIVO:\n${d.obj}\n\n`;
-  t+=`ACTIVIDADES (${d.acts.length}):\n`;
+  let t=`=== AOA — ASESORÍA ORGANISMO ADMINISTRADOR ===\n`;
+  t+=`${d.razon} | BP: ${d.bp} | ${d.mod} | ${fd(d.fecha_a)}\n\n`;
+  const partLines=d.participantes.map(p=>`- ${p.nombre}${p.cargo?' | '+p.cargo:''}`).join('\n');
+  t+=`PARTICIPANTES:\n${partLines}\n- ${d.enombre} | Experto en Prevención ACHS\n\n`;
+  t+=`OBJETIVO:\n${d.obj}\n\nACTIVIDADES (${d.acts.length}):\n`;
   d.acts.forEach((a,i)=>{
-    t+=`\n[${i+1}] ${a.sub||a.motivo||a.tipo}\n`;
-    t+=`    Tipo: ${a.tipo} | Motivo: ${a.motivo}\n`;
-    t+=`    ID: ${a.ida} | Fecha: ${fmtD(a.fecha)}\n`;
-    t+=`    Desc: ${a.desc.substring(0,80)}...\n    Acuerdo: ${a.acuer}\n`;
+    t+=`\n[${i+1}] ${a.motivo||a.tipo} | ID: ${a.ida} | ${fd(a.fecha)}\n`;
+    t+=`    ${(a.desc||'').substring(0,80)}...\n    → ${a.acuer}\n`;
   });
-  t+=`\nFIRMAS:\nExperto: ${d.enombre} | RUT: ${d.erut}\nReceptor: ${d.rnombre} | RUT: ${d.rrut} | ${d.rcargo}\n`;
+  t+=`\nFIRMAS: ${d.enombre} (${d.erut}) / ${d.rnombre} (${d.rrut})\n`;
   document.getElementById('prev').textContent=t;
 }
 
-function showS(msg,type){
-  const el=document.getElementById('smsg');
-  el.textContent=msg; el.className='smsg '+type; el.style.display='block';
-  if(type!=='load') setTimeout(()=>{el.style.display='none'},4500);
-}
+// ── PDF ───────────────────────────────────────────
+function buildDoc(d){
+  const fc=fd(d.fcump)||'30-04-2026';
+  const mr=d.mod==='REMOTO'?'X':'&nbsp;';
+  const mp=d.mod==='PRESENCIAL'?'X':'&nbsp;';
 
-// ═══════════════════════════════════════════════
-// GENERADOR DE DOCUMENTO (estructura idéntica al Word adjunto)
-// ═══════════════════════════════════════════════
-function buildDocument(d){
-  const fa=fmtD(d.fecha_a);
-  const fc=fmtD(d.fcump)||'30-04-2026';
-  const mod_remoto = d.mod==='REMOTO' ? 'X' : '&nbsp;';
-  const mod_pres   = d.mod==='PRESENCIAL' ? 'X' : '&nbsp;';
-
-  // ACHS logo SVG inline
-  const logoSVG=`<svg width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:10px;">
-    <rect width="54" height="54" rx="10" fill="#13C063"/>
-    <text x="27" y="37" font-family="Arial,sans-serif" font-size="18" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="-0.5">achs</text>
+  const logo=`<svg width="58" height="58" viewBox="0 0 58 58" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <rect width="58" height="58" rx="11" fill="#13C063"/>
+    <text x="29" y="39" font-family="Arial,sans-serif" font-size="20" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="-1">achs</text>
   </svg>`;
 
-  let partRows='';
-  [[d.p1n,d.p1c],[d.p2n,d.p2c],[d.enombre,'Experto en Prevención ACHS']].forEach(([n,c])=>{
-    if(n) partRows+=`<tr><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${n}</td><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${c}</td></tr>`;
+  let pRows='';
+  (d.participantes||[]).forEach(p=>{
+    if(p.nombre) pRows+=`<tr><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${p.nombre}</td><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${p.cargo||''}</td></tr>`;
   });
+  pRows+=`<tr><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${d.enombre}</td><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">Experto en Prevención ACHS</td></tr>`;
 
-  let actRows='';
+  let aRows='';
   d.acts.forEach(a=>{
-    // PDF: Motivo as bold title, then description below
-    const motivo=a.motivo||a.tipo||'';
-    const tema=`<b style="color:#000;">${motivo}</b>${a.desc?'<br><span style="font-size:9pt;color:#000;">'+a.desc.replace(/\n/g,'<br>')+'</span>':''}`;
-    actRows+=`<tr>
-      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${fmtD(a.fecha)}<br><span style="color:#000;font-size:8.5pt;">${a.ida}</span></td>
-      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${tema}</td>
+    // PDF muestra SOLO el Motivo como título — sin códigos, sin submotivo
+    const titulo=a.motivo||a.tipo||'';
+    const desc=a.desc?'<br><span style="font-size:9pt;color:#000;font-weight:400;">'+a.desc.replace(/\n/g,'<br>')+'</span>':'';
+    aRows+=`<tr>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${fd(a.fecha)}<br><span style="font-size:8pt;color:#000;">${a.ida}</span></td>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;"><b>${titulo}</b>${desc}</td>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${a.acuer}</td>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${d.enombre}<br>Experto ACHS</td>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${fc}</td>
     </tr>`;
   });
 
-  return `<!DOCTYPE html>
-<html lang="es">
-<head><meta charset="UTF-8">
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <style>
 @page{margin:1.8cm;size:A4}
 *{box-sizing:border-box}
 body{font-family:Arial,sans-serif;font-size:10pt;color:#000;margin:0;background:#fff}
 table{width:100%;border-collapse:collapse;margin-bottom:11px}
 th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;border:1px solid #333;text-align:left}
-.lbl{background:#f0f0f0;font-weight:bold;font-size:9pt;padding:5px 8px;vertical-align:middle;color:#000;}
-.obj-hdr{background:#111;color:#fff;font-size:9pt;font-weight:bold;padding:5px 8px;text-transform:uppercase;letter-spacing:.5px;border:1px solid #333;}
+.lbl{background:#f0f0f0;font-weight:bold;font-size:9pt;padding:5px 8px;vertical-align:middle;color:#000}
+.ohdr{background:#111;color:#fff;font-size:9pt;font-weight:bold;padding:5px 8px;text-transform:uppercase;letter-spacing:.5px;border:1px solid #333}
 .foot{font-size:7.5pt;color:#000;text-align:center;margin-top:18px;border-top:1px solid #ccc;padding-top:6px}
 @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-</style>
-</head>
-<body>
+</style></head><body>
 
-<!-- ENCABEZADO -->
-<div style="display:flex;align-items:center;justify-content:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2.5px solid #111;gap:4px;">
-  ${logoSVG}
-  <span style="font-size:15pt;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:#000;vertical-align:middle;">Asesoría Organismo Administrador</span>
+<div style="display:table;width:100%;margin-bottom:14px;padding-bottom:10px;border-bottom:2.5px solid #111;">
+  <div style="display:table-cell;vertical-align:middle;width:72px;">${logo}</div>
+  <div style="display:table-cell;vertical-align:middle;padding-left:12px;">
+    <span style="font-size:15pt;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:#000;">Asesoría Organismo Administrador</span>
+  </div>
 </div>
 
-<!-- DATOS EMPRESA -->
 <table>
   <tr>
     <td class="lbl" style="border:1px solid #ccc;width:160px;">Razón Social</td>
-    <td colspan="3" style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${d.razon}</td>
+    <td colspan="3" style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">
+      ${d.razon}${d.razon_sub?'<br><span style="font-size:9pt;font-weight:700;color:#000;">'+d.razon_sub+'</span>':''}
+    </td>
   </tr>
   <tr>
     <td class="lbl" style="border:1px solid #ccc;">BP Empresa</td>
     <td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${d.bp}</td>
     <td class="lbl" style="border:1px solid #ccc;width:160px;">Modalidad Asesoría</td>
-    <td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">
-      Remoto:&nbsp;<b>${mod_remoto}</b>&nbsp;&nbsp;&nbsp;Presencial:&nbsp;<b>${mod_pres}</b>
-    </td>
+    <td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">Remoto:&nbsp;<b>${mr}</b>&nbsp;&nbsp;&nbsp;Presencial:&nbsp;<b>${mp}</b></td>
   </tr>
 </table>
 
-<!-- PARTICIPANTES -->
 <table>
   <thead><tr><th>Participantes de la Asesoría</th><th>Cargo</th></tr></thead>
-  <tbody>${partRows}</tbody>
+  <tbody>${pRows}</tbody>
 </table>
 
-<!-- OBJETIVO -->
 <table>
-  <tr><td class="obj-hdr">Objetivos de la Asesoría</td></tr>
+  <tr><td class="ohdr">Objetivos de la Asesoría</td></tr>
   <tr><td style="border:1px solid #ccc;padding:7px 8px;font-size:10pt;color:#000;">${d.obj}</td></tr>
 </table>
 
-<!-- ACTIVIDADES -->
 <table>
   <thead>
     <tr>
-      <th style="width:13%;">Fecha&nbsp;–&nbsp;ID Asesoría</th>
+      <th style="width:13%;">Fecha – ID Asesoría</th>
       <th style="width:34%;">Tema Tratado</th>
       <th style="width:22%;">Acuerdo / Compromiso</th>
       <th style="width:19%;">Nombre y Cargo Responsable</th>
       <th style="width:12%;">Fecha Cumplimiento</th>
     </tr>
   </thead>
-  <tbody>${actRows||'<tr><td colspan="5" style="border:1px solid #ccc;padding:8px;text-align:center;color:#555;font-size:9pt;">Sin actividades registradas</td></tr>'}</tbody>
+  <tbody>${aRows||'<tr><td colspan="5" style="border:1px solid #ccc;padding:8px;text-align:center;color:#555;font-size:9pt;">Sin actividades registradas</td></tr>'}</tbody>
 </table>
 
-<!-- FIRMAS -->
 <table>
   <thead>
-    <tr>
-      <th>Profesional Organismo Administrador</th>
-      <th>Receptor CT / Visita — Firma Empresa</th>
-    </tr>
+    <tr><th>Profesional Organismo Administrador</th><th>Receptor CT / Visita — Firma Empresa</th></tr>
   </thead>
   <tbody>
     <tr>
@@ -527,7 +726,7 @@ th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;bor
   </tbody>
 </table>
 
-<div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v3.1 · Uso interno exclusivo</div>
+<div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v4.0 · Uso interno exclusivo</div>
 </body></html>`;
 }
 
@@ -536,20 +735,18 @@ function genPDF(){
   showS('Generando PDF...','load');
   setTimeout(()=>{
     try{
-      const html=buildDocument(d);
+      const html=buildDoc(d);
       const win=window.open('','_blank','width=900,height=700');
       if(!win){showS('Permite ventanas emergentes en el navegador.','err');return}
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
+      win.document.open(); win.document.write(html); win.document.close();
       setTimeout(()=>{win.focus();win.print()},800);
-      showS('✓ Documento abierto. Elige "Guardar como PDF" en el diálogo de impresión.','ok');
+      showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo de impresión.','ok');
     }catch(e){showS('Error: '+e.message,'err')}
   },200);
 }
 
 function resetF(){
-  if(!confirm('¿Limpiar todos los datos del formulario?'))return;
+  if(!confirm('¿Limpiar todos los datos?'))return;
   acts=[];acnt=0;
   document.getElementById('acts-wrap').innerHTML='';
   document.getElementById('empty-msg').style.display='block';
@@ -558,8 +755,133 @@ function resetF(){
   document.getElementById('fcump').value='';
 }
 
-document.getElementById('fecha_a').value=today();
+// ── BP DATA ───────────────────────────────────────
+const BPS = [
+  {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']},
+  {bp:'2000574070', centro:'DIRECCION S. S. M. ORIENTE', referentes:['Dayana Delgado']},
+  {bp:'2000294182', centro:'HOSPITAL DEL SALVADOR', referentes:[]},
+  {bp:'2000294188', centro:'HOSPITAL DR. LUIS TISNE BROUSSE', referentes:[]},
+  {bp:'2000294183', centro:'HOSPITAL LUIS CALVO MACKENNA', referentes:['Marjorie Gonzalez']},
+  {bp:'2000294184', centro:'INSTITUTO DE NEUROCIRUGIA', referentes:['Eliu Arevalo']},
+  {bp:'2000294186', centro:'INSTITUTO NACIONAL DE GERIATRIA', referentes:['Paulo Sepulveda']},
+  {bp:'2000294189', centro:'HOSPITAL HANGA ROA', referentes:['Guillermo Lopez']},
+  {bp:'2000906772', centro:'HOSPITAL METROPOLITANO DE SANTIAGO', referentes:['Felipe Gongora','Patricio Galaz']},
+  {bp:'2000294187', centro:'INST. NAC. REHAB. PEDRO AGUIRRE CERDA', referentes:['Marcela Gonzalez']}
+];
+
+let bpFocused=-1;
+
+function bpFilter(){
+  const q=document.getElementById('bp-search').value.trim().toLowerCase();
+  const dd=document.getElementById('bp-dd');
+  if(!q){dd.classList.remove('open');return}
+  const matches=BPS.filter(b=>
+    b.centro.toLowerCase().includes(q)||b.bp.includes(q)
+  );
+  if(!matches.length){dd.innerHTML='<div class="bp-opt" style="color:var(--g4);">Sin resultados</div>';dd.classList.add('open');return}
+  dd.innerHTML=matches.map((b,i)=>
+    `<div class="bp-opt" data-i="${i}" data-bp="${b.bp}" onclick="bpSelect('${b.bp}')">
+      ${b.centro}<span class="bp-num">${b.bp}</span>
+    </div>`
+  ).join('');
+  dd.classList.add('open');
+  bpFocused=-1;
+}
+
+function bpOpen(){
+  const q=document.getElementById('bp-search').value.trim();
+  if(q) bpFilter();
+}
+
+function bpKey(e){
+  const dd=document.getElementById('bp-dd');
+  const opts=dd.querySelectorAll('.bp-opt');
+  if(!opts.length) return;
+  if(e.key==='ArrowDown'){e.preventDefault();bpFocused=Math.min(bpFocused+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('focused',i===bpFocused));}
+  else if(e.key==='ArrowUp'){e.preventDefault();bpFocused=Math.max(bpFocused-1,0);opts.forEach((o,i)=>o.classList.toggle('focused',i===bpFocused));}
+  else if(e.key==='Enter'&&bpFocused>=0){e.preventDefault();const bp=opts[bpFocused].getAttribute('data-bp');bpSelect(bp);}
+  else if(e.key==='Escape'){dd.classList.remove('open');}
+}
+
+function bpSelect(bpNum){
+  const entry=BPS.find(b=>b.bp===bpNum);
+  if(!entry) return;
+  // Razón Social siempre = prefijo SSMO + nombre del centro
+  const PREFIX='SERVICIO DE SALUD METROPOLITANO ORIENTE';
+  document.getElementById('razon').value=PREFIX;
+  document.getElementById('razon-sub').textContent='▶ '+entry.centro;
+  document.getElementById('razon-sub').style.display='block';
+  document.getElementById('bp').value=entry.bp;
+  document.getElementById('bp-search').value='';
+  document.getElementById('bp-dd').classList.remove('open');
+  const sel=document.getElementById('bp-selected');
+  document.getElementById('bp-selected-txt').textContent=entry.centro+' — '+entry.bp;
+  sel.classList.add('show');
+  // Pre-load referentes as participants
+  participantes=[];
+  entry.referentes.forEach(r=>participantes.push({nombre:r,cargo:'Referente'}));
+  renderChips();
+}
+
+function bpClear(){
+  document.getElementById('razon').value='';
+  const sub=document.getElementById('razon-sub');
+  if(sub){sub.textContent='';sub.style.display='none';}
+  document.getElementById('bp').value='';
+  document.getElementById('bp-selected').classList.remove('show');
+  document.getElementById('bp-search').value='';
+  participantes=[];
+  renderChips();
+}
+
+// close dropdown on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.bp-search-wrap'))
+    document.getElementById('bp-dd')?.classList.remove('open');
+});
+
+// ── PARTICIPANTES (chips) ─────────────────────────
+let participantes=[];
+
+function renderChips(){
+  const wrap=document.getElementById('part-chips-empresa');
+  if(!wrap) return;
+  if(!participantes.length){
+    wrap.innerHTML='<span style="font-size:11px;color:var(--g4);font-style:italic;padding:4px;">Sin participantes — agrega usando el formulario de abajo.</span>';
+    return;
+  }
+  wrap.innerHTML=participantes.map((p,i)=>`
+    <div class="part-chip">
+      <span>${p.nombre}</span>${p.cargo?`<span class="ch-cargo">·&nbsp;${p.cargo}</span>`:''}
+      <button class="ch-del" onclick="delPart(${i})" title="Quitar">✕</button>
+    </div>`).join('');
+}
+
+function addParticipante(){
+  const n=document.getElementById('pnew-nombre').value.trim();
+  const c=document.getElementById('pnew-cargo').value.trim();
+  if(!n){document.getElementById('pnew-nombre').focus();return}
+  participantes.push({nombre:n,cargo:c});
+  document.getElementById('pnew-nombre').value='';
+  document.getElementById('pnew-cargo').value='';
+  renderChips();
+}
+
+function delPart(i){
+  participantes.splice(i,1);
+  renderChips();
+}
+
+// allow Enter in nombre field to add
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.id==='pnew-nombre'){e.preventDefault();addParticipante();}
+  if(e.key==='Enter'&&e.target.id==='pnew-cargo'){e.preventDefault();addParticipante();}
+});
+
+// ── INIT ──────────────────────────────────────────
+document.getElementById('fecha_a').value=tod();
 document.getElementById('fcump').value='2026-04-30';
+renderFavs();
 </script>
 </body>
 </html>
