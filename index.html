@@ -1696,18 +1696,495 @@ function onMotivoChange(id){
     document.getElementById('sub-wrap-'+id).style.display='none';
   }
   updBadge(id);
+  // Reset auto-fill flags so new submotivo triggers text
+  const descEl2=document.getElementById('ad'+id);
+  const acuerEl2=document.getElementById('aa'+id);
+  if(descEl2) descEl2.removeAttribute('data-a');
+  if(acuerEl2) acuerEl2.removeAttribute('data-a-acuer');
   // star sync
   const key=t+'||'+m;
   const star=document.getElementById('fstar'+id);
   if(star) star.textContent=favorites.some(f=>f.key===key)?'★':'☆';
 }
+const TEXTOS = {
+  "AAD01": {
+    "desc": "Se realiza generación de estadísticas y casuística correspondiente a la semana N°[SEMANA] del presente año, con el objetivo de consolidar información de accidentabilidad del centro de trabajo.",
+    "acuer": "Informe es derivado mediante correo electrónico a referente institucional."
+  },
+  "AAD02": {
+    "desc": "Se realiza preparación de material de charla para actividad preventiva programada en [ÁREA/SERVICIO]. El material aborda los temas de [TEMA PRINCIPAL].",
+    "acuer": "Material queda disponible para uso en terreno."
+  },
+  "AAD03": {
+    "desc": "Se realiza generación de indicadores de accidentabilidad correspondientes al período [MES/AÑO], incluyendo tasas, frecuencia y severidad del centro de trabajo.",
+    "acuer": "Indicadores son entregados a referente institucional para gestión interna."
+  },
+  "AAD04": {
+    "desc": "Se realiza habilitación y reportabilidad de capacitación en el sistema [PLATAFORMA/SISTEMA]. Se registran actividades de formación ejecutadas en el período [PERÍODO].",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "AAD05": {
+    "desc": "Se realiza preparación y entrega de material físico preventivo para [ÁREA/SERVICIO], correspondiente a [DESCRIPCIÓN DEL MATERIAL].",
+    "acuer": "Material entregado físicamente a referente del área."
+  },
+  "AAD06": {
+    "desc": "Se realiza generación de informe y/o presentación de resultados del simulacro de emergencia ejecutado en fecha [FECHA SIMULACRO]. El informe contempla evaluación de tiempos, rutas y acciones correctivas.",
+    "acuer": "Informe es derivado mediante correo electrónico a referente y jefatura institucional."
+  },
+  "AAD07": {
+    "desc": "Se realiza generación de propuesta de medidas para riesgos críticos identificados en el proceso de [ÁREA/PROCESO]. Se establecen controles de ingeniería, administrativos y EPP según jerarquía.",
+    "acuer": "Propuesta es derivada a referente para revisión y validación."
+  },
+  "AAD08": {
+    "desc": "Se realiza generación de informe de cumplimiento del protocolo MINSAL correspondiente a [NOMBRE PROTOCOLO]. El informe contempla estado de implementación y brechas identificadas.",
+    "acuer": "Informe es derivado mediante correo electrónico a referente institucional."
+  },
+  "AAD09": {
+    "desc": "Se realiza reunión de trabajo con [CARGO/ÁREA] del centro, con el objetivo de [OBJETIVO DE LA REUNIÓN]. Se abordan los siguientes puntos: [PUNTOS TRATADOS].",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "AAD10": {
+    "desc": "Se realiza presentación de resultados de accidentabilidad correspondiente al período [MES/TRIMESTRE/AÑO], incluyendo análisis de causas, tendencias y plan de acción asociado.",
+    "acuer": "Presentación es entregada a jefatura y referente institucional."
+  },
+  "AAD11": {
+    "desc": "Se realiza presentación de propuesta de venta del programa FDT a [ÁREA/SERVICIO]. Se exponen objetivos, metodología y resultados esperados del programa.",
+    "acuer": "Se deja constancia de la presentación para seguimiento comercial."
+  },
+  "ACO01": {
+    "desc": "Se realiza diagnóstico inicial de la empresa/centro de trabajo, evaluando condiciones de seguridad, accidentabilidad y gestión preventiva actual, como base para la generación del acuerdo de colaboración.",
+    "acuer": "Diagnóstico es entregado a jefatura institucional para revisión."
+  },
+  "ACO02": {
+    "desc": "Se realiza generación del acuerdo de colaboración para el período [AÑO], definiendo actividades, responsables, plazos y compromisos preventivos entre ACHS y el centro de trabajo.",
+    "acuer": "Acuerdo es enviado mediante correo electrónico para revisión y firma."
+  },
+  "ACO03": {
+    "desc": "Se lleva a cabo la firma del acuerdo de colaboración para el período [AÑO], formalizando el compromiso de trabajo preventivo conjunto entre ACHS y [RAZÓN SOCIAL].",
+    "acuer": "Acuerdo firmado queda en poder de ambas partes."
+  },
+  "ACO04": {
+    "desc": "Se realiza verificación y control del cumplimiento de actividades establecidas en el acuerdo de colaboración, correspondiente al período [MES/TRIMESTRE]. Se revisa estado de avance y compromisos pendientes.",
+    "acuer": "Se entrega AOA para gestión interna con estado actualizado."
+  },
+  "ACO05": {
+    "desc": "Se realiza verificación y control global del acuerdo de colaboración, evaluando cumplimiento total de actividades, logros y brechas del período [AÑO].",
+    "acuer": "Informe global es derivado a referente y jefatura institucional."
+  },
+  "ACO06": {
+    "desc": "Se realiza modificación de actividades en el acuerdo de colaboración vigente, ajustando [ACTIVIDADES MODIFICADAS] en función de [MOTIVO DEL CAMBIO].",
+    "acuer": "Acuerdo modificado es enviado para firma de ambas partes."
+  },
+  "ACO07": {
+    "desc": "Se realiza verificación y control de actividades del acuerdo de colaboración, correspondiente al período 2.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "ACO08": {
+    "desc": "Se realiza verificación y control de actividades del acuerdo de colaboración, correspondiente al período 3.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG01": {
+    "desc": "Se realiza diagnóstico y plan de acción FDT en [ÁREA/SERVICIO], identificando focos de riesgo, comportamientos críticos y definiendo actividades de mejora con líderes del proceso.",
+    "acuer": "Plan de acción es entregado a jefatura del área."
+  },
+  "FTG02": {
+    "desc": "Se realiza entrenamiento al equipo de ejecución en metodología de observación de exposiciones FDT en [ÁREA/SERVICIO]. Se trabaja conceptos, criterios de observación y registro.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG03": {
+    "desc": "Se realiza sesión de modelamiento y coaching en observación de exposiciones FDT en [ÁREA/SERVICIO]. El experto acompaña al líder en terreno retroalimentando la aplicación de la metodología.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG04": {
+    "desc": "Se realiza verificación de calidad de la observación de exposiciones FDT en [ÁREA/SERVICIO], evaluando adherencia a la metodología y calidad del registro por parte del líder.",
+    "acuer": "Resultados de verificación son entregados a jefatura del área."
+  },
+  "FTG05": {
+    "desc": "Se realiza evaluación de sostenibilidad de la observación de exposiciones FDT en [ÁREA/SERVICIO], midiendo continuidad, frecuencia y calidad de la práctica por parte del equipo.",
+    "acuer": "Informe de sostenibilidad es entregado a jefatura del área."
+  },
+  "FTG14": {
+    "desc": "Se realiza asistencia técnica FDT GIGE en [ÁREA/SERVICIO], apoyando al equipo en la implementación, resolución de dudas y ajuste de la metodología según contexto del proceso.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG15": {
+    "desc": "Se realiza diagnóstico y plan de acción GIGE en [ÁREA/SERVICIO], identificando brechas de liderazgo en seguridad y definiendo acciones de mejora con los líderes del proceso.",
+    "acuer": "Plan de acción GIGE es entregado a jefatura del área."
+  },
+  "FTG17": {
+    "desc": "Se realiza Coaching en Terreno N°1 GIGE en [ÁREA/SERVICIO], acompañando al líder en la aplicación de prácticas de liderazgo visible en seguridad con su equipo de trabajo.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG18": {
+    "desc": "Se realiza Coaching en Terreno N°2 GIGE en [ÁREA/SERVICIO], reforzando las prácticas de liderazgo en seguridad y retroalimentando avances respecto a sesión anterior.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG19": {
+    "desc": "Se realiza Coaching en Terreno N°3 GIGE en [ÁREA/SERVICIO], evaluando consolidación de las prácticas de liderazgo en seguridad y definiendo próximos pasos.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "FTG20": {
+    "desc": "Se realiza evaluación de sostenibilidad e informe al Líder del Sitio / CT en [ÁREA/SERVICIO], presentando resultados del proceso GIGE, logros alcanzados y oportunidades de mejora.",
+    "acuer": "Informe de sostenibilidad es entregado a líder del sitio y jefatura."
+  },
+  "ATS01": {
+    "desc": "Se realiza análisis de accidentes ocurridos en el período [MES] y acuerdo de medidas de control en focos críticos identificados, con participación de referente institucional y jefaturas de área.",
+    "acuer": "Medidas de control acordadas quedan registradas en acta y AOA."
+  },
+  "ATS03": {
+    "desc": "Se realiza análisis casuístico de casos de accidentabilidad correspondiente a la semana N°[SEMANA] / mes de [MES], revisando causas, mecanismos de lesión y oportunidades de mejora.",
+    "acuer": "Informe casuístico es derivado mediante correo electrónico a referente."
+  },
+  "ATS04": {
+    "desc": "Se realiza jornada preventiva en [ÁREA/SERVICIO] abordando el tema [TEMA], con participación de [N°] trabajadores. Se trabajan conceptos clave y compromisos de mejora.",
+    "acuer": "Registro de asistencia y material quedan en poder del referente institucional."
+  },
+  "ATS02": {
+    "desc": "Se realiza seguimiento de medidas de control en focos críticos acordadas en sesión del [FECHA ANTERIOR], verificando estado de implementación y resolviendo brechas pendientes.",
+    "acuer": "Estado de avance es registrado en AOA para seguimiento."
+  },
+  "CPH01": {
+    "desc": "Se realiza asesoría en gestión del Comité Paritario de Higiene y Seguridad (CPHS), abordando [TEMAS: funcionamiento, investigación de accidentes, planificación de actividades]. Se revisa estado de avance del programa de trabajo.",
+    "acuer": "Se entrega AOA para gestión interna del CPHS."
+  },
+  "CPH03": {
+    "desc": "Se realiza asesoría en el proceso de certificación del CPHS, revisando requisitos, documentación necesaria y estado de avance según estándar ACHS.",
+    "acuer": "Se entrega AOA con hoja de ruta para proceso de certificación."
+  },
+  "CPH04": {
+    "desc": "Se realiza asesoría en la elaboración del programa de trabajo del CPHS para el período [AÑO], definiendo actividades, responsables y cronograma de ejecución.",
+    "acuer": "Programa de trabajo es entregado al CPHS para validación y firma."
+  },
+  "CPH05": {
+    "desc": "Se realiza actividad práctica con el CPHS, desarrollando [TIPO DE ACTIVIDAD: inspección, investigación de accidente, taller] en [ÁREA/PROCESO], con participación de [N°] integrantes.",
+    "acuer": "Registro de actividad queda en poder del CPHS."
+  },
+  "SOP01": {
+    "desc": "Se realiza reunión con el área de prevención de riesgos del centro, abordando los siguientes temas: [TEMAS TRATADOS]. Se revisa estado de gestión preventiva y compromisos pendientes.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "SOP03": {
+    "desc": "Se realiza reunión con Gerencia / Directivos del centro, presentando estado de accidentabilidad, avance de programa preventivo y compromisos de gestión para el período [MES/TRIMESTRE].",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "SOP04": {
+    "desc": "Se realiza reunión con jefaturas de [ÁREA/SERVICIO], abordando indicadores de seguridad del área, compromisos preventivos y estado de medidas de control implementadas.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "ITC101": {
+    "desc": "Se realiza identificación de peligros y evaluación de riesgos (MIPER) en el proceso de [ÁREA/PROCESO], identificando [N°] peligros y evaluando niveles de riesgo según metodología estándar.",
+    "acuer": "MIPER es entregado a referente para revisión y validación."
+  },
+  "ITC103": {
+    "desc": "Se realiza inspección en proceso crítico de [ÁREA/PROCESO], verificando condiciones de seguridad, cumplimiento de estándares y estado de medidas de control implementadas.",
+    "acuer": "Informe de inspección es derivado a referente con hallazgos y recomendaciones."
+  },
+  "ITC105": {
+    "desc": "Se realiza investigación del accidente/incidente ocurrido en fecha [FECHA], en [ÁREA/PROCESO]. Se aplica metodología de análisis causal, identificando causas directas, básicas y fallos del sistema.",
+    "acuer": "Informe de investigación es derivado a referente y jefatura institucional."
+  },
+  "ITC109": {
+    "desc": "Se realiza generación de informe técnico de análisis casuístico correspondiente al período [MES/SEMANA], consolidando accidentes de trabajo, trayecto y enfermedades profesionales del centro.",
+    "acuer": "Informe casuístico es derivado mediante correo electrónico a referente."
+  },
+  "ITC111": {
+    "desc": "Se realiza generación del plan táctico de accidentabilidad para [ÁREA/PROCESO], definiendo actividades priorizadas, responsables y plazos para reducción de accidentabilidad en focos críticos.",
+    "acuer": "Plan táctico es entregado a referente y jefatura para validación."
+  },
+  "ITC30": {
+    "desc": "Se realiza charla/taller preventivo en [ÁREA/SERVICIO] sobre el tema [TEMA], con participación de [N°] trabajadores (igual o menor a 5). Se abordan causas, consecuencias y medidas preventivas.",
+    "acuer": "Registro de asistencia queda en poder del referente institucional."
+  },
+  "ITC32": {
+    "desc": "Se realiza charla/taller preventivo en [ÁREA/SERVICIO] sobre el tema [TEMA], con participación de [N°] trabajadores (más de 5). Se abordan causas, consecuencias y medidas preventivas.",
+    "acuer": "Registro de asistencia queda en poder del referente institucional."
+  },
+  "AGS03": {
+    "desc": "Se realiza charla/taller en [ÁREA/SERVICIO] sobre [TEMA], con participación de [N°] trabajadores. Se abordan conceptos clave, casos prácticos y compromisos de mejora.",
+    "acuer": "Registro de asistencia y material quedan en poder del referente institucional."
+  },
+  "AGS05": {
+    "desc": "Se realiza asesoría al departamento de prevención de riesgos, apoyando en [ACTIVIDAD/TEMA], con el objetivo de fortalecer la gestión preventiva institucional.",
+    "acuer": "Se entrega AOA para gestión interna."
+  },
+  "CTS01": {
+    "desc": "Se realiza identificación de peligro de exposición a citostáticos en [ÁREA/SERVICIO]. Se levantan procesos, trabajadores expuestos y condiciones actuales de manejo según protocolo MINSAL.",
+    "acuer": "Informe de identificación es derivado a referente para gestión."
+  },
+  "CTS02": {
+    "desc": "Se realiza asesoría de difusión y sensibilización sobre el manejo seguro de citostáticos en [ÁREA/SERVICIO], abordando riesgos, normativa vigente y medidas de control.",
+    "acuer": "Registro de asistencia queda en poder del referente institucional."
+  },
+  "CTS04": {
+    "desc": "Se realiza evaluación cualitativa de exposición a citostáticos en [ÁREA/SERVICIO], aplicando metodología estándar ACHS para determinar nivel de riesgo y brechas de cumplimiento.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "CTS05": {
+    "desc": "Se realiza asistencia técnica en manejo de citostáticos en [ÁREA/SERVICIO], apoyando implementación de medidas de control, revisión de procedimientos y equipamiento de protección.",
+    "acuer": "Se entrega AOA con recomendaciones técnicas para gestión interna."
+  },
+  "CTS08": {
+    "desc": "Se realiza verificación y control de medidas implementadas para exposición a citostáticos en [ÁREA/SERVICIO], evaluando adherencia al protocolo MINSAL y estado de controles.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "CTS99": {
+    "desc": "Se realiza evaluación e identificación negativa de exposición a citostáticos en [ÁREA/SERVICIO], determinando que no existe exposición significativa al agente en las condiciones actuales de trabajo.",
+    "acuer": "Resultado es derivado a referente y queda registrado en sistema."
+  },
+  "AGB01": {
+    "desc": "Se realiza evaluación cualitativa de exposición a agentes biológicos en [ÁREA/SERVICIO], identificando agentes presentes, vías de exposición y trabajadores potencialmente expuestos.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "AGB02": {
+    "desc": "Se realiza identificación de peligro de exposición a agentes biológicos en [ÁREA/SERVICIO], levantando tipo de agente, procesos involucrados y condiciones de exposición.",
+    "acuer": "Informe de identificación es derivado a referente para gestión."
+  },
+  "AGB03": {
+    "desc": "Se realiza verificación y control de medidas implementadas para exposición a agentes biológicos en [ÁREA/SERVICIO], evaluando estado de controles y adherencia al protocolo.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "AGB99": {
+    "desc": "Se realiza evaluación e identificación negativa de exposición a agentes biológicos en [ÁREA/SERVICIO], determinando que las condiciones actuales no generan exposición significativa.",
+    "acuer": "Resultado es derivado a referente y queda registrado en sistema."
+  },
+  "RUI01": {
+    "desc": "Se realiza asesoría en identificación de peligro de exposición a ruido en [ÁREA/PROCESO], identificando fuentes generadoras, procesos involucrados y trabajadores potencialmente expuestos.",
+    "acuer": "Informe de identificación es derivado a referente para gestión."
+  },
+  "RUI02": {
+    "desc": "Se realiza asesoría en planificación y difusión del protocolo de exposición a ruido en [ÁREA/SERVICIO], definiendo etapas de implementación, responsables y cronograma de evaluación.",
+    "acuer": "Plan de implementación es derivado a referente institucional."
+  },
+  "RUI03": {
+    "desc": "Se realiza estudio previo de exposición a ruido en [ÁREA/PROCESO], aplicando metodología de caracterización para determinar necesidad de evaluación cuantitativa y priorización de puestos.",
+    "acuer": "Informe de estudio previo es derivado a referente para revisión."
+  },
+  "RUI06": {
+    "desc": "Se realiza tamizado + screening de exposición a ruido en [ÁREA/PROCESO], utilizando sonómetro para evaluación preliminar de niveles de presión sonora en puestos de trabajo.",
+    "acuer": "Informe de tamizado es derivado a referente con resultados y recomendaciones."
+  },
+  "RUI12": {
+    "desc": "Se realiza verificación y control de medidas implementadas para exposición a ruido en [ÁREA/SERVICIO], evaluando estado de controles técnicos, administrativos y uso de EPP auditivo.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "RUI21": {
+    "desc": "Se realiza asesoría para prevenir la hipoacusia profesional en [ÁREA/SERVICIO], abordando riesgos, medidas de control disponibles y obligaciones normativas del empleador.",
+    "acuer": "Registro de asesoría queda en poder del referente institucional."
+  },
+  "RUI98": {
+    "desc": "Se realiza gestión del protocolo de vigilancia ambiental de ruido en [ÁREA/SERVICIO], coordinando etapas de evaluación, registro en sistema y seguimiento de trabajadores expuestos.",
+    "acuer": "Estado de gestión es derivado a referente institucional."
+  },
+  "RUI99": {
+    "desc": "Se realiza evaluación e identificación negativa de exposición a ruido en [ÁREA/PROCESO], determinando que los niveles de presión sonora se encuentran bajo los límites permisibles.",
+    "acuer": "Resultado es derivado a referente y queda registrado en sistema."
+  },
+  "RUI22": {
+    "desc": "Se realiza tamizado de ruido en [ÁREA/PROCESO], aplicando medición básica de niveles de presión sonora para clasificación inicial de puestos de trabajo.",
+    "acuer": "Resultados de tamizado son derivados a referente para seguimiento."
+  },
+  "SIL01": {
+    "desc": "Se realiza asesoría en identificación de peligro y caracterización del riesgo de exposición a sílice en [ÁREA/PROCESO], identificando tareas generadoras, trabajadores expuestos y condiciones de trabajo.",
+    "acuer": "Informe de identificación es derivado a referente para gestión."
+  },
+  "SIL02": {
+    "desc": "Se realiza asesoría de difusión del protocolo de vigilancia de sílice en [ÁREA/SERVICIO], abordando alcance, etapas, responsabilidades y plazos de implementación.",
+    "acuer": "Registro de difusión queda en poder del referente institucional."
+  },
+  "SIL04": {
+    "desc": "Se realiza evaluación cualitativa de exposición a sílice en [ÁREA/PROCESO], aplicando metodología estándar ACHS para determinar nivel de riesgo y brechas de cumplimiento.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "SIL15": {
+    "desc": "Se realiza verificación y control de medidas implementadas para exposición a sílice en [ÁREA/PROCESO], evaluando estado de controles técnicos, administrativos y EPP.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "SIL16": {
+    "desc": "Se realiza asesoría en elaboración del plan de acción para reducción de exposición a sílice en [ÁREA/PROCESO], definiendo medidas de control, responsables y plazos de implementación.",
+    "acuer": "Plan de acción es entregado a referente para validación y ejecución."
+  },
+  "SIL98": {
+    "desc": "Se realiza gestión del protocolo de vigilancia ambiental de sílice en [ÁREA/SERVICIO], coordinando etapas de evaluación, registro en sistema y seguimiento de trabajadores expuestos.",
+    "acuer": "Estado de gestión es derivado a referente institucional."
+  },
+  "SIL99": {
+    "desc": "Se realiza evaluación e identificación negativa de exposición a sílice en [ÁREA/PROCESO], determinando que las condiciones de trabajo no generan exposición significativa al agente.",
+    "acuer": "Resultado es derivado a referente y queda registrado en sistema."
+  },
+  "UIV01": {
+    "desc": "Se realiza evaluación cualitativa de exposición a sobreesfuerzo vocal en [ÁREA/SERVICIO], identificando tareas con demanda vocal, condiciones del entorno y trabajadores expuestos.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "UIV02": {
+    "desc": "Se realiza asistencia técnica en manejo del sobreesfuerzo vocal en [ÁREA/SERVICIO], apoyando implementación de medidas de control y orientando sobre técnicas de higiene vocal.",
+    "acuer": "Se entrega AOA con recomendaciones técnicas para gestión interna."
+  },
+  "UIV03": {
+    "desc": "Se realiza verificación y control de medidas implementadas para sobreesfuerzo vocal en [ÁREA/SERVICIO], evaluando estado de controles y adherencia a recomendaciones previas.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "UIV05": {
+    "desc": "Se realiza sensibilización y organización sobre riesgo de sobreesfuerzo vocal en [ÁREA/SERVICIO], abordando factores de riesgo, consecuencias y medidas preventivas disponibles.",
+    "acuer": "Registro de sensibilización queda en poder del referente institucional."
+  },
+  "UIV06": {
+    "desc": "Se realiza gestión de vigilancia de la salud de trabajadores expuestos a sobreesfuerzo vocal en [ÁREA/SERVICIO], coordinando evaluaciones fonoaudiológicas y registro de casos.",
+    "acuer": "Estado de vigilancia es derivado a referente institucional."
+  },
+  "UIV99": {
+    "desc": "Se realiza evaluación e identificación negativa de exposición a sobreesfuerzo vocal en [ÁREA/SERVICIO], determinando que las condiciones actuales no generan riesgo significativo.",
+    "acuer": "Resultado es derivado a referente y queda registrado en sistema."
+  },
+  "EPE01": {
+    "desc": "Se realiza historia ocupacional del trabajador [ID/CARGO], levantando exposiciones laborales previas y actuales relevantes para el proceso de calificación de enfermedad profesional en estudio.",
+    "acuer": "Historia ocupacional es derivada a referente y equipo de calificación."
+  },
+  "EPE02": {
+    "desc": "Se realiza evaluación del puesto de trabajo del trabajador [ID/CARGO] en [ÁREA/PROCESO], vinculando condiciones de exposición con la patología en estudio.",
+    "acuer": "Informe de evaluación de puesto es derivado al equipo de calificación."
+  },
+  "EPE03": {
+    "desc": "Se realiza prescripción de medidas en caso donde la empresa se opone a la realización de historia ocupacional y/o evaluación de puesto de trabajo, conforme a normativa vigente.",
+    "acuer": "Prescripción es derivada a referente institucional con registro formal."
+  },
+  "EPE04": {
+    "desc": "Se realiza verificación de medidas prescritas en situación donde la empresa se opuso a la historia ocupacional y/o evaluación de puesto de trabajo, evaluando estado de cumplimiento.",
+    "acuer": "Estado de verificación es derivado a referente institucional."
+  },
+  "FAT01": {
+    "desc": "Se realiza identificación de peligro de fatiga laboral en [ÁREA/PROCESO], levantando factores organizacionales, condiciones de turno, carga de trabajo y trabajadores expuestos.",
+    "acuer": "Informe de identificación es derivado a referente para gestión."
+  },
+  "FAT02": {
+    "desc": "Se realiza evaluación cualitativa de fatiga laboral en [ÁREA/PROCESO], aplicando metodología estándar para determinar nivel de riesgo y brechas de gestión.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "APD04": {
+    "desc": "Se realiza evaluación cualitativa de exposición a agentes que provocan dermatitis en [ÁREA/PROCESO], identificando sustancias, frecuencia de contacto y trabajadores expuestos.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "APD06": {
+    "desc": "Se realiza asistencia técnica en manejo de agentes que provocan dermatitis en [ÁREA/SERVICIO], apoyando implementación de medidas de control y revisión de procedimientos.",
+    "acuer": "Se entrega AOA con recomendaciones técnicas para gestión interna."
+  },
+  "APD21": {
+    "desc": "Se realiza verificación y control de medidas implementadas para exposición a agentes que provocan dermatitis en [ÁREA/SERVICIO], evaluando estado de controles y uso de EPP.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "APD99": {
+    "desc": "Se realiza evaluación e identificación negativa de exposición a agentes que provocan dermatitis en [ÁREA/SERVICIO], determinando que no existe exposición significativa.",
+    "acuer": "Resultado es derivado a referente y queda registrado en sistema."
+  },
+  "TUR01": {
+    "desc": "Se realiza evaluación cualitativa de exposición a turnos en [ÁREA/SERVICIO], analizando estructura de turnos, descansos, horas nocturnas y factores de riesgo asociados a los trabajadores expuestos.",
+    "acuer": "Informe de evaluación cualitativa es derivado a referente institucional."
+  },
+  "CVH01": {
+    "desc": "Se realiza asesoría de identificación de riesgo por virus hanta en [ÁREA/PROCESO], evaluando condiciones del entorno, presencia de roedores y trabajadores potencialmente expuestos.",
+    "acuer": "Informe de identificación es derivado a referente para gestión."
+  },
+  "CVH02": {
+    "desc": "Se realiza verificación de medidas de prevención de virus hanta en [ÁREA/PROCESO], evaluando estado de controles implementados, limpieza y condiciones del entorno de trabajo.",
+    "acuer": "Informe de verificación es derivado a referente con estado de cumplimiento."
+  },
+  "CVH03": {
+    "desc": "Se realiza asesoría y difusión de medidas preventivas frente al virus hanta en [ÁREA/SERVICIO], abordando síntomas, conductas de riesgo, medidas de control y obligaciones del empleador.",
+    "acuer": "Registro de difusión queda en poder del referente institucional."
+  },
+  "CVH04": {
+    "desc": "Se realiza evaluación de medidas de prevención de virus hanta implementadas en [ÁREA/PROCESO], determinando nivel de cumplimiento y brechas respecto a estándares vigentes.",
+    "acuer": "Informe de evaluación es derivado a referente con estado de cumplimiento."
+  },
+  "GLK01": {
+    "desc": "Se realiza sensibilización y presentación de la Ley 21.643 (Ley Karín) al centro de trabajo, abordando alcance, obligaciones del empleador, plazos y pasos a seguir para el proceso de certificación.",
+    "acuer": "Registro de sensibilización queda en poder del referente institucional."
+  },
+  "GLK02": {
+    "desc": "Se realiza asistencia técnica en la implementación de la Ley 21.643 (Ley Karín) en [ÁREA/SERVICIO], apoyando elaboración de documentos, procedimientos y requisitos del sello.",
+    "acuer": "Se entrega AOA con estado de avance para gestión interna."
+  },
+  "GLK03": {
+    "desc": "Se realiza verificación y control del cumplimiento de requisitos del Sello Ley Karín en el centro de trabajo, evaluando documentación, procesos y evidencias según estándar ACHS.",
+    "acuer": "Informe de verificación es derivado a referente con brechas y estado."
+  },
+  "GLK04": {
+    "desc": "Se realiza proceso de certificación de Gestión Sello Ley Karín Nivel 1 en el centro de trabajo, validando cumplimiento de requisitos mínimos según estándar ACHS.",
+    "acuer": "Certificado Nivel 1 es entregado formalmente a jefatura institucional."
+  },
+  "GLK05": {
+    "desc": "Se realiza proceso de certificación de Gestión Sello Ley Karín Nivel 2 en el centro de trabajo, validando cumplimiento de requisitos avanzados según estándar ACHS.",
+    "acuer": "Certificado Nivel 2 es entregado formalmente a jefatura institucional."
+  },
+  "GLK06": {
+    "desc": "Se realiza entrega de certificado y ceremonia de reconocimiento del Sello Ley Karín en el centro de trabajo, formalizando el logro alcanzado por la institución.",
+    "acuer": "Acto de entrega queda registrado con fotografías y lista de asistencia."
+  },
+  "ARE01": {
+    "desc": "Se realiza generación del plan de emergencia y evacuación del centro de trabajo, definiendo roles, procedimientos, rutas de evacuación y recursos disponibles para respuesta ante emergencias.",
+    "acuer": "Plan de emergencia es entregado a referente para revisión, aprobación y difusión."
+  },
+  "ARE02": {
+    "desc": "Se realiza presentación del contexto del simulacro programado para fecha [FECHA SIMULACRO], informando a jefaturas y referente sobre objetivos, escenario, roles y protocolo de evaluación.",
+    "acuer": "Registro de presentación queda en poder del referente institucional."
+  },
+  "ARE03": {
+    "desc": "Se realiza ejecución del simulacro de emergencia en el centro de trabajo, evaluando tiempos de respuesta, participación, comunicación y cumplimiento del plan establecido.",
+    "acuer": "Informe de simulacro es derivado a referente y jefatura institucional."
+  },
+  "ARE05": {
+    "desc": "Se realiza presentación de informe de resultados del simulacro ejecutado en fecha [FECHA SIMULACRO], incluyendo hallazgos, fortalezas, brechas y plan de acción de mejora.",
+    "acuer": "Informe de resultados es derivado a referente y jefatura institucional."
+  },
+  "ARE06": {
+    "desc": "Se realiza seguimiento de cumplimiento del plan de acción derivado del simulacro de emergencia ejecutado en [FECHA SIMULACRO], verificando estado de medidas acordadas.",
+    "acuer": "Estado de cumplimiento es registrado en AOA para seguimiento."
+  },
+  "ARS04": {
+    "desc": "Se realiza construcción/actualización del MIPER (Matriz de Identificación de Peligros y Evaluación de Riesgos) para [ÁREA/PROCESO], identificando [N°] peligros y estableciendo medidas de control.",
+    "acuer": "MIPER es entregado a referente para revisión, validación y difusión."
+  },
+  "ARS02": {
+    "desc": "Se realiza presentación de medidas para riesgos críticos identificados en [ÁREA/PROCESO], definiendo controles de ingeniería, administrativos y EPP según jerarquía de control.",
+    "acuer": "Medidas son presentadas a jefatura y referente para aprobación e implementación."
+  },
+  "ARS03": {
+    "desc": "Se realiza seguimiento de cumplimiento de medidas para riesgos críticos en [ÁREA/PROCESO], verificando estado de implementación y resolviendo brechas pendientes.",
+    "acuer": "Estado de avance es registrado en AOA para seguimiento."
+  }
+};
+
 function onSubChange(id){
   updBadge(id);
   const sub=v('as'+id);
-  if(sub){
-    const d=document.getElementById('ad'+id);
+  if(!sub) return;
+
+  // Extract code from submotivo e.g. "Generar estadísticas (AAD01)" → "AAD01"
+  const codeMatch=sub.match(/\(([A-Z0-9]+)\)\s*$/);
+  const code=codeMatch?codeMatch[1]:null;
+
+  const descEl=document.getElementById('ad'+id);
+  const acuerEl=document.getElementById('aa'+id);
+
+  if(code && TEXTOS[code]){
+    // Use standard text if field is empty or was auto-set
+    if(!descEl.value.trim()||descEl.getAttribute('data-a')){
+      descEl.value=TEXTOS[code].desc;
+      descEl.setAttribute('data-a','1');
+      ar(descEl);
+    }
+    if(!acuerEl.value.trim()||acuerEl.value==='Se entrega AOA para gestión interna.'||acuerEl.getAttribute('data-a-acuer')){
+      acuerEl.value=TEXTOS[code].acuer;
+      acuerEl.setAttribute('data-a-acuer','1');
+      ar(acuerEl);
+    }
+  } else {
+    // No standard text: use clean submotivo name as base
     const subClean=sub.replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
-    if(!d.value.trim()||d.value===d.getAttribute('data-a')){d.value=subClean;d.setAttribute('data-a',subClean);ar(d);}
+    if(!descEl.value.trim()||descEl.getAttribute('data-a')){
+      descEl.value=subClean;
+      descEl.setAttribute('data-a','1');
+      ar(descEl);
+    }
   }
 }
 function updBadge(id){
