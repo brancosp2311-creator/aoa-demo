@@ -124,11 +124,12 @@ select option[disabled]{color:#aaa;font-style:italic}
 .btn-part-add:hover{background:var(--gd)}
 
 /* GIGE / RED SELECTOR */
-.dept-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.dept-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
 .dept-btn{border:2px solid var(--g3);border-radius:8px;padding:10px 8px;font-size:12px;font-weight:800;cursor:pointer;background:var(--wh);color:var(--g4);font-family:inherit;text-align:center;transition:all .15s;letter-spacing:.5px}
 .dept-btn:hover{border-color:var(--bk);color:var(--bk)}
 .dept-btn.active-gige{border-color:#0055AA;background:#E8F0FB;color:#0055AA}
 .dept-btn.active-red{border-color:#C8102E;background:#FDECEA;color:#C8102E}
+.dept-btn.active-hye{border-color:#0a8a45;background:#e8faf1;color:#0a8a45}
 .dept-label{font-size:9px;font-weight:400;display:block;margin-top:2px;letter-spacing:.3px;text-transform:none}
 </style>
 </head>
@@ -282,176 +283,1338 @@ select option[disabled]{color:#aaa;font-style:italic}
 // GIGE = solo FTG de PPP / RED = sin PPP
 // ══════════════════════════════════════════
 const DB = {
-  "GIGE — Programa Propio": {
-    "FDT Tradicional GIGE": ["Diagnóstico y Plan de Acción","Observación de exposiciones - Entrenamiento al equipo de ejecución","Observación de exposiciones - Modelamiento y Coaching","Observación de exposiciones - Verificación de la calidad","Observación de exposiciones - Evaluación de sostenibilidad","Sesiones de Seguridad - Entrenamiento al equipo de ejecución","Sesiones de Seguridad - Modelamiento y Coaching","Sesiones de Seguridad - Verificación de la calidad","Sesiones de Seguridad - Evaluación de sostenibilidad","Verificación de Controles Críticos - Entrenamiento","Verificación de Controles Críticos - Modelamiento y Coaching","Verificación de Controles Críticos - Verificación de la calidad","Verificación de Controles Críticos - Evaluación de sostenibilidad","Asistencia Técnica FDT GIGE","Diagnóstico y Plan de Acción GIGE","Entrega de resultados y Plan de acción del líder GIGE","Coaching en Terreno 1 GIGE","Coaching en Terreno 2 GIGE","Coaching en Terreno 3 GIGE","Evaluación de sostenibilidad - Informe al Líder del Sitio GIGE"]
-  },
-  "Programa Propio (PPP)": {
-    "Actividad administrativa": ["Generación de indicadores","Generar estadísticas y casuística","Habilitación y reportabilidad de Capacitación","Preparación de material de charla","Preparación y entrega de material físico","Riesgo de emergencia - Generación de informe","Gestión de Riesgo en SST - Propuesta medidas riesgos críticos","Protocolo Minsal - Generación de informe","Reunión de Trabajo","Presentación Resultados","Presentación de Venta FDT"],
-    "Acuerdo de colaboración": ["Diagnóstico empresa","Firma de acuerdo de colaboración","Generación de acuerdo de colaboración","Modificación de actividades en acuerdo de colaboración","Verificación y control de actividades en acuerdo de colaboración","Verificación y control global de acuerdo de colaboración","Verificación y control de actividades en acuerdo de colaboración periodo 2","Verificación y control de actividades en acuerdo de colaboración periodo 3"],
-    "Asesoría en riesgos de emergencia": ["Ejecución de simulacro","Generación de planes de emergencia y evacuación","Presentación de contexto de simulacro","Presentación de informe de resultados de simulacro","Realización actividades apoyo a gestión de riesgos de emergencia","Seguimiento de cumplimiento plan de acción de simulacro"],
-    "Asesoría Gestión de Riesgo en SST": ["Construcción de MIPER","Presentación de medidas para riesgos críticos","Seguimiento de cumplimiento en medidas para riesgos críticos"],
-    "Asesoría Gestión En SST": ["Asesoría departamento prevención de riesgo","Asesoría en gestión de contratistas","Asesoría en seguridad industrial","Asesoría teletrabajo y trabajo a distancia","Construcción plan de acción","Elaboración de material seguridad","Generar programa de capacitación","Metodología Dekra","Realización charla/taller","Revisión de material seguridad","Actividad de liderazgo visible","Seguimiento asesoría en seguridad industrial","Investigación accidente metodología árbol causal"],
-    "Asistencia en SST": ["Análisis de accidentes y acuerdo de medidas de control en focos críticos","Análisis casuístico de casos","Jornadas preventivas","Seguimiento de medidas de control en focos críticos"],
-    "Auditorías de seguridad y salud ocupacional": ["Aplicación de auditoría de seguridad y salud ocupacional","Informe de auditoría de seguridad y salud ocupacional","Presentación de herramienta de auditoría"],
-    "Comité Paritario de Higiene y Seguridad": ["Actividad práctica con CPHS","Asesoría en certificación de CPHS","Asesoría en elaboración de programa de trabajo","Asesoría en gestión de CPHS","Presentación de proceso de certificación"],
-    "Intervención Táctica Accidentabilidad ITA": ["Aplicación de campaña preventiva","Generación de informe técnico de análisis casuístico","Identificación de peligros y evaluación de riesgos","Investigación de accidentes de incidentes","Inspección en procesos críticos","Seguimiento a acuerdos y medidas pendientes","Generación de plan táctico de accidentabilidad","Generación de resultados de Plan táctico","Realización charla o taller","Difusión de Material Preventivo","Observación en procesos críticos"],
-    "Soporte en SST": ["Reunión con área de prevención de riesgos","Reunión con dirigentes sindicales","Reunión con Gerencia o Directivos","Reunión con Jefaturas","Reunión con Recursos Humanos de la empresa"],
-    "Gestión sello Ley Karín": ["Sensibilización y presentación","Asistencia Técnica","Verificación y cumplimiento Sello Ley Karin","Certificación de Gestión Sello Ley Karín Nivel 1","Certificación de Gestión Sello Ley Karín Nivel 2","Entrega de certificado - Ceremonia"],
-    "Asesoría Gestión de Aspectos Legales PPP": ["Asesoría en normativas de SST","Presentación de actualización D.S. 67","Generación y/o actualización D.S. 67"]
-  },
-  "RED — Todas las áreas (sin PPP)": {
-    "Análisis Casuístico y Accidentabilidad": ["Gestión de accidentes - incidentes","Observación e inspección en procesos críticos","Seguimiento Gestión de accidentes","Difusión de Material Preventivo ACHS","Acompañamiento de acciones preventivas","Verificación y control"],
-    "Prescripción y Verificación": ["Prescripción de medidas","Verificación de medidas prescritas"],
-    "Riesgos Críticos": ["GCC - Diagnóstico Etapa 0","GCC - Trabajo en altura física mayor o igual 1,8 metros","GCC - Trabajo en espacios confinados","GCC - Conducción de vehículos livianos","GCC - Trabajo con energía eléctrica","GCC - Trabajo con máquinas equipos y herramientas motrices","GCC - Trabajo en excavaciones","GCC - Control de energías peligrosas","GCC - Verificación y control"],
-    "Sistema de gestión SST": ["Sensibilización y diagnóstico SGSST","Acompañamiento procesos del SGSST","Auditoría SG Regulatorio","Auditoría SG 45.001","Gestión Preventiva - Requisitos legales","Gestión Preventiva - Riesgo de Desastres","Gestión Preventiva - Comité Paritario","Gestión del Riesgo - MIPER","Gestión del Riesgo - Programa de trabajo preventivo","Evaluación de Desempeño - Medición y Seguimiento","Evaluación de Desempeño - Auditoría Interna","Evaluación de Desempeño - Revisión por la Dirección"],
-    "Higiene Ocupacional - Ruido": ["Identificación de Peligro","Ev Cualitativa","Tamizado + Screening","Tamizado","Verificación Y Control","Asesoría para prevenir la hipoacusia","Gestión protocolo vigilancia ambiental Ruido","Evaluación e identificación negativa"],
-    "Higiene Ocupacional - Sílice": ["Identificación de Peligro y Caracterización del Riesgo","Ev Cualitativa","Ev Cualitativa Rubro Construcción","Verificación Y Control","Asesoría en la Elaboración de Plan de Acción","Gestión protocolo vigilancia ambiental Sílice","Evaluación e identificación negativa"],
-    "Higiene Ocupacional - Agentes Biológicos": ["Identificación de Peligro","Ev Cualitativa","Verificación Y Control","Evaluación e identificación negativa"],
-    "Higiene Ocupacional - Citostáticos": ["Identificación de Peligro","Asesoría Difusión y Sensibilización","Ev Cualitativa","Verificación Y Control","Evaluación e identificación negativa"],
-    "Psicosocial - Protocolo": ["Gestión protocolo vigilancia ambiental Psicosocial","Difusión - Entrega de Kit Apoyo Protocolo","Asesoría Resultados Protocolo","Asistencia Técnica Protocolo","Asesoría de planificación","Asesoría Habilitación CEAL","Asesoría Inicial Protocolo Instituciones Públicas"],
-    "Ley Karin": ["Asistencia inicial Ley Karin","Política Ley 21.643","Protocolo prevención del acoso laboral sexual y violencia","Procedimiento de denuncia e investigación","Asesoría para certificación Sello Ley Karin","Verificación Sello Ley Karin Nivel 1","Verificación Sello Ley Karin Nivel 2","Prescripción Ley Karin"],
-    "Enfermedad Profesional": ["Prescripción de medidas Post-calificación EP","Verificación de medidas prescritas Post-calificación EP","Asesoría en Prevención de Enfermedades Profesionales","Revisión de las recomendaciones RECA"],
-    "Ergonomía - Salud Pública y Privada": ["Manejo y traslado de pacientes Salud","Manejo de objetos cortopunzantes Salud","Dermatitis Salud","Asesoría Exposición Agresiones y Amenazas en Salud","Asesoría Sobrecarga Laboral en Salud","Asesoría Violencia en Salud","Asesoría Desplazamiento operacional Salud"],
-    "Fatiga y Turnos": ["Evaluación Cualitativa Fatiga Laboral","Identificación de Peligro Fatiga Laboral","Evaluación Cualitativa Turnos"],
-    "Sobreesfuerzo Vocal": ["Ev Cualitativa","Asistencia Técnica","Verificación Y Control","Sensibilización y organización","Vigilancia de la salud"]
-  },
   "Asesoría (ASE)": {
-    "ACHS Gestión": ["Asesoría Estructura Organizativa","Reconocimiento SST"],
-    "Asesoría de Gestión PYME": ["Asesoría de seguimiento para PYME Remota","Asesoría Gestión de Aspectos Legales Digital","Asesoría Inicial de Prevención PYME","Asesoría de seguimiento para PYME Presencial"],
-    "Comité Paritario de Higiene y Seguridad": ["Ejecución de Auditoría certificación de CPHS","Presentación y postulación de certificación de CPHS","Asesoría de certificación para CPHS","Verificación y control Plan de acción CPHS"],
-    "Gestión de Aspectos Legales": ["Asesoría en normativas de SST","Lista de verificación Aspectos Legales","Asesoría protocolos MINSAL"],
-    "Gestión En SST": ["Asesoría departamento prevención de riesgo","Asesoría en gestión de contratistas","Asesoría en seguridad industrial","Charla Taller - Estándar","Programa preventivo seguridad en máquinas equipos y herramientas motrices","Observación/Inspección","Charla Taller - Requerimiento comercial"],
-    "Modelo de Asesorías Integral": ["Diagnóstico y Plan de Prevención","Políticas SST","Verificación y Control Compromisos SST","Objetivos de SST","Medición y Seguimiento de SST","Asesoría de Auditoría Interna","Asesoría de Revisión por la Dirección","Ejecución Revisión por la Dirección"],
-    "Gestión Seguridad Laboral": ["Asesoría Violencia Tipo II desde usuarios o clientes","Asesoría prevención de riesgo de suicidio en lugares de trabajo"],
-    "Acuerdo de colaboración": ["Firma de acuerdo de colaboración","Generación de acuerdo de colaboración","Modificación de actividades en acuerdo de colaboración","Verificación y control de actividades en acuerdo de colaboración"],
-    "Asesoría IPER": ["Entendimiento de SST y Proceso IPER"],
-    "Asesoría Gestión de Riesgo en SST": ["Asesoría sectorial caída en altura","Asesoría sectorial caída en altura seguimiento","Prescripción de medidas para proceso GDR","Verificación de prescripción para proceso GDR"],
-    "Proceso de Evaluación DS67": ["Difusión y entrega de kit","Asistencia Tecnica","Segunda verificación y control por incumplimiento de medidas"],
-    "Riesgos Críticos": ["Asesoría control de Riesgos críticos - Diagnóstico","Asesoría Puesta en marcha control de Riesgos críticos","Verificación control de Riesgos críticos"],
-    "Asesoría Decreto 44": ["Asesoría Decreto 44"]
-  },
-  "Gestiones en prevención (GEP)": {
-    "Estrategia Sectorial Salud Pública y Privada": ["Manejo y traslado de pacientes Salud","Verificación y Control Manejo y traslado de pacientes","Manejo de objetos cortopunzantes Salud","Verificación y Control objetos cortopunzantes","Dermatitis Salud","Verificación y Control Dermatitis Salud","Asesoría Exposición Agresiones y Amenazas en Salud","Verificación y Control Agresiones y Amenazas","Asesoría Sobrecarga Laboral en Salud","Verificación y Control Sobrecarga en Salud","Asesoría Violencia en Salud","Verificación y Control Violencia en Salud","Asesoría Desplazamiento operacional Salud","Verificación y control Desplazamiento operacional Salud"],
-    "Sistema de gestión SST": ["Sensibilización y diagnóstico SGSST","Acompañamiento procesos del SGSST","Auditoría SG Regulatorio","Auditoría SG 45.001","Gestión Preventiva - Requisitos legales","Gestión Preventiva - Riesgo de Desastres","Gestión Preventiva - Comité Paritario","Gestión Preventiva - Contratistas","Gestión del Riesgo - MIPER","Gestión del Riesgo - Programa de trabajo preventivo","Evaluación de Desempeño - Medición y Seguimiento","Evaluación de Desempeño - Auditoría Interna","Evaluación de Desempeño - Revisión por la Dirección"],
-    "Gestión de controles críticos": ["GCC - Diagnóstico Etapa 0","GCC - Trabajo en altura física mayor o igual 1,8 metros","GCC - Trabajo en espacios confinados","GCC - Conducción de vehículos livianos","GCC - Trabajo con energía eléctrica","GCC - Trabajo con máquinas equipos y herramientas motrices","GCC - Trabajo en excavaciones","GCC - Control de energías peligrosas","GCC - Verificación y control"],
-    "Ley 21.643 - Asesoría Ley Karin": ["Asistencia inicial Ley Karin","Política Ley 21.643","Protocolo prevención del acoso laboral sexual y violencia","Procedimiento de denuncia e investigación","Asesoría Violencia en el trabajo por parte de clientes o usuarios","Asesoría para certificación Sello Ley Karin","Verificación Sello Ley Karin Nivel 1","Verificación Sello Ley Karin Nivel 2","Prescripción Ley Karin"],
-    "Requerimientos DS44": ["Asesoría Personas especialmente sensibles: Embarazadas","Análisis puesto de trabajo Embarazadas","Requerimientos DS44 - Verificación y Control","Asesoría Personas especialmente sensibles: Adulto Mayor","Asesoría Personas especialmente sensibles: Adolescente"],
-    "Sello Bienestar DS44": ["Asesorías Calidad de Vida - DS 44","VyC Calidad de Vida - DS 44","Sensibilización Sello Promueve bienestar","Seguimiento Sello promueve Bienestar","Reconocimiento Sello Promueve bienestar"],
-    "Estrategia Sectorial Transversal": ["Desplazamiento operacional - Transversal","Máquinas motrices - Transversal","Trabajo administrativo - Transversal","Verificación y control Estrategia sectorial Transversal","Fatiga laboral - Transversal","Conducción de vehículos livianos - Transversal","Trabajo en altura mayor a 1,8 metros - Transversal"],
-    "Sistema SHSYMAT sector público": ["Asesoría SHSYMAT Propuesta técnica","Asesoría en política SST SHSYMAT","Planificación y ejecución SHSYMAT","Verificación SHSYMAT","Mejora SHSYMAT","Reconocimiento SHSYMAT"],
-    "Investigación de enfermedad profesional": ["Análisis de causas EP Musculoesquelética","Apoyo empresa investigación Enfermedad profesional","Verificación de medidas EP Musculoesquelética"],
-    "Estrategias sectoriales Municipalidades": ["Asesoría Conducción de vehículos Municipalidades","Verificación y Control Conducción de vehículos Municipalidades","Asesoría Violencia en Municipalidades","Verificación y Control Violencia en Municipalidades","Asesoría Sobrecarga Laboral en Municipalidades","Verificación y Control Sobrecarga en Municipalidades"]
-  },
-  "Higiene y ergonomía (HYE)": {
-    "Agentes Biologicos": ["Ev Cualitativa","Verificación Y Control","Identificación de Peligro","Evaluación e identificación negativa"],
-    "Citostáticos": ["Asistencia Técnica","Asesoría Difusión y Sensibilización","Ev Cualitativa","Identificación de Peligro","Verificación Y Control","Evaluación e identificación negativa"],
-    "EP en estudio": ["Evaluación puesto de trabajo","Historia Ocupacional","Prescripción de medidas empresa se opone a HO y/o EPT","Verificación de medidas prescritas empresa se opone a HO y/o EPT"],
-    "Fatiga Laboral": ["Evaluación Cualitativa","Identificación de Peligro"],
-    "Hiperbaria": ["Asistencia Técnica","Ev Cualitativa","Identificación de Peligro","Verificación Y Control","Asesoría de Implementación de Medidas","Evaluación e identificación negativa"],
-    "Iluminación": ["Asistencia Técnica","Ev Cualitativa","Verificación Y Control","Planificación y Organización","Evaluación e identificación negativa"],
-    "Ruido": ["Gestión protocolo vigilancia ambiental Ruido","Asesoría en la Planificación y Difusión","Estudio Previo","Asesoría en la identificación de Peligro","Tamizado + Screening","Verificación Y Control","Asesoría para prevenir la hipoacusia","Evaluación e identificación negativa","Tamizado"],
-    "Sílice": ["Gestión protocolo vigilancia ambiental Sílice","Asistencia Técnica","Asesoría de difusión","Ev Cualitativa","Ev Cualitativa Rubro Construcción","Verificación Y Control","Asesoría en la Elaboración de Plan de Acción","Evaluación e identificación negativa","Asesoría en la Identificación de Peligro y Caracterización del Riesgo"],
-    "Sobreesfuerzo vocal": ["Asistencia Técnica","Ev Cualitativa","Verificación Y Control","Evaluación e identificación negativa","Sensibilización y organización","Vigilancia de la salud"],
-    "Plaguicidas": ["Asistencia Técnica","Ev Cualitativa","Verificación Implementación Protocolo","Identificación de Peligro","Evaluación e identificación negativa"],
-    "Radiaciones ionizantes": ["Asistencia Técnica","Ev Cualitativa","Identificación de Peligro","Verificación Y Control","Evaluación e identificación negativa"],
-    "Radiación UV solar": ["Asistencia Técnica","Ev Cualitativa","Identificación de Peligro y Difusión de Protocolo","Verificación Y Control","Evaluación e identificación negativa"],
-    "Turnos": ["Evaluación Cualitativa"],
-    "Prevención virus hanta": ["Asesoría de identificación de virus hanta","Verificación de medidas de prevención de virus hanta","Asesoría y difusión en virus hanta"]
-  },
-  "Psicosocial (RPSL)": {
-    "Psicosocial protocolo": ["Gestión protocolo vigilancia ambiental Psicosocial","Difusión - Entrega de Kit Apoyo Protocolo","Asesoría Cda Protocolo","Resultados CEAL Protocolo","Asesoría Resultados Protocolo","Asistencia Técnica","Asesoría de planificación","Asesoría Habilitación CEAL","Asesoría Inicial Protocolo Instituciones Públicas"]
-  },
-  "Gestión Táctica Preventiva (GTP)": {
-    "Intervención Táctica Accidentabilidad ITA": ["Gestión de accidentes - incidentes","Observación e inspección en procesos críticos","Seguimiento Gestión de accidentes - incidentes","Difusión de Material Preventivo ACHS","Acompañamiento de acciones preventivas","Verificación y control"],
-    "Modelo de gestión Focalizado en Accidentabilidad": ["Asesoría de Gestión Focalizada en Accidentabilidad","Identificación de peligros y Evaluación de riesgos focalizada presencial","Identificación de peligros y Evaluación de riesgos focalizada remota","Seguimiento focalizado en accidentabilidad"],
-    "Prescripción y verificación de medidas": ["Prescripción de medidas","Verificación de medidas prescritas"],
-    "Informe de calificación (RGA)": ["Informe para calificar mecanismo lesional","Informe para calificar","Informe para calificar Remoto","Informe para calificar RALF"]
-  },
-  "Enfermedad Profesional (VAM)": {
-    "Asesoría en Prevención de Enfermedades Profesionales": ["Asesoría en Prevención de Enfermedades Profesionales"],
-    "Enfermedad profesional post-calificación": ["Notificación a autoridad Post-calificación EP","Prescripción de medidas Post-calificación EP","Verificación de medidas prescritas Post-calificación EP","Regularización de prescripción de medidas Post-calificación EP","Regularización de verificación de medidas prescritas Post-calificación EP"],
-    "Recomendaciones RECA": ["Revisión de las recomendaciones RECA"]
-  },
-  "Regulatorio (REG)": {
-    "Investigación de accidentes SUSESO": ["Comunicación inicial y recolección de antecedentes iniciales","Recolección antecedentes","Informe de accidente y causas","Prescripción de medidas correctivas","Verificación de medidas correctivas","Segunda verificación de medidas correctivas","Informe de accidente abreviado"],
-    "Programa Asistencia Cumplimiento": ["Entrega Certificado PAC","Inicio Asistencia Técnica","Seguimiento y Verificación"],
-    "Trabajo a distancia": ["Evaluación puesto de trabajo para trabajo a distancia","Prescripción inicial para trabajo a distancia","Prescripción post revisión MIPER para trabajo a distancia","Revisión MIPER para trabajo a distancia"],
-    "Prescripción regulatoria": ["Prescripción fiscalización Psicosocial","Prescripción fiscalización Higiene","Prescripción fiscalización Ergonomía","Prescripción Grupo discusión por Riesgo Alto"],
-    "Caída en Alturas": ["Presentación y Herramienta","Informe de Prescripción","Informe de Verificación y Control"]
+    "ACHS Gestión (AHG)": [
+      "Asesoría Estructura Organizativa  (AHG03)",
+      "Reconocimiento SST (AHG04)"
+    ],
+    "Asesoría de Gestión (AGE)": [
+      "Asesoría de seguimiento para PYME (Remota) (AGE04)",
+      "Asesoría Gestión de Aspectos Legales - Digital (AGE05)",
+      "Asesoría Inicial de Prevención PYME  (AGE02)",
+      "Asesoría de seguimiento para PYME (Presencial) (AGE03)"
+    ],
+    "Asesoría en Contingencias (CON)": [
+      "Asesoría Gripe Aviar (CON16)"
+    ],
+    "Asesorías Sectoriales (ASS)": [
+      "Asesoría a buzos profesionales (ASS02)",
+      "Asesoría Centros de contacto o llamadas (ASS01)",
+      "Ev. Ruido de fondo para Centros de contacto o llamadas (ASS03)",
+      "Ev. De Iluminación para Centros de contacto o llamadas (ASS04)",
+      "Ev. De ergonomía para Centros de contacto o llamadas (ASS05)",
+      "Ev. De calidad de aire  para Centros de contacto o llamadas (ASS06)",
+      "Sistema de Gestión de la Seguridad y Salud en el Trabajo para Faenas Portuarias (ASS07)"
+    ],
+    "Comité Paritario de Higiene y Seguridad (PPE)": [
+      "Ejecución de Auditoría certificación de CPHS (PPE02)",
+      "Presentación y postulación de certificación de CPHS (PPE01)",
+      "Asesoría de certificación para CPHS (PPE03)",
+      "Verificación y control Plan de acción CPHS (PPE04)"
+    ],
+    "Ejecución y Seguimiento (EYS)": [
+      "Asesoría de Roles críticos y habilitación de plataforma (EYS1000)",
+      "Asesoría inicial CPHS muellaje (EYS22)",
+      "Asesoría investigación de accidentes y enfermedades profesionales CPHS muellaje (EYS23)",
+      "Asesoría operativización CPHS muellaje (EYS24)",
+      "Asistencia a empresas que presentan servicios de limpieza y remoción de escombros en incendios forestales (EYS31)",
+      "Asesoría Gestión de riesgos de emergencia - Foco Altas temperaturas AT/ATE (EYS28)",
+      "Asesoría Gestión de riesgos de emergencia - Foco Incendios forestales (EYS29)",
+      "Asesoría en preparación y respuestas para altas temperaturas AT/ATE (EYS30)"
+    ],
+    "Gestión de Aspectos Legales (GAL)": [
+      "Asesoría en normativas de sst (GAL01)",
+      "Lista de verificación Aspectos Legales  (GAL03)",
+      "Asesoría protocolos MINSAL (GAL02)"
+    ],
+    "Gestión de Contratistas (PGC)": [
+      "Asesoría de diagnóstico y asignación de responsables (PGC01)",
+      "Asesoría de identificación de procesos y definición de requisitos de SST (PGC02)",
+      "Asesoría de Reglamento especial y Programa Preventivo de SST (PGC03)"
+    ],
+    "Gestión En SST (GSS)": [
+      "Asesoría departamento prevención de riesgo (GSS03)",
+      "Asesoría en gestión de contratistas (GSS04)",
+      "Asesoría en seguridad industrial (GSS06)",
+      "Asesoría teletrabajo y trabajo a distancia (GSS07)",
+      "Perspectiva de género en Construcción (GSS15)",
+      "Charla Taller - Estándar (GSS05)",
+      "Programa preventivo seguridad en máquinas, equipos y herramientas motrices (PPSMEHM)",
+      "Seguimiento asesoría en seguridad industrial (GSS09)",
+      "Observación/Inspección (Hasta 5) (GSS10)",
+      "Verificación y Control PPSMEHM (GSS11)",
+      "Observación/Inspección (Desde 6) (GSS12)",
+      "Charla Taller - Requerimiento comercial / solicitud cliente  (GSS13)",
+      "Actividad de relacionamiento - Cambio de equipo (GSS14)"
+    ],
+    "Asesoría Gestión SST Portuario (GSP)": [
+      "Formulario único de fiscalización - FUF Portuario (GSP01)"
+    ],
+    "Modelo de Asesorías Integral (MAI)": [
+      "Diagnóstico y Plan de Prevención (MAI12)",
+      "Políticas SST (MAI01)",
+      "Verificación y Control Compromisos SST (MAI02)",
+      "Objetivos de SST (MAI03)",
+      "Verificación y Control Objetivos SST (MAI04)",
+      "Propuesta Técnica, Organización Funciones y Responsabilidades (MAI05)",
+      "Verificación y Control Organización Funciones y Responsabilidades (MAI06)",
+      "Medición y Seguimiento de SST (MAI07)",
+      "Seguimiento - Asesoría Medición y Seguimiento (MAI08)",
+      "Asesoría de Auditoría Interna (MAI09)",
+      "Programa Anual y Planes de Auditoría Interna (MAI10)",
+      "Ejecución y Plan de Acción de Auditorías Internas (MAI11)",
+      "Seguimiento - Auditoría Interna (MAI13)",
+      "Asesoría de Revisión por la Dirección (MAI14)",
+      "Ejecución Revisión por la Dirección (MAI15)",
+      "Seguimiento - Revisión por la dirección (MAI16)"
+    ],
+    "Gestión Seguridad Laboral (GSL)": [
+      "Asesoría Violencia Tipo II (desde usuarios o clientes) (GSL01)",
+      "Asesoría prevención de riesgo de suicidio en lugares de trabajo (GSL02)"
+    ],
+    "Plan de Prevención y Acuerdo de Colaboración (PDP)": [
+      "Plan de Prevención final (PDP02)"
+    ],
+    "Asesoría Gestión de Aspectos Legales (AAR)": [
+      "Presentación de actualización D.S. 67 (AAR01)",
+      "Generación y/o actualización D.S. 67 (AAR02)"
+    ],
+    "Acuerdo de colaboración (ADC)": [
+      "Firma de acuerdo de colaboración (ADC01)",
+      "Generación de acuerdo de colaboración (ADC02)",
+      "Modificación de actividades en acuerdo de colaboración (ADC03)",
+      "Verificación y control de actividades en acuerdo de colaboración (ADC04)"
+    ],
+    "Asesoría IPER (AIP)": [
+      "Entendimiento de SST y Proceso IPER (AIP01)"
+    ],
+    "Asistencia en SST (ASR)": [
+      "Jornadas preventivas (ASR01)"
+    ],
+    "Auditorías de seguridad y salud ocupacional (AUR)": [
+      "Aplicación de auditoría de seguridad y salud ocupacional (AUR01)"
+    ],
+    "Asesoría Gestion de Riesgo en SST (GRS)": [
+      "Asesoría sectorial caída en altura (GRS07)",
+      "Asesoría sectorial caída en altura seguimiento (GRS08)",
+      "Asesoría sectoriales muellaje (GRS06)",
+      "Prescripción de medidas para proceso GDR (GRS09)",
+      "Verificación de prescripción para proceso GDR (GRS10)"
+    ],
+    "Asesoría Gestión En SST (ARR)": [
+      "Reunión con dirigentes sindicales (ARR02)",
+      "Reunión con Gerencia o Directivos (ARR03)",
+      "Gestión de ingreso de casos médicos (ARR04)",
+      "Sensibilización del modelo Dekra (ARR05)",
+      "Asesoría en el diagnóstico de gestión LGF - Dekra (ARR06)",
+      "Asesoría en la definición de roles - Dekra (ARR07)",
+      "Asesoría para la guía en gestión de eventos y calculo de índice - Dekra (ARR08)",
+      "Practica de Verificación de Controles Críticos (VCC) - Dekra (ARR09)",
+      "Revisión de indicadores del proceso LGF - Dekra (ARR10)",
+      "Asesoría en normativa de SST en Plataformas Digitales (ARR11)",
+      "Verificación y Control de Medidas en Plataformas Digitales (ARR12)",
+      "Asesoria en medidas preventivas para trabajos de reconocimiento, limpieza y remoción de escombros (ARR13)"
+    ],
+    "Gestión del riesgo de emergencia (GRE)": [
+      "Asesoría para la implementación de extintores de incendio (GRE01)"
+    ],
+    "Proceso de Evaluación DS67 (PEV)": [
+      "Difusión y entrega de kit (PEV01)",
+      "Asistencia Tecnica  (PEV02)",
+      "Segunda verificación y control  por incumplimiento de medidas (PEV03)"
+    ],
+    "Gestión del riesgo (GDR)": [
+      "Verificación del cumplimiento muellaje (GDR02)",
+      "Prescripción por brecha muellaje (GDR03)",
+      "Prescripción inicial muellaje (GDR04)",
+      "Informe de cumplimiento muellaje (GDR05)",
+      "Revisión MIPER muellaje (GDR06)"
+    ],
+    "Asistencia Técnica (ATE)": [
+      "Diagnostico de sustancias químicas (ATE01)",
+      "Asistencia en cumplimiento de Decreto 43 (ATE02)",
+      "Asistencia en reconocimiento de agentes cancerígenos (ATE03)",
+      "Asistencia en desarrollo de plan de emergencias químicas (ATE04)",
+      "Asesoría: Carga de Combustible (ATE05)"
+    ],
+    "Asesoría en Plan Integral de Seguridad Escolar (PIE)": [
+      "Presentación de PISE (PIE01)",
+      "Conformación de Comité de Seguridad Escolar (PIE02)",
+      "Diagnóstico de amenazas y vulnerabilidad (PIE03)",
+      "Planificación de medidas y planes de respuesta (PIE04)",
+      "Apoyo en simulacro y seguimiento (PIE05)",
+      "Certificación y ceremonia (PIE06)",
+      "Verificación y control de implementación del PISE\t(PIE07)"
+    ],
+    "Estrategia educacional-violencia (EEV)": [
+      "Sensibilización (EEV01)",
+      "Seguimiento y ejecución (EEV02)",
+      "Revisión de requisitos violencia (EEV03)"
+    ],
+    "Estrategia educacional-sobrecarga laboral (EEL)": [
+      "Sensibilización (EEL01)",
+      "Seguimiento y ejecución (EEL02)",
+      "Revisión de requisitos sobrecarga laboral (EEL03)"
+    ],
+    "Estrategia educacional- sobreesfuerzo vocal (EES)": [
+      "Sensibilización (EES01)",
+      "Seguimiento y ejecución (EES02)",
+      "Revisión de requisitos sobrecarga vocal (EES03)"
+    ],
+    "Estrategia educacional- desplazamiento operacional (EED)": [
+      "Sensibilización (EED01)",
+      "Seguimiento y ejecución (EED02)",
+      "Revisión de requisitos sobrecarga laboral (EED03)"
+    ],
+    "Asesoría mordedura de perros (AMP)": [
+      "Difusión de material técnico y entendimiento de la asesoría (AMP01)"
+    ],
+    "Protocolo  exposición a Metales y Metaloides (PMM)": [
+      "Asesoría en la difusión (PMM01)"
+    ],
+    "Asesoría de Gestión regulatoria (GRG)": [
+      "Asesoría Decreto 44 (GRG02)"
+    ],
+    "Riesgos Críticos (RCT)": [
+      "Asesoría control de Riesgos críticos - Diagnóstico (RCT01)",
+      "Asesoría Puesta en marcha control de Riesgos críticos (RCT02)",
+      "Verificación control de Riesgos críticos (RCT03)"
+    ],
+    "Asesoría exposición a ácido sulfhídrico (EAS)": [
+      "Asesoría exposición a ácido sulfhídrico (EAS01)",
+      "Evaluación de medidas ácido sulfhídrico (EAS02)",
+      "Verificación y control ácido sulfhídrico (EAS03)"
+    ],
+    "Reclasificación de empresa - D.S. 110 (RDE)": [
+      "Correcta asignación de tasa y CIIU (RDE01)"
+    ],
+    "Teleoperadores (TLP)": [
+      "Presentación y Sensibilización Teleoperadores (TLP01)",
+      "Apoyo evaluación teleoperadores (TLP02)",
+      "Verificación y control teleoperadores (TLP03)"
+    ]
   },
   "Campaña (CAM)": {
-    "Campaña ACHS": ["Difusión campaña","Seguimiento - VyC Campaña"]
+    "Campaña Achs (CMP)": [
+      "Difusión campaña (CMP01)",
+      "Seguimiento - VyC Campaña (CMP02)"
+    ]
+  },
+  "Enfermedad Profesional (VAM)": {
+    "Asesoría en Prevención de Enfermedades Profesionales (APE)": [
+      "Asesoría en Prevención de Enfermedades Profesionales  (APE01)"
+    ],
+    "Enfermedad profesional (EPS)": [
+      "Notificación a autoridad Post-calificación EP (EPS04)",
+      "Prescripción de medidas Post-calificación EP (EPS01)",
+      "Verificación de medidas prescritas Post-calificación EP (EPS05)",
+      "Regularización de prescripción de medidas Post-calificación EP (EPS06)",
+      "Regularización de verificación de medidas prescritas Post-calificación EP (EPS07)"
+    ],
+    "Recomendaciones RECA (RRE)": [
+      "Revisión de las recomendaciones RECA (RRE01)"
+    ]
+  },
+  "Gestión Táctica Preventiva (GTP)": {
+    "Intervención Táctica Accidentabilidad ITA (ITA)": [
+      "Gestión de accidentes - incidentes (ITA105)",
+      "Observación e inspección en procesos críticos (ITA103)",
+      "Seguimiento Gestión de accidentes - incidentes (ITA106)",
+      "Seguimiento Observación e inspección en procesos críticos (ITA104)",
+      "Difusión de Material Preventivo ACHS (ITA111)",
+      "Acompañamiento de acciones preventivas (ITA125)",
+      "Verificación y control (ITA126)",
+      "Persuasión de estándar de gestión y entrega de Kit (ITA127)",
+      "Evaluación en terreno y definición del plan de acción en sucursales críticas (ITA128)",
+      "Sensibilización  Accidentabilidad PYME (ITA129)",
+      "Seguimiento  Accidentabilidad PYME (ITA130)"
+    ],
+    "Modelo de gestión Focalizado en Accidentabilidad (MFA)": [
+      "Asesoría de Gestión Focalizada en Accidentabilidad (MFA01)",
+      "Identificación de peligros y Evaluación de riesgos focalizada en accidentabilidad (presencial) (MFA03)",
+      "Identificación de peligros y Evaluación de riesgos focalizada en accidentabilidad (remota) (MFA02)",
+      "Seguimiento focalizado en accidentabilidad (MFA04)"
+    ],
+    "Plan de Capacitación (PCA)": [
+      "Elaboración y presentación de Plan de Capacitación (PCA01)"
+    ],
+    "Prescripción y verificación de medidas (PVM)": [
+      "Prescripción de medidas (PVM01)",
+      "Verificación de medidas prescritas (PVM02)"
+    ],
+    "Rga": [
+      "Informe para calificar mecanismo lesional (RGA02)",
+      "Informe para calificar (RGA01)",
+      "Informe para calificar Remoto (RGA03)",
+      "Informe para calificar RALF (RGA04)"
+    ]
+  },
+  "Higiene y ergonomía (HYE)": {
+    "Agentes Biologicos (AGB)": [
+      "Ev Cualitativa (AGB01)",
+      "Traspaso OAL Evaluaciones Cualitativas (AGB20)",
+      "Verificación Y Control (AGB03)",
+      "Identificación de Peligro (AGB02)",
+      "Evaluación e identificación negativa (AGB99)"
+    ],
+    "Agentes provocan dermatitis (APD)": [
+      "Asistencia Técnica (APD06)",
+      "Ev Cualitativa (APD04)",
+      "Traspaso OAL Evaluaciones Cualitativas (APD20)",
+      "Verificación Y Control (APD21)",
+      "Evaluación e identificación negativa (APD99)"
+    ],
+    "Asbesto (ASB)": [
+      "Asistencia Técnica (ASB07)",
+      "Ev Cualitativa (ASB04)",
+      "Identificación de Peligro (ASB01)",
+      "Traspaso OAL Evaluaciones Cualitativas (ASB20)",
+      "Verificación Y Control (ASB11)",
+      "Evaluación e identificación negativa (ASB99)"
+    ],
+    "Calor (CAL)": [
+      "Asistencia Técnica (CAL04)",
+      "Ev Cualitativa (CAL03)",
+      "Identificación de Peligro (CAL01)",
+      "Traspaso OAL Evaluaciones Cualitativas (CAL20)",
+      "Verificación Y Control (CAL08)",
+      "Evaluación e identificación negativa (CAL99)"
+    ],
+    "Citostáticos (CTS)": [
+      "Asistencia Técnica (CTS05)",
+      "Asesoría Difusión y Sensibilización (CTS02)",
+      "Ev Cualitativa (CTS04)",
+      "Identificación de Peligro (CTS01)",
+      "Traspaso OAL Evaluaciones Cualitativas (CTS20)",
+      "Verificación Y Control (CTS08)",
+      "Evaluación e identificación negativa (CTS99)"
+    ],
+    "EP en estudio (EPE)": [
+      "Evaluación puesto de trabajo (EPE02)",
+      "Historia Ocupacional (EPE01)",
+      "Prescripción de medidas empresa se opone a HO y/o EPT (EPE03)",
+      "Verificación de medidas prescritas empresa se opone a HO y/o EPT (EPE04)"
+    ],
+    "Ergonomía oficinas (ERO)": [
+      "Verificación y control (ERO03)"
+    ],
+    "Fatiga Laboral (FAT)": [
+      "Evaluación Cualitativa (FAT02)",
+      "Identificación de Peligro (FAT01)"
+    ],
+    "Fiebre Q (FIQ)": [
+      "Asistencia Técnica - Difusión del protocolo (FIQ06)",
+      "Caracterización del Riesgo (FIQ03)",
+      "Ev Cualitativa (FIQ02)",
+      "Traspaso OAL Evaluaciones Cualitativas (FIQ20)",
+      "Verificación y Control (FIQ04)",
+      "Evaluación e identificación negativa (FIQ99)"
+    ],
+    "Frío (FRI)": [
+      "Asistencia Técnica (FRI04)",
+      "Ev Cualitativa (FRI03)",
+      "Identificación de Peligro (FRI01)",
+      "Traspaso OAL Evaluaciones Cualitativas (FRI20)",
+      "Verificación Y Control (FRI08)",
+      "Evaluación e identificación negativa (FRI99)"
+    ],
+    "Hiperbaria (HIE)": [
+      "Asistencia Técnica (HIE06)",
+      "Difusión - Entrega de Kit Apoyo Protocolo (HIE02)",
+      "Asesoría de Evaluación  Cualitativa (HIE04)",
+      "Identificación de Peligro (HIE01)",
+      "Traspaso OAL Evaluaciones Cualitativas (HIE09)",
+      "Verificación Y Control (HIE08)",
+      "Asesoría de Implementación de Medidas (HIE11)",
+      "Evaluación e identificación negativa (HIE99)"
+    ],
+    "Hipobaria (HIO)": [
+      "Ev Cualitativa (HIO04)",
+      "Verificación Y Control (HIO07)",
+      "Asesoría Plan de Acción Hipobaria (HIO10)",
+      "Asistencia Técnica\t(HIO05)",
+      "Asesoría en la Identificación de Peligro (HIO09)",
+      "Evaluación e identificación negativa (HIO99)",
+      "Asesoría en la Planificación y Difusión (HIO02)",
+      "Traspaso OAL Evaluaciones Cualitativas (HIO11)"
+    ],
+    "Iluminación (ILU)": [
+      "Asistencia Técnica (ILU02)",
+      "Ev Cualitativa (ILU01)",
+      "Traspaso OAL Evaluaciones Cualitativas (ILU20)",
+      "Verificación Y Control (ILU06)",
+      "Planificación y Organización (ILU04)",
+      "Evaluación e identificación negativa (ILU99)"
+    ],
+    "Metales pesados (MPS)": [
+      "Asistencia Técnica (MPS06)",
+      "Asesoría Evaluación Cualitativa (MPS04)",
+      "Asesoría en la Identificación de Peligro y Caracterización del Riesgo (MPS01)",
+      "Traspaso OAL Evaluaciones Cualitativas (MPS20)",
+      "Verificación Y Control (MPS10)",
+      "Asesoría Plan de Acción (MPS11)",
+      "Evaluación e identificación negativa (MPS99)"
+    ],
+    "Micobacterium tuberculoso (TBC)": [
+      "Difusión - Entrega de Kit Apoyo Protocolo (TBC01)",
+      "Ev Cualitativa (TBC04)",
+      "Identificación de Peligro (TBC02)",
+      "Traspaso OAL Evaluaciones Cualitativas (TBC20)",
+      "Verificación Y Control (TBC07)",
+      "Evaluación e identificación negativa (TBC99)"
+    ],
+    "Otros agentes ergonómicos (OAE)": [
+      "Verificación Y Control (OAE05)"
+    ],
+    "Otros agentes químicos (OAQ)": [
+      "Asistencia Técnica (OAQ05)",
+      "Ev Cualitativa (OAQ04)",
+      "Identificación de Peligro (OAQ01)",
+      "Traspaso OAL Evaluaciones Cualitativas (OAQ20)",
+      "Verificación Y Control (OAQ09)",
+      "Evaluación e identificación negativa (OAQ99)"
+    ],
+    "Plaguicidas (PLA)": [
+      "Asesoría para disminuir intoxicaciones (PLA21)",
+      "Asistencia Técnica (PLA07)",
+      "Difusión - Entrega de Kit Apoyo Protocolo (PLA02)",
+      "Ev Cualitativa (PLA04)",
+      "Registro del plan de aplicación  (PLA03)",
+      "Traspaso OAL Evaluaciones Cualitativas (PLA20)",
+      "Verificación Implementación Protocolo (PLA06)",
+      "Identificación de Peligro (PLA01)",
+      "Evaluación e identificación negativa (PLA99)"
+    ],
+    "Radiaciones ionizantes (RIO)": [
+      "Asistencia Técnica (RIO04)",
+      "Ev Cualitativa (RIO03)",
+      "Identificación de Peligro (RIO01)",
+      "Traspaso OAL Evaluaciones Cualitativas (RIO20)",
+      "Verificación Y Control (RIO08)",
+      "Evaluación e identificación negativa (RIO99)"
+    ],
+    "Radiación uv solar (RUV)": [
+      "Asistencia Técnica (RUV06)",
+      "Ev Cualitativa (RUV04)",
+      "Identificación de Peligro y Difusión de Protocolo (RUV08)",
+      "Traspaso OAL Evaluaciones Cualitativas (RUV20)",
+      "Verificación Y Control (RUV07)",
+      "Evaluación e identificación negativa (RUV99)"
+    ],
+    "Empresas con presencia de Ruido (RUI)": [
+      "Gestión protocolo vigilancia ambiental Ruido (RUI98)",
+      "Asesoría en la Planificación y Difusión (RUI02)",
+      "Estudio Previo (RUI03)",
+      "Asesoría en la identificación de Peligro (RUI01)",
+      "Registro de la Ficha cualitativa  (RUI11)",
+      "Registro del Estudio Previo  (RUI13)",
+      "Tamizado + Screening (RUI06)",
+      "Traspaso OAL Evaluaciones Cualitativas (RUI20)",
+      "Verificación Y Control (RUI12)",
+      "Asesoría para prevenir la hipoacusia (RUI21)",
+      "Evaluación e identificación negativa (RUI99)",
+      "Asesoría en la elaboración de plan de acción y sistema de gestión (RUI16)",
+      "Tamizado (RUI22)"
+    ],
+    "Sílice (SIL)": [
+      "Gestión protocolo vigilancia ambiental Sílice (SIL98)",
+      "Asistencia Técnica (SIL09)",
+      "Asesoría de difusión (SIL02)",
+      "Ev Cualitativa (SIL04)",
+      "Ev Cualitativa Rubro Construcción (SIL05)",
+      "Traspaso OAL Evaluaciones Cualitativas (SIL20)",
+      "Verificación Y Control (SIL15)",
+      "Asesoría en la Elaboración de Plan de Acción (SIL16)",
+      "Evaluación e identificación negativa (SIL99)",
+      "Asesoría en la Identificación de Peligro y Caracterización del Riesgo (SIL01)"
+    ],
+    "Turnos (TUR)": [
+      "Evaluación Cualitativa (TUR01)"
+    ],
+    "Sobreesfuerzo vocal (UIV)": [
+      "Asistencia Técnica (UIV02)",
+      "Ev Cualitativa (UIV01)",
+      "Traspaso OAL Evaluaciones Cualitativas (UIV20)",
+      "Verificación Y Control (UIV03)",
+      "Evaluación e identificación negativa (UIV99)",
+      "Sensibilización y organiazción (UIV05)",
+      "Vigilancia de la salud (UIV06)"
+    ],
+    "Solicitud de nomina INE e identificar trabajadores independientes de la empresa (INE)": [
+      "Solicitud de nomina INE e identificar trabajadores independientes de la empresa (INE01)"
+    ],
+    "Prevención de contagio por virus hanta  (CVH)": [
+      "Asesoría de identificación de virus hanta (CVH01)",
+      "Verificación de medidas de prevención de virus hanta (CVH02)",
+      "Asesoría y difusión en virus hanta (CVH03)",
+      "Evaluación de medidas de prevención virus hanta  (CVH04)"
+    ]
+  },
+  "Pilotos (PIL)": {
+    "Registro administrativo (PILRAD)": [
+      "Registro administrativo de contacto a la empresa SVE (PIL06)",
+      "Registro administrativo de contacto a la empresa SVE (PIL05)"
+    ]
+  },
+  "Proceso de Acreditación (PRO)": {
+    "Acreditación de Agencia (ACA)": [
+      "Plan de Evacuación (ACA02)",
+      "Plan de Prevención de Incendios (ACA01)",
+      "Reunión de Acreditación (ACA03)"
+    ]
+  },
+  "Relacionamiento (RLC)": {
+    "Diagnóstico SVE (DSV)": [
+      "Bienvenida y Diagnóstico (DSV01)"
+    ]
+  },
+  "Programa Propio (PPP)": {
+    "Actividad administrativa (AAD)": [
+      "Generación de indicadores (AAD03)",
+      "Generar estadísticas y casuística (AAD01)",
+      "Habilitación y reportabilidad de Capacitación (AAD04)",
+      "Preparación de material de charla (AAD02)",
+      "Preparación y entrega de material físico (AAD05)",
+      "Riesgo de emergencia - Generación de informe y/o presentación de resultados simulacro vía correo eléctronico (AAD06)",
+      "Gestión de Riesgo en SST - Generación de propuesta medidas para riesgos críticos (AAD07)",
+      "Protocolo Minsal - Generación de informe (AAD08)",
+      "Reunión de Trabajo (AAD09)",
+      "Presentación Resultados (AAD10)",
+      "Presentación de Venta FDT (AAD11)"
+    ],
+    "Acuerdo de colaboración (ACO)": [
+      "Diagnóstico empresa (ACO01)",
+      "Firma de acuerdo de colaboración  (ACO03)",
+      "Generación de acuerdo de colaboración (ACO02)",
+      "Modificación de actividades en acuerdo de colaboración (ACO06)",
+      "Verificación y control de actividades en acuerdo de colaboración (ACO04)",
+      "Verificación y control global de acuerdo de colaboración (ACO05)",
+      "Verificación y control de actividades en acuerdo de colaboración periodo 2 (ACO07)",
+      "Verificación y control de actividades en acuerdo de colaboración periodo 3 (ACO08)"
+    ],
+    "FDT Tradicional  GIGE (FTG)": [
+      "Diagnóstico y Plan de Acción (FTG01)",
+      "Observación de exposiciones- Entrenamiento al equipo de ejecución  (FTG02)",
+      "Observación de exposiciones- Modelamiento y Coaching  (FTG03)",
+      "Observación de exposiciones- Verificación de la calidad (FTG04)",
+      "Observación de exposiciones- Evaluación de sostenibilidad  (FTG05)",
+      "Sesiones de Seguridad en el trabajo - Entrenamiento al equipo de ejecución  (FTG06)",
+      "Sesiones de Seguridad en el trabajo -  Modelamiento y Coaching  (FTG07)",
+      "Sesiones de Seguridad en el trabajo - Verificación de la calidad (FTG08)",
+      "Sesiones de Seguridad en el trabajo -  Evaluación de sostenibilidad  (FTG09)",
+      "Verificación de Controles Críticos - Entrenamiento al equipo de ejecución  (FTG10)",
+      "Verificación de Controles Críticos - Modelamiento y Coaching  (FTG11)",
+      "Verificación de Controles Críticos - Verificación de la calidad (FTG12)",
+      "Verificación de Controles Críticos -  Evaluación de sostenibilidad  (FTG13)",
+      "Asistencia Técnica FDT GIGE (FTG14)",
+      "Diagnóstico y Plan de Acción GIGE (FTG15)",
+      "Entrega de resultados y Plan de acción del líder GIGE (FTG16)",
+      "Coaching en Terreno 1 GIGE (FTG17)",
+      "Coaching en Terreno 2 GIGE (FTG18)",
+      "Coaching en Terreno 3 GIGE (FTG19)",
+      "Evaluación de sostenibilidad Informe al Líder del Sitio / CT GIGE (FTG20)"
+    ],
+    "Asesoría en riesgos de emergencia (ARE)": [
+      "Ejecución de simulacro (ARE03)",
+      "Generación de planes de emergencia y evacuación (ARE01)",
+      "Presentación de contexto de simulacro (ARE02)",
+      "Presentación de informe de resultados de simulacro (ARE05)",
+      "Realización actividades apoyo a gestión de riesgos de emergencia (ARE07)",
+      "Seguimiento de cumplimiento plan de acción de simulacro (ARE06)"
+    ],
+    "Asesoría Gestión de Aspectos Legales (AAG)": [
+      "Asesoría en normativas de SST (AAG01)",
+      "Presentación de actualización D.S. 67 (AAG04)",
+      "Generación y/o actualización D.S. 67 (AAG03)"
+    ],
+    "Asesoría Gestion de Riesgo en SST (ARS)": [
+      "Construcción de MIPER (ARS04)",
+      "Presentación de medidas para riesgos críticos (ARS02)",
+      "Seguimiento de cumplimiento en medidas para riesgos críticos (ARS03)"
+    ],
+    "Asesoría Gestión En SST (AGS)": [
+      "Asesoría departamento prevención de riesgo (AGS05)",
+      "Asesoría en gestión de contratistas (AGS06)",
+      "Asesoría en seguridad industrial (AGS02)",
+      "Asesoría teletrabajo y trabajo a distancia (AGS10)",
+      "Construcción plan de acción (AGS14)",
+      "Elaboración de material seguridad  (AGS08)",
+      "Generar programa de capacitación (AGS11)",
+      "Metodología Dekra (AGS13)",
+      "Realización charla/taller (AGS03)",
+      "Revisión de material seguridad  (AGS09)",
+      "Actividad de liderazgo visible (AGS12)",
+      "Seguimiento asesoría en seguridad industrial (AGS15)",
+      "Investigación accidente metodología árbol causal (AGS16)",
+      "Asistencia técnica a todos los ingresos y seguimiento telefonico por cada control (AGS17)"
+    ],
+    "Asesoría y gestión de protocolo (AGP)": [
+      "Presentación de resultados y plan de acción sobre protocolos MINSAL (AGP03)",
+      "Seguimiento de plan de acción sobre protocolos MINSAL (AGP04)",
+      "Verificación de cumplimiento de protocolos MINSAL (AGP01)"
+    ],
+    "Asistencia en SST (ATS)": [
+      "Análisis de accidentes y acuerdo de medidas de control en focos críticos (ATS01)",
+      "Análisis casuístico de casos (ATS03)",
+      "Jornadas preventivas (ATS04)",
+      "Seguimiento de medidas de control en focos críticos (ATS02)"
+    ],
+    "Auditorías de seguridad y salud ocupacional (AUD)": [
+      "Aplicación de auditoría de seguridad y salud ocupacional (AUD02)",
+      "Informe de auditoría de seguridad y salud ocupacional (AUD03)",
+      "Presentación de herramienta de auditoría de seguridad y salud ocupacional (AUD01)"
+    ],
+    "Comité Paritario de Higiene y Seguridad (CPH)": [
+      "Actividad práctica con CPHS (CPH05)",
+      "Asesoría en certificación de CPHS (CPH03)",
+      "Asesoría en elaboración de programa de trabajo (CPH04)",
+      "Asesoría en gestión de CPHS (CPH01)",
+      "Presentación de proceso de certificación (CPH02)"
+    ],
+    "Coordinación interna (CIN)": [
+      "Coordinación interna por proyecto (CIN01)"
+    ],
+    "Infracciones DT (IDT)": [
+      "Prescripción por infracción (IDT01)",
+      "Verificación y control infracción gravísima (IDT02)"
+    ],
+    "Intervención Táctica Accidentabilidad ITA (ITC)": [
+      "Aplicación de campaña preventiva (ITC108)",
+      "Generación de informe técnico de análisis casuístico (ITC109)",
+      "Identificación de peligros y evaluación de riesgos (ITC101)",
+      "Investigación de accidentes de incidentes (ITC105)",
+      "Inspección en procesos críticos (ITC103)",
+      "Seguimiento a acuerdos y medidas pendientes (ITC110)",
+      "Seguimiento identificación de peligros y evaluación de riesgos (ITC102)",
+      "Seguimiento investigación de accidentes de incidentes (ITC106)",
+      "Seguimiento Observación en procesos críticos (ITC104)",
+      "Generación de plan tactico de accidentabilidad (ITC111)",
+      "Generación de resultados de Plan táctico (ITC112)",
+      "Realización charla o taller (= o <5) (ITC30)",
+      "Difusión de Material Preventivo (ITC31)",
+      "Observación en procesos críticos (ITC113)",
+      "Seguimiento inspección en procesos críticos (ITC33)",
+      "Realización charla o taller (>5) (ITC32)"
+    ],
+    "Soporte en SST (SOP)": [
+      "Asesoría en la elaboración en videos corporativos (SOP06)",
+      "Desarrollo de innovaciones en conjunto con la empresa (SOP07)",
+      "Gestión de prestaciones  y  documentación de siniestros (SOP08)",
+      "Reunión con área de prevención de riesgos (SOP01)",
+      "Reunión con dirigentes sindicales (SOP02)",
+      "Reunión con Gerencia o Directivos (SOP03)",
+      "Reunión con Jefaturas (SOP04)",
+      "Reunión con Recursos Humanos de la empresa (SOP09)"
+    ],
+    "Administrativos -  Gestión de Contratistas (AGC)": [
+      "Asesoría en gestión de contratistas revisión documental (AGC01)",
+      "Asesoría en gestión de contratistas capacitación (AGC02)"
+    ],
+    "Turnos (TUP)": [
+      "Evaluación cualitativa (TUP01)"
+    ],
+    "Gestión sello Ley Karín (GLK)": [
+      "Sensibilización y presentación (GLK01)",
+      "Asistencia Técnica (GLK02)",
+      "Verificación y cumplimiento Sello Ley Karin (GLK03)",
+      "Certificación de Gestión Sello Ley Karín Nivel 1 (GLK04)",
+      "Certificación de Gestión Sello Ley Karín Nivel 2 (GLK05)",
+      "Entrega de certificado - Ceremonia (GLK06)"
+    ]
+  },
+  "Programa Propio Minería (PPM)": {
+    "Compromisos Comerciales (CCM)": [
+      "Certificado de tasas por empresa y/o sucursal (CCM02)",
+      "Coordinación de servicios ESACHS (CCM01)",
+      "Gestión de ingreso de casos médicos (CCM07)",
+      "Gestión SEL/CIEL (CCM08)",
+      "Seguimiento deudas por no pago cotizaciones ley (CCM05)",
+      "Seguimiento pago facturas SEL (CCM04)",
+      "Solicitud cursos e-learning (CCM03)",
+      "Creación SOLPED (CCM09)"
+    ],
+    "Asesoría Gestión En SST (GST)": [
+      "Actividad Preventiva Inicio de Turno Minería (GST01)"
+    ],
+    "Estrategia Preventiva (EPV)": [
+      "Verificación medidas de control acciones correctivas minería (EPV01)",
+      "Informe de Verificación medidas de control acciones correctivas minería (EPV02)"
+    ],
+    "Estrategia Preventiva Minería (EPM)": [
+      "Diagnóstico Inicial - Estrategia Minería (EPM01)",
+      "Evaluación de medidas preventivas - Estrategia Minería (EPM02)",
+      "Levantamiento medidas específicas- Estrategia Minería (EPM03)",
+      "Diagnóstico de cierre - Estrategia Minería (EPM04)"
+    ]
+  },
+  "Psicosocial (RPSL)": {
+    "Psicosocial protocolo (PRT)": [
+      "Gestión protocolo vigilancia ambiental Psicosocial (PRT98)",
+      "Difusión - Entrega de Kit Apoyo Protocolo (PRT20)",
+      "Asesoría Cda Protocolo (PRT21)",
+      "Resultados CEAL Protocolo (PRT22)",
+      "Asesoría Resultados Protocolo (PRT23)",
+      "Asistencia Técnica (PRT24)",
+      "Asesoría de planificación (PRT25)",
+      "Asesoría Habilitación CEAL (PRT26)",
+      "Asesoría Inicial Protocolo Instituciones Públicas (PRT27)"
+    ]
+  },
+  "Regulatorio (REG)": {
+    "Caracterización Organizacional y Centro de Trabajo (CAR)": [
+      "Caracterización del Centro de Trabajo (CAR02)",
+      "Regularización de caracterización de centro de trabajo (CAR03)"
+    ],
+    "Infracciones DT (IDT)": [
+      "Prescripción por infracción (IDT01)",
+      "Verificación y control infracción gravísima (IDT02)"
+    ],
+    "Programa Asistencia Cumplimiento (PAC)": [
+      "Entrega Certificado PAC (PAC02)",
+      "Entrega Certificado PAC ATRASADO (PAC05)",
+      "Inicio Asistencia Técnica  (PAC01)",
+      "Prescripción por infracción- SVE (PAC04)",
+      "Seguimiento y Verificación  (PAC03)"
+    ],
+    "Sistema Información SUSESO (SIS)": [
+      "Verificación para revertir recargo (SIS01)"
+    ],
+    "Trabajo a distancia (TRD)": [
+      "Evaluación puesto de trabajo para trabajo a distancia (TRD04)",
+      "Prescripción inicial para trabajo a distancia (TRD01)",
+      "Prescripción post revisión MIPER para trabajo a distancia (TRD03)",
+      "Revisión MIPER para trabajo a distancia (TRD02)"
+    ],
+    "Gestión del riesgo (GDR)": [
+      "Verificación del cumplimiento muellaje (GDR02)",
+      "Prescripción por brecha muellaje (GDR03)",
+      "Prescripción inicial muellaje (GDR04)",
+      "Informe de cumplimiento muellaje (GDR05)",
+      "Revisión MIPER muellaje (GDR06)"
+    ],
+    "Caída en Alturas (CEA)": [
+      "Presentación y Herramienta (CEA01)",
+      "Informe de Prescripción (CEA02)",
+      "Informe de Verificación y Control (CEA03)"
+    ],
+    "Investigación de accidentes SUSESO (IAS)": [
+      "Comunicación inicial y recolección de antecedentes iniciales (IAS001)",
+      "Recolección antecedentes (IAS003)",
+      "Informe de accidente y causas  (IAS004)",
+      "Prescripción de medidas correctivas  (IAS005)",
+      "Verificación de medidas correctivas  (IAS006)",
+      "Segunda verificación de medidas correctivas  (IAS007)",
+      "Reconocimiento de antecedentes - accidentes RALF iniciados en otro OAL (IAS008)",
+      "Informe de accidente abreviado (IAS009)"
+    ],
+    "Prescripción (PRE)": [
+      "Prescripción fiscalización Psicosocial (PRE01)",
+      "Prescripción fiscalización Higiene (PRE02)",
+      "Prescripción fiscalización Ergonomía (PRE03)",
+      "Prescripción Grupo discusión por Riesgo Alto (PRE04)"
+    ],
+    "Flujo DS67 (FDS)": [
+      "Validación Documentación DS 67 Interno (FDS01)"
+    ]
+  },
+  "SVE Soporte Virtual Especializado (SVE)": {
+    "Derivación requerimiento empresa (DRE)": [
+      "Asesoría técnica PYME (DRE01)"
+    ],
+    "Fidelización PREF (FPR)": [
+      "Campaña tienes un minutito: visita en el camino (FPR02)",
+      "Difusión de protocolos psicosocial (FPR03)",
+      "Intervención Táctica ITA (FPR01)"
+    ],
+    "Fidelización PYME (FPM)": [
+      "Asesoría Comités Paritarios (FPM04)",
+      "Asesoría de seguimiento para PYME (Presencial) (FPM09)",
+      "Asesoría de seguimiento para PYME (Remota) (FPM10)",
+      "Asesoría Gestión de Aspectos Legales  (FPM02)",
+      "Asesoría Gestión de Riesgos de Emergencia (FPM03)",
+      "Asesoría Inicial de Prevención PYME (Presencial) (FPM08)",
+      "Asesoría Inicial de Prevención PYME (FPM06)",
+      "Plan de Prevención PDP (FPM01)"
+    ],
+    "Infracciones DT (IDT)": [
+      "Prescripción por infracción (IDT01)",
+      "Verificación y control infracción gravísima (IDT02)"
+    ],
+    "Gestión EP (GCE)": [
+      "Asesoría proceso EP (GCE01)"
+    ]
+  },
+  "Fidelización (FID)": {
+    "ACHS Virtual (AVI)": [
+      "Asesoría Achs Virtual (AVI01)",
+      "Prestaciones Economicas (AVI02)",
+      "Nueva función para emitir certificado de tasas al día en línea en Achs Virtual (AVI04)",
+      "Quiero que me contacten (AVI05)"
+    ],
+    "Campaña Bienvenida (CAM)": [
+      "Notificación a empresa de cambios en Equipo de Atención (CAM02)",
+      "Bienvenida nuevas empresas (CAM01)"
+    ],
+    "Casos Médicos (CME)": [
+      "Seguimiento Casos Médicos (CME01)"
+    ],
+    "Actualización de Datos (COF)": [
+      "Actualización de Contactos (COF01)",
+      "Contactos Gremios (COF04)",
+      "Actualización datos encargado de capacitación (COF05)"
+    ],
+    "Experiencia de servicio (EXP)": [
+      "Relacionamiento con cliente (EXP03)",
+      "Empresa con riesgo de fuga - Modelo Score (EXP04)"
+    ],
+    "Gestión Activa Fidelización (GAF)": [
+      "Llamado fidelización (GAF06)",
+      "Gestión Compromiso Pendiente (GAF02)",
+      "Difusión y venta del Diagnóstico Digital de Cultura (OCDI) (GAF07)"
+    ],
+    "Marketing (MAR)": [
+      "Difusión Modelo Sistema de gestión Achs 45.001 (SGA01)",
+      "Campaña Todo parte con una chispa (MKT27)",
+      "Campaña Difusión protocolo psicosocial (MKT28)",
+      "Campaña Usted sí sabe (MKT29)",
+      "Campaña Infórmate y enfócate (MKT30)",
+      "Campaña Pequeños accidentes, grandes consecuencias (MKT31)",
+      "Campaña Si lo ves, Dímelo (MKT32)",
+      "Campaña Esto no pasa (MKT33)",
+      "Campaña Muévelo, muévelo (MKT26)",
+      "Campaña Mundo ACHS (Completar Perfil) (MAR01)",
+      "Campaña CEM (MAR02)",
+      "Campaña Mundo ACHS (Contar Historia) (MAR03)",
+      "Campaña Segurito va a clases (MAR04)",
+      "Campaña ACHS Gestión (MAR07)",
+      "Campaña Segurito Online (MAR09)",
+      "Campaña Saber Llegar (MAR12)",
+      "Campaña Día de la Mujer (MAR13)",
+      "Campaña Ofinautas (MAR15)",
+      "Campaña 18 de Septiembre (MKT01)",
+      "Campaña Fin de Año (MKT02)",
+      "Señales de inclusión (MKT03)",
+      "Campaña Verano (MKT04)",
+      "Vacunación Influenza (MKT08)",
+      "Día del Trabajador (MKT09)",
+      "Dale un minuto a tu salud (MKT12)",
+      "Campañas mailing masivo  (MKT13)",
+      "Campaña \"Botas bien puestas\"  (MKT14)",
+      "Campaña Buen Trato Salud (MAR16)",
+      "Campaña Se me cuida (MKT15)",
+      "Campaña No te quedes en mute (MKT16)",
+      "Campaña Cuéntame (MKT17)",
+      "Campaña Porrazos (MKT18)",
+      "Campaña Cuando calienta el sol, aquí en la pega (MKT19)",
+      "Campaña Marzo (MKT20)",
+      "Campaña invierno (MKT21)",
+      "Campaña App Capacitaciones (MKT22)",
+      "Campaña Buen Trato Educación (MKT23)",
+      "Campaña Buen Trato Transversal (MKT24)",
+      "Campaña Buen Trato Genérico (MKT25)",
+      "Campaña Achs Virtual (MKT34)",
+      "Campaña Plataforma CPHS (MKT35)",
+      "Campaña Kyan Health (MKT36)",
+      "Campaña Lesiones Graves y Fatales (MKT37)"
+    ],
+    "Promover capacitación (OCA)": [
+      "Oferta de capacitación (OCA01)"
+    ],
+    "Proyecto Salud No Laboral (PSL)": [
+      "Refuerzo comunicacional de la iniciativa de Salud No Laboral con empresas por parte de las EC (PSL01)",
+      "Comunicación respecto a los convenios de Salud No Laboral por parte de las EC (PSL02)"
+    ],
+    "Recuperación de Servicio (REC)": [
+      "Reclamo Empresa (REC02)",
+      "Tracking Empresas (REC01)",
+      "Requerimiento Empresa (REC03)",
+      "Proceso DS67 (REC04)",
+      "DS67 - Apoyo rebaja y apelacion (REC05)",
+      "DS67 - Reforzamiento proceso apelacion (REC06)",
+      "Alerta de desafiliacion medianas empresas (REC07)"
+    ],
+    "Servicios Evaluaciones Laborales (SEL)": [
+      "Acuerdos SEL (SEL01)",
+      "Ventas SEL (SEL02)"
+    ],
+    "Campaña Salud Mental (SLM)": [
+      "Inicio Campaña Salud Mental (SLM01)",
+      "Seguimiento Campaña Salud Mental (SLM02)",
+      "Cierre Campaña Salud Mental (SLM03)"
+    ],
+    "Subsidios (SUB)": [
+      "Subsidios a Prescribir (SUB01)",
+      "Vales Vistas Pendientes de Cobro (SUB02)",
+      "Vales Vistas Reabonados Cuenta ACHS (SUB03)"
+    ],
+    "Actividades SVE (SVE)": [
+      "Llamada de Bienvenida (SVE01)"
+    ],
+    "Unidad Control de Asociados (UCA)": [
+      "Omisión de Trabajadores (UCA01)"
+    ],
+    "Difusión servicios complementarios (DSC)": [
+      "Campaña Operativos de Salud (DSC01)",
+      "Campaña Calidad de Vida (DSC02)",
+      "Programa Prevención del Consumo de Alcohol y drogas (DSC04)",
+      "Campaña mes del Corazón (DSC03)",
+      "Campaña mes de la Inclusión (DSC05)"
+    ],
+    "MTC (MTC)": [
+      "OCDI online (MTC01)",
+      "FDT - Proceso de venta (MTC02)"
+    ],
+    "Contacto EP (CEP)": [
+      "Cargar proactivamente contacto EP en salesforce (CEP01)"
+    ],
+    "Relacionador Laboral (RLB)": [
+      "Capacitaciones (RLB01)"
+    ]
+  },
+  "Regulatorio (RGL)": {
+    "Gestión EP (GCE)": [
+      "Asesoría proceso EP (GCE01)"
+    ]
+  },
+  "Habilitación y Formación (HYF)": {
+    "Habilitación (HAB)": [
+      "Curso Nuevos Auditores - Certificación CPHS (HAB08)",
+      "Train the Trainers (HAB01)",
+      "Charla Formativa (HAB02)",
+      "RALF (HAB03)",
+      "Habilitación Expertos - autoaprendizaje (HAB04)",
+      "Train the Trainers Comercial (HAB05)",
+      "Habilitación Autoaprendizaje (HAB07)",
+      "IPT (HAB06)",
+      "Acompañamiento Orientación Técnica Accidentabilidad (HAB09)"
+    ],
+    "Malla Expertos (MAE)": [
+      "Curso genérico 0.5 horas (MAE01)",
+      "Curso genérico 1 horas (MAE02)",
+      "Psicosocial - Capacitación 16 horas y certificación (MAE03)"
+    ],
+    "Encuentro CPHS (ECP)": [
+      "Jornadas preventivas (ECP01)"
+    ],
+    "Modelo cultura experiencia (MCE)": [
+      "Confirmación de procesos expertos (MCE01)"
+    ]
+  },
+  "Aseguramiento de la Calidad (ADC)": {
+    "Confirmación de Roles (CDR)": [
+      "Realización de Confirmación de Procesos (CDR05)"
+    ]
+  },
+  "Gestiones en prevención (GEP)": {
+    "Estrategia Sectorial Transversal (EST)": [
+      "Desplazamiento operacional - Transversal (EST01)",
+      "Máquinas motrices - Transversal (EST02)",
+      "Trabajo administrativo  - Transversal (EST03)",
+      "Verificación y control - Estrategia sectorial Transversal (EST04)",
+      "Fatiga laboral - Transversal (EST05)",
+      "Conducción de vehículos livianos - Transversal (EST06)",
+      "Trabajo en altura mayor a 1,8 metros  - Transversal (EST07)",
+      "Evaluación Trabajo en altura mayor a 1,8 metros  - Transversal (EST08)",
+      "Seguridad en el MMC - control de accidentes (EST09)",
+      "Evaluación de Seguridad en el MMC - control de accidentes (EST10)",
+      "Asesoría Trabajo en Izaje de cargas (EST12)",
+      "Apoyo lista de verificación Izaje de cargas (EST13)",
+      "Asesoría  Equipos para el Transporte de carga (EST14)",
+      "Apoyo lista de verificación Equipos para el transporte de carga(EST15)"
+    ],
+    "Sistema de gestión SST (SGS)": [
+      "Homologación certificación empresas a Achs 45.001 (SGS14)",
+      "Estructura en SST - Política (SGS24)",
+      "Estructura en SST - Objetivos (SGS25)",
+      "Estructura en SST - Organización, funciones y responsabilidades (SGS26)",
+      "Sensibilización y diagnóstico (empresa) SGSST (SGS01)",
+      "Acompañamiento procesos del SGSST (SGS02)",
+      "Auditoría SG Regulatorio (SGS03)",
+      "Auditoría SG 45.001 (SGS04)",
+      "Gestión Preventiva - Requisitos legales (SGS05)",
+      "Gestión Preventiva - Riesgo de Desastres (SGS06)",
+      "Gestión Preventiva - Comité Paritario de Higiene y Seguridad (SGS07)",
+      "Gestión Preventiva - Contratistas (SGS08)",
+      "Gestión Preventiva - Investigación de incidentes y análisis de EP (SGS09)",
+      "Gestión del Riesgo - Entendimiento del proceso gestión del riesgo (SGS10)",
+      "Gestión del Riesgo - Identificación de peligros y evaluación de riesgos (MIPER) (SGS11)",
+      "Gestión del Riesgo - Programa de trabajo preventivo (SGS12)",
+      "Gestión del Riesgo - Mapas de riesgos (SGS13)",
+      "Planificación - Competencias y Capacitación (SGS15)",
+      "Planificación - Comunicación, Participación y Consulta (SGS16)",
+      "Planificación - Información documentada (SGS17)",
+      "Planificación - Gestión del Cambio (SGS18)",
+      "Planificación - Control de Adquisiciones (SGS19)",
+      "Evaluación de Desempeño - Medición y Seguimiento (SGS20)",
+      "Evaluación de Desempeño - Auditoría Interna (SGS21)",
+      "Evaluación de Desempeño - Revisión por la Dirección (SGS22)",
+      "Mejora Continua - No Conformidad y Acción Correctiva (SGS23)",
+      "Diagnóstico Achs 45001 - fecha de implementación (SGS27)"
+    ],
+    "Gestión de controles críticos (GCC)": [
+      "GCC - Diagnóstico (Etapa 0) (GCC01)",
+      "GCC - Trabajo en altura física mayor o igual 1,8 metros (GCC02)",
+      "GCC - Trabajo en espacios confinados (GCC03)",
+      "GCC - Conducción de vehículos livianos (GCC04)",
+      "GCC - Trabajo con energía eléctrica (GCC05)",
+      "GCC - Trabajo con máquinas, equipos y herramientas motrices (GCC06)",
+      "GCC - Trabajo en excavaciones (GCC07)",
+      "GCC - Control de energías peligrosas (GCC08)",
+      "GCC - Verificación y control (GCC09)"
+    ],
+    "Sello Bienestar (SBT)": [
+      "Asesorías Calidad de Vida - DS 44 (SBT01)",
+      "VyC Calidad de Vida - DS 44 (SBT02)",
+      "Sensibilización Sello Promueve bienestar (SBT03)",
+      "Seguimiento Sello promueve Bienestar (SBT04)",
+      "VyC Sello promueve bienestar (SBT05)",
+      "Reconocimiento Sello Promueve bienestar (SBT06)"
+    ],
+    "Estrategia Outsourcing (OUT)": [
+      "Gestión de Accidentes  - Outsourcing (OUT02)",
+      "Gestión de Requisitos legales  - Outsourcing (OUT03)",
+      "Verificación y control - Outsourcing (OUT04)"
+    ],
+    "Estrategias sectoriales Educación Superior (ESE)": [
+      "Asesoría Sobrecarga laboral Educación superior (ESE01)",
+      "Verificación y control Sobrecarga laboral Educación superior (ESE02)",
+      "Asesoría Violencia laboral Educación superior (ESE03)",
+      "Verificación y control Violencia laboral Educación superior (ESE04)"
+    ],
+    "Requerimientos DS44 (REQ)": [
+      "Asesoría Personas trabajadores especialmente sensibles: Embarazadas (REQ01)",
+      "Análisis puesto de trabajo Personas trabajadores especialmente sensibles: Embarazadas (REQ02)",
+      "Requerimientos DS44 - Verificación y Control (REQ03)",
+      "Asesoría Personas trabajadores especialmente sensibles: Adulto Mayor (REQ04)",
+      "Análisis de Puesto de trabajo  Personas trabajadores especialmente sensibles: Adulto Mayor (REQ05)",
+      "Asesoría Personas trabajadores especialmente sensibles: Adolescente (REQ06)",
+      "Análisis puesto de trabajo Personas trabajadores especialmente sensibles: Adolescente (REQ07)"
+    ],
+    "Capacitacion (CAP)": [
+      "Gestión en Capacitación Push (CAP01)"
+    ],
+    "Ley 19.404 - Trabajo Pesado (TPS)": [
+      "Asesoría trabajo pesado (TPS01)",
+      "Informe técnico trabajo pesado (TPS02)"
+    ],
+    "Asesorías del sector financiero (ASF)": [
+      "Condiciones de orden y aseo Servicios financieros (ASF01)",
+      "Verificación y Control de Condiciones de orden y aseo Servicios financieros (ASF02)",
+      "Conducción y uso de vehículos Servicios financieros (ASF03)",
+      "Verificación y Control de Conducción y uso de vehículos Servicios financieros (ASF04)",
+      "Desplazamiento Operacional Servicios financieros (ASF05)",
+      "Verificación y Control de Desplazamiento Operacional Servicios financieros (ASF06)",
+      "Sobrecarga laboral Servicios financieros (ASF07)",
+      "Verificación y Control de Sobrecarga laboral Servicios financieros (ASF08)",
+      "Trabajo administrativo servicios financieros (ASF09)",
+      "Verificación y Control de Trabajo administrativo servicios financieros (ASF10)",
+      "Selección de asesorías estrategia sectorial Servicios financieros (ASF16)"
+    ],
+    "Asesoría Estrategia Sectorial Salmonicultura (AES)": [
+      "Asesoría Manejo Manual de Carga Salmonicultura (AES01)",
+      "Verificación y Control Manejo Manual de Carga Salmonicultura (AES02)",
+      "Asesoría de Desplazamiento Operacional Salmonicultura (AES03)",
+      "Verificación y Control Desplazamiento Operacional Salmonicultura (AES04)",
+      "Asesoría de Seguridad en Máquinas y Equipos Salmonicultura (AES05)",
+      "Verificación y Control Seguridad en Máquinas y Equipos Salmonicultura (AES06)",
+      "Asesoría TMERT Salmonicultura (AES07)",
+      "Verificación y Control TMERT Salmonicultura (AES08)",
+      "Asesoría Programa de Rotación Salmonicultura (AES09)",
+      "Verificación Programa de Rotación Salmonicultura (AES10)",
+      "Selección de asesorías estrategia sectorial Salmonicultura (AES16)"
+    ],
+    "Asesoría Estrategia Sectorial Gestión Residuos Domiciliarios (ARD)": [
+      "Asesoría de Recolección y Transporte de Residuos Domiciliarios (ARD01)",
+      "Verificación y Control de Recolección y Transporte de Residuos Domiciliarios (ARD02)",
+      "Asesoría Vacunación de recolectores (ARD03)",
+      "Selección de asesorías estrategia sectorial Gestión de residuos (ARD15)"
+    ],
+    "Asesoría Estrategia Sectorial Construcción – Trabajo en excavaciones (ESC)": [
+      "Asesoría de Trabajo en Excavaciones (ESC01)",
+      "Verificación y Control de Trabajo en Excavaciones (ESC02)"
+    ],
+    "Plan Integral de Seguridad Salas Cuna y Jardines Infantiles (PSJ)": [
+      "Desplazamiento Operacional Educación Preescolar (PSJ07)",
+      "Verificación y Control Desplazamiento Operacional Educación Preescolar (PSJ08)",
+      "Sobrecarga Laboral Educación Preescolar (PSJ09)",
+      "Verificación y Control Sobrecarga Laboral Educación Preescolar (PSJ10)",
+      "Asesoría Violencia en Educación Preescolar (PSJ11)",
+      "Verificación y Control Violencia en Educación Preescolar (PSJ12)",
+      "Asesoría de Sensibilización, Difusión y Evaluación Inicial de Requisitos (PSJ01)",
+      "Asesoría conformación y funcionamiento del Comité de Seguridad o Designación del Encargado de Seguridad (PSJ02)",
+      "Asesoría Desarrollo de diagnostico del establecimiento (PSJ03)",
+      "Asesoría Planificación de Medidas de control y respuestas (PSJ04)",
+      "Asesoría Seguimiento y readecuación (PSJ05)",
+      "Asesoría de Revisión de requisitos (PSJ06)",
+      "Asesoría Sobreesfuerzo vocal (PSJ13)",
+      "Asistencia en Taller (PSJ14)",
+      "Validación de Requisitos (PSJ15)",
+      "Selección de asesorías estrategia educación pre escolar (PSJ16)"
+    ],
+    "Asesoría Estrategia Sectorial Elaboración de Alimentos (AEA)": [
+      "Asesoría Manejo manual de carga Alimentos (AEA01)",
+      "Verificación y Control Manejo Manual de Carga Alimentos (AEA02)",
+      "Asesoría de Desplazamiento Operacional Alimentos (AEA03)",
+      "Verificación y Control Desplazamiento Operacional Alimentos (AEA04)",
+      "Asesoría Máquinas y Equipos de Trabajo Alimentos (AEA05)",
+      "Verificación y Control Máquinas y Equipos de Trabajo Alimentos (AEA06)",
+      "Asesoría Trabajo con Movimiento Repetitivo Alimentos (AEA07)",
+      "Verificación y Control Trabajo con Movimiento Repetitivo Alimentos (AEA08)",
+      "Selección de asesorías estrategia sectorial Elaboración de alimentos (AEA16)"
+    ],
+    "Asesoría Estrategia Sectorial Elaboración de Bebidas (AEB)": [
+      "Asesoría Manejo Manual de Carga Bebidas (AEB01)",
+      "Verificación y Control Manejo Manual de Carga Bebidas (AEB02)",
+      "Asesoría de Desplazamiento Operacional Bebidas (AEB03)",
+      "Verificación y Control Desplazamiento Operacional Bebidas (AEB04)",
+      "Asesoría Máquinas y Equipos de Trabajo Bebidas (AEB05)",
+      "Verificación y Control Máquinas y Equipos de Trabajo Bebidas (AEB06)",
+      "Asesoría Trabajo con Movimiento Repetitivo Bebidas (AEB07)",
+      "Verificación y Control Trabajo con Movimiento Repetitivo Bebidas (AEB08)",
+      "Asesoría Equipo Mecanizado para Movimiento de Cargas Bebidas (AEB09)",
+      "Verificación y Control Equipo Mecanizado para Movimiento de Cargas Bebidas (AEB10)",
+      "Selección de asesorías estrategia sectorial Elaboración de bebidas (AEB16)"
+    ],
+    "Estrategia Sectorial Salud Pública y Privada (SPP)": [
+      "Manejo y traslado de pacientes Salud (SPP01)",
+      "Verificación y Control Manejo y traslado de pacientes Salud (SPP02)",
+      "Manejo de objetos cortopunzantes  Salud (SPP03)",
+      "Verificación y Control Manejo de objetos cortopunzantes Salud (SPP04)",
+      "Dermatitis Salud (SPP05)",
+      "Verificación y Control Dermatitis Salud (SPP06)",
+      "Asesoría Exposición Agresiones y Amenazas en Salud (SPP07)",
+      "Verificación y Control Exposición Agresiones y Amenazas en Salud (SPP08)",
+      "Asesoría Sobrecarga Laboral en Salud pública y privada (SPP09)",
+      "Verificación y Control Sobrecarga en Salud pública y privada (SPP10)",
+      "Asesoría Violencia en Salud pública y privada (SPP11)",
+      "Verificación y Control en Salud pública y privada (SPP12)",
+      "Asesoría Desplazamiento operacional Salud (SPP13)",
+      "Verificación y control Desplazamiento operacional Salud (SPP14)",
+      "Selección de asesorías estrategia sectorial Salud Pública y Privada (SPP16)"
+    ],
+    "Estrategias sectoriales comercio minorista (SCM)": [
+      "Asesoría Conducción y uso de vehículo Comercio minorista (SCM01)",
+      "Verificación y Control Conducción y uso de vehículo Comercio minorista (SCM02)",
+      "Asesoría Desplazamiento Operacional Comercio minorista (SCM03)",
+      "Verificación y Control Desplazamiento Operacional Comercio minorista (SCM04)",
+      "Asesoría manejo manual de carga Comercio minorista (SCM05)",
+      "Verificación y Control Manejo manual de carga en Comercio minorista (SCM06)",
+      "Asesoría Manipulación de alimentos Comercio minorista (SCM07)",
+      "Verificación y Control Manipulación de alimentos en Comercio minorista (SCM08)",
+      "Asesoría Procesamiento y conservación de carnes y cesinas Comercio minorista (SCM09)",
+      "Verificación y Control Procesamiento y conservación de carnes - cecinas en Comercio minorista (SCM10)",
+      "Asesoría Trabajo con herramientas manuales Comercio minorista (SCM11)",
+      "Verificación y Control Trabajo con herramientas manuales en Comercio minorista (SCM12)",
+      "Selección de asesorías estrategia sectorial comercio minorista (SCM16)"
+    ],
+    "Asesoría Trabajo en solitario  Minería (AEM)": [
+      "Trabajo en solitario minería Sensibilización (AEM01)",
+      "Trabajo en solitario minería Identificación y revisión de MIPER (AEM02)",
+      "Trabajo en solitario minería Prescripción de medidas (AEM03)",
+      "Trabajo en solitario minería Verificación y control (AEM04)"
+    ],
+    "Estrategia Sectorial Municipalidades (ESM)": [
+      "Asesoría Conducción de vehículos Municipalidades (ESM01)",
+      "Verificación y Control Conducción de vehículos Municipalidades (ESM02)",
+      "Asesoría Desplazamiento Operacional Comercio Municipalidades (ESM03)",
+      "Verificación y Control Desplazamiento Operacional Municipalidades (ESM04)",
+      "Asesoría Violencia en Municipalidades (ESM05)",
+      "Verificación y Control Violencia en Municipalidades (ESM06)",
+      "Asesoría Sobrecarga Laboral en Municipalidades (ESM07)",
+      "Verificación y Control Sobrecarga en Municipalidades (ESM08)",
+      "Asesoría Trabajo en áreas verdes (ESM09)",
+      "Verificación y Control Trabajo en áreas verdes (ESM10)"
+    ],
+    "Transversal (TRA)": [
+      "Asesoría Protección a la maternidad, paternidad y vida familiar Ley 21.645 (TRA01)"
+    ],
+    "Inclusión laboral de personas con discapacidad (ILD)": [
+      "Asesoría Inclusión laboral de personas con discapacidad (ILD01)",
+      "Verificación y Control Asesoría Inclusión laboral de personas con discapacidad (ILD02)",
+      "Verificación y Control AJUSTES RAZONABLES Asesoría Inclusión laboral de personas con discapacidad (ILD03)"
+    ],
+    "Sistema de higiene, seguridad y mejoramiento de ambientes de trabajo del sector público (SHS)": [
+      "Asesoría SHSYMAT Propuesta técnica (SHS01)",
+      "Asesoría en política SST SHSYMAT (SHS02)",
+      "Planificación y ejecución  SHSYMAT (SHS03)",
+      "Verificación SHSYMAT (SHS04)",
+      "Mejora SHSYMAT (SHS05)",
+      "Reconocimiento SHSYMAT (SHS06)"
+    ],
+    "Estrategias sectoriales Programa propio (ESP)": [
+      "Presentación Estrategia Sectorial Programa Propio (ESP01)",
+      "Verificación y control Estrategia Sectorial programa propio (ESP02)",
+      "Reconocimiento Estrategia Sectorial programa propio (ESP03)"
+    ],
+    "Estrategias sectoriales transporte terrestre (ETT)": [
+      "Asesoría Conducción y uso de vehículo transporte terrestre (ETT01)",
+      "Verificación y Control Conducción y uso de vehículo transporte terrestre (ETT02)",
+      "Asesoría desplazamiento operacional transporte terrestre (ETT03)",
+      "Verificación y Control desplazamiento operacional transporte terrestre (ETT04)",
+      "Asesoría Sobrecarga laboral transporte terrestre (ETT05)",
+      "Verificación y Control sobrecarga laboral transporte terrestre (ETT06)",
+      "Asesoría Agresiones - Amenazas transporte terrestre (ETT07)",
+      "Verificación y Control Agresiones - Amenazas transporte terrestre (ETT08)",
+      "Asesoría Fatiga - Somnolencia transporte terrestre (ETT09)",
+      "Verificación y Control Fatiga - Somnolencia transporte terrestre (ETT10)",
+      "Asesoría manejo manual de carga transporte terrestre (ETT11)",
+      "Verificación y Control manejo manual de carga transporte terrestre (ETT12)",
+      "Selección de asesorías estrategia sectorial transporte terrestre (ETT16)"
+    ],
+    "Estrategias sectoriales educación escolar (EEE)": [
+      "Asesoría Desplazamiento Operacional Educación escolar (EEE01)",
+      "Asistencia de observación Desplazamiento Operacional Educación escolar (EEE02)",
+      "Verificación y Control Desplazamiento Operacional Educación escolar (EEE03)",
+      "Asesoría Sobrecarga laboral Educación escolar (EEE04)",
+      "Verificación y control Sobrecarga laboral Educación escolar (EEE05)",
+      "Asesoría Sobreesfuerzo vocal Educación escolar (EEE06)",
+      "Asistencia en taller Sobreesfuerzo vocal Educación escolar (EEE07)",
+      "Verificación y Control Sobreesfuerzo vocal Educación escolar (EEE08)",
+      "Asesoría Violencia laboral Educación escolar (EEE09)",
+      "Verificación y control Violencia laboral Educación escolar (EEE10)",
+      "Selección de asesorías estrategia sectorial Educación escolar (EEE16)",
+      "Asesoría Gestión de inclusión Educacional (EEE11)",
+      "Asesoría Gestión de inclusión Educacional - Verificación y Control (EEE12)"
+    ],
+    "Asesoría Autoevaluación inicial de cumplimiento de aspectos legales (Anexo 2) (AIC)": [
+      "Asesoría Anexo 2 (AIC01)",
+      "Recepción y registro lista de autoevaluación Anexo 2 (AIC02)",
+      "Asistencia técnica planes de acción Anexo 2 (AIC03)",
+      "Recepción y registro lista de autoevaluación más plan de acción Anexo 2 (AIC04)"
+    ],
+    "Asesoría evaluación inicial de riesgos críticos en centros de trabajo (Anexo 3) (AIR)": [
+      "Asesoría Anexo 3 (AIR01)",
+      "Recepción y registro riesgos críticos Anexo 3 (AIR02)",
+      "Asistencia técnica planes de acción Anexo 3 (AIR03)",
+      "Recepción y registro lista de riesgos críticos más planes de acción, Anexo 3 (AIR04)"
+    ],
+    "Ley 21.643 - Asesoría Ley Karin (ALK)": [
+      "Ley 21.643 - Asistencia inicial Ley Karin (ALK01)",
+      "Política Ley 21.643 (ALK02)",
+      "Protocolo prevención del acoso laboral, sexual y violencia (ALK03)",
+      "Procedimiento de denuncia e investigación (ALK04)",
+      "Asesoría Violencia en el trabajo (por parte de clientes o usuarios) (ALK08)",
+      "Verificación y control Violencia en el trabajo (por parte de clientes o usuarios) (ALK09)",
+      "Asesoría para certificación Sello Ley Karin (ALK10)",
+      "AT Ley Karin - Trabajadores de casas particulares (ALK05)",
+      "Verificación Sello Ley Karin Nivel 1 (ALK06)",
+      "Verificación Sello Ley Karin Nivel 2 (ALK07)",
+      "Prescripción Ley Karin  (ALK11)"
+    ],
+    "Estrategias sectoriales Administración Pública Municipalidades (APM)": [
+      "Asesoría servicios de aministración municipal (APM01)",
+      "Verificación y control servicios de administración municipal (APM02)",
+      "Asesoría Aseo y Ornato (APM03)",
+      "Verificación y control Aseo y Ornato (APM04)",
+      "Asesoría Servicios de Atención al Público (APM05)",
+      "Verificación y control Servicios de Atención al Público (APM06)",
+      "Selección de asesorías estrategia sectorial Administración Pública Municipalidades (APM16)"
+    ],
+    "Asistencia MIPE (MIP)": [
+      "Bienvenida empresa MIPE: Ley 16.744 (MIP01)"
+    ],
+    "Estrategias sectoriales (ESS)": [
+      "Asesoría Estrategia Sectorial (ESS01)",
+      "Seguimiento/verificación Estrategia Sectorial (ESS02)",
+      "Reconocimiento Estrategia Sectorial (ESS03)",
+      "Presentación modelo Estrategias Sectoriales (ESS04)"
+    ],
+    "Investigación de enfermedad profesional (IEP)": [
+      "Análisis de causas EP Musculoesquelética (IEP01)",
+      "Apoyo empresa investigación Enfermedad profesional (EP) (IEP02)",
+      "Verificación de medidas EP Musculoesquelética (IEP03)"
+    ],
+    "Agentes químicos - control de accidentes (QUI)": [
+      "Asesoría Manipulación agentes químicos (QUI01)",
+      "Apoyo manipulación agentes químicos (QUI02)",
+      "Manipulación agentes químicos - Verificación y control (QUI03)"
+    ]
+  },
+  "Accidentabilidad (ACC)": {
+    "Actividad de trayecto (ACT)": [
+      "Difusión - Entrega de Kit Apoyo trayecto (ACT01)"
+    ]
+  },
+  "Metodologia Focalizada de Lesiones Graves y Fatales (MFL)": {
+    "Difusion y sensibilizacion de la  metodologia empresa (DSM)": [
+      "Descripcion Objetivos y beneficios del Programa  Evaluacion de la  gestion LGF (DSM01)"
+    ],
+    "Sesion de Gestion de eventos calculo del Indice de potencial LGF (SGC)": [
+      "Guiar la completación del la matriz de eventos.Definir el indice de potencial LGF (SGC01)"
+    ],
+    "Verificadores de controles criticos (VCC)": [
+      "Envio de Modelo estandar de Hojas de verificacion (VCC01)"
+    ],
+    "Curso de Verificacion controles criticos (CVC)": [
+      "Envio de codigo curso de VCC en terreno (CVC01)"
+    ],
+    "Práctica de Coaching de verificacion de CC en terreno (PCV)": [
+      "Capacitacion en sala y terreno (PCV01)"
+    ],
+    "Indicadores LGF (ILG)": [
+      "Solicitud del Indice LGF  y Indicadores de VCC (ILG01)"
+    ],
+    "Reunion de revision del Proceso  LGf Focalizado (RRP)": [
+      "Gestion LGF  y clima LGF (RRP01)"
+    ],
+    "Seguimiento (SLG)": [
+      "Indice de LGF y Verificacion de Controles criticos (SLG01)"
+    ],
+    "Reunión con el equipo  coordinador de la empresa (REU)": [
+      "Aclaracion del Modelo Propósito- Gestion Responder dudas del proceso (REU01)"
+    ]
+  },
+  "Metodologia FDT (FDT)": {
+    "Sesiones de seguridad en el trabajo (SST)": [
+      "Evaluación del proceso y sustentabilidad Entrega de resultados a la gerencia  (FDT- RED) (SST01)",
+      "Seguimiento de Sesiones de Seguridad en el Trabajo (RED) (SST02)",
+      "Verificación de calidad de la Sesiones de Seguridad en el Trabajo en terreno  (FDT- RED) (SST03)"
+    ],
+    "Verificador de controles críticos (VCR)": [
+      "Evaluación del proceso y sustentabilidad Entrega de resultados a la gerencia  (FDT- RED) (VCR01)",
+      "Seguimiento a Verificacion de Controles Críticos (RED) (VCR02)",
+      "Verificación de calidad de la verificacion de controles críticos  (FDT- RED) (VCR03)"
+    ],
+    "Observación de exposiciones (ODE)": [
+      "Evaluación del proceso y sustentabilidad Entrega de resultados a la gerencia  (FDT- RED) (ODE01)",
+      "Seguimiento a Observación de exposiciones (RED) (ODE02)",
+      "Verificación de calidad de la observación en terreno  (FDT- RED) (ODE03)"
+    ],
+    "Difusión Propuesta (FDT)": [
+      "Difusión Propuesta (FDT01)"
+    ]
+  },
+  "Creación/seguimiento/actualización de programa trabajo (CSA)": {
+    "Estrategia accidentabilidad (EAC)": [
+      "Gestión accidentes centro de trabajo  (EAC01)",
+      "Confección/actualización de MIPER  (EAC02)",
+      "Levantamiento de riesgos - Accidentabilidad  (EAC03)",
+      "Levantamiento de riesgos - Violencia  (EAC04)",
+      "Levantamiento de riesgos - Graves/Fatales  (EAC05)",
+      "Verificación y control global  (EAC06)",
+      "Elaboración Plan de trabajo Accidentabilidad (EAC00)"
+    ]
+  },
+  "Asesoría MIPE (AMP)": {
+    "Sistema de gestión SST MIPE (SMP)": [
+      "Gestión Preventiva - Requisitos legales - MIPE (SMP01)",
+      "Gestión Preventiva - Riesgo de Desastres - MIPE (SMP02)",
+      "Gestión Preventiva - Comité Paritario de Higiene y Seguridad - MIPE (SMP03)",
+      "Gestión del Riesgo - Identificación de peligros y evaluación de riesgos (MIPER) - MIPE (SMP04)",
+      "Procesos del Sistema de gestión - MIPE (SMP05)"
+    ]
+  },
+  "Elección Representantes Directorio (ERD)": {
+    "Validación CPHS (VCP)": [
+      "Validación CPHS\t(VCP01)"
+    ]
   }
 };
 
-// ── FAVORITOS ─────────────────────────────────────
-let favorites = [];
-try{ favorites = JSON.parse(localStorage.getItem('aoa_favs')||'[]'); }catch(e){}
-
-function saveFavs(){try{localStorage.setItem('aoa_favs',JSON.stringify(favorites))}catch(e){}}
-
-function renderFavs(){
-  const g=document.getElementById('fav-grid');
-  if(!favorites.length){
-    g.innerHTML='<span class="fav-empty">Guarda favoritos con ☆ en cada actividad para acceso rápido aquí.</span>';
-    return;
-  }
-  g.innerHTML=favorites.map(f=>`
-    <div class="fav-chip" onclick='loadFav(${JSON.stringify(f)})'>
-      ⭐ ${f.motivo}
-      <span class="fav-x" onclick="event.stopPropagation();delFav('${f.key}')">✕</span>
-    </div>`).join('');
-}
-
-function delFav(key){
-  favorites=favorites.filter(f=>f.key!==key);
-  saveFavs(); renderFavs();
-renderChips();
-  // update all star buttons
-  document.querySelectorAll('[data-favkey]').forEach(el=>{
-    if(el.getAttribute('data-favkey')===key) el.textContent='☆';
-  });
-}
-
-function toggleFav(id){
-  const amEl=document.getElementById('am'+id);
-  const tipo=amEl?.getAttribute('data-tipo')||'';
-  const mot=amEl?.getAttribute('data-mot')||'';
-  const dept=cardDept[id]||'';
-  if(!mot){alert('Selecciona Motivo primero.');return}
-  const key=dept+'||'+tipo+'||'+mot;
-  const starEl=document.getElementById('fstar'+id);
-  const idx=favorites.findIndex(f=>f.key===key);
-  if(idx>-1){
-    favorites.splice(idx,1);
-    if(starEl) starEl.textContent='☆';
-  } else {
-    favorites.push({key,dept,tipo,motivo:mot});
-    if(starEl) starEl.textContent='★';
-  }
-  saveFavs(); renderFavs();
-}
-
-function loadFav(fav){
-  const id=addAct();
-  setTimeout(()=>{
-    // set dept first
-    if(fav.dept) setDept(id, fav.dept);
-    // then select the composite motivo value
-    const ms=document.getElementById('am'+id);
-    if(ms&&fav.tipo&&fav.motivo){
-      const composite=fav.tipo+'||'+fav.motivo;
-      ms.value=composite;
-      if(ms.value===composite) onMotivoChange(id);
-    }
-  },30);
-}
-
-// ── SELECTS ───────────────────────────────────────
-// GIGE uses: Programa Propio (PPP) keys only
-// RED uses: everything else (all non-PPP keys)
-const GIGE_KEYS = ['GIGE — Programa Propio','Programa Propio (PPP)'];
-const RED_KEYS  = Object.keys(DB).filter(k => !GIGE_KEYS.includes(k));
+// GIGE = PPP tipos | RED = todo menos PPP y HYE | HYE = solo Higiene y ergonomía
+const GIGE_KEYS = ["Programa Propio (PPP)", "Programa Propio Minería (PPM)"];
+const HYE_KEYS  = ["Higiene y ergonomía (HYE)"];
+const RED_KEYS  = ["Asesoría (ASE)", "Campaña (CAM)", "Enfermedad Profesional (VAM)", "Gestión Táctica Preventiva (GTP)", "Pilotos (PIL)", "Proceso de Acreditación (PRO)", "Relacionamiento (RLC)", "Psicosocial (RPSL)", "Regulatorio (REG)", "SVE Soporte Virtual Especializado (SVE)", "Fidelización (FID)", "Regulatorio (RGL)", "Habilitación y Formación (HYF)", "Aseguramiento de la Calidad (ADC)", "Gestiones en prevención (GEP)", "Accidentabilidad (ACC)", "Metodologia Focalizada de Lesiones Graves y Fatales (MFL)", "Metodologia FDT (FDT)", "Creación/seguimiento/actualización de programa trabajo (CSA)", "Asesoría MIPE (AMP)", "Elección Representantes Directorio (ERD)"];
 
 // dept state per card id
 const cardDept = {};
@@ -462,11 +1625,13 @@ function setDept(id, dept){
   // toggle button styles
   const bg = document.getElementById('btn-gige-'+id);
   const br = document.getElementById('btn-red-'+id);
-  if(bg) { bg.classList.toggle('active-gige', dept==='GIGE'); bg.classList.remove('active-red'); }
-  if(br) { br.classList.toggle('active-red',  dept==='RED');  br.classList.remove('active-gige'); }
+  const bh = document.getElementById('btn-hye-'+id);
+  if(bg) { bg.classList.toggle('active-gige', dept==='GIGE'); bg.classList.remove('active-red','active-hye'); }
+  if(br) { br.classList.toggle('active-red',  dept==='RED');  br.classList.remove('active-gige','active-hye'); }
+  if(bh) { bh.classList.toggle('active-hye',  dept==='HYE'); bh.classList.remove('active-gige','active-red'); }
 
   // build motivo select from the right group
-  const keys = dept==='GIGE' ? GIGE_KEYS : RED_KEYS;
+  const keys = dept==='GIGE' ? GIGE_KEYS : dept==='HYE' ? HYE_KEYS : RED_KEYS;
   let h='<option value="" disabled selected>-- Selecciona Motivo --</option>';
   keys.forEach(tipo=>{
     if(!DB[tipo]) return;
@@ -541,7 +1706,8 @@ function onSubChange(id){
   const sub=v('as'+id);
   if(sub){
     const d=document.getElementById('ad'+id);
-    if(!d.value.trim()||d.value===d.getAttribute('data-a')){d.value=sub;d.setAttribute('data-a',sub);ar(d);}
+    const subClean=sub.replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
+    if(!d.value.trim()||d.value===d.getAttribute('data-a')){d.value=subClean;d.setAttribute('data-a',subClean);ar(d);}
   }
 }
 function updBadge(id){
@@ -550,10 +1716,11 @@ function updBadge(id){
   const dept=cardDept[id]||'';
   const bg=document.getElementById('abg'+id);
   if(bg){
-    bg.textContent=m||(dept?'['+dept+'] Elige motivo':'Nueva Actividad');
+    const deptLabel=dept==='GIGE'?'GIGE':dept==='RED'?'RED':dept==='HYE'?'HYE':'';
+    bg.textContent=m||(deptLabel?'['+deptLabel+'] Elige motivo':'Nueva Actividad');
     // color by dept
-    bg.style.background=dept==='GIGE'?'#E8F0FB':dept==='RED'?'#FDECEA':'var(--gl)';
-    bg.style.color=dept==='GIGE'?'#0055AA':dept==='RED'?'#C8102E':'var(--gd)';
+    bg.style.background=dept==='GIGE'?'#E8F0FB':dept==='RED'?'#FDECEA':dept==='HYE'?'#e8faf1':'var(--gl)';
+    bg.style.color=dept==='GIGE'?'#0055AA':dept==='RED'?'#C8102E':dept==='HYE'?'#0a8a45':'var(--gd)';
   }
 }
 
@@ -589,6 +1756,10 @@ function addAct(afterId){
           <button class="dept-btn" id="btn-red-${id}" onclick="setDept(${id},'RED')">
             RED
             <span class="dept-label">Todas las áreas (sin PPP)</span>
+          </button>
+          <button class="dept-btn" id="btn-hye-${id}" onclick="setDept(${id},'HYE')">
+            HYE
+            <span class="dept-label">Higiene y Ergonomía</span>
           </button>
         </div>
       </div>
@@ -724,8 +1895,10 @@ function buildDoc(d){
   let aRows='';
   d.acts.forEach(a=>{
     // PDF muestra SOLO el Motivo como título — sin códigos, sin submotivo
-    const titulo=a.motivo||a.tipo||'';
-    const desc=a.desc?'<br><span style="font-size:9pt;color:#000;font-weight:400;">'+a.desc.replace(/\n/g,'<br>')+'</span>':'';
+    const titulo=(a.motivo||a.tipo||'').replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
+    const cleanLine=s=>s.replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
+    const descClean=a.desc?a.desc.split('\n').map(cleanLine).join('\n'):'';
+    const desc=descClean?'<br><span style="font-size:9pt;color:#000;font-weight:400;">'+descClean.replace(/\n/g,'<br>')+'</span>':'';
     aRows+=`<tr>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${fd(a.fecha)}<br><span style="font-size:8pt;color:#000;">${a.ida}</span></td>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;"><b>${titulo}</b>${desc}</td>
