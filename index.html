@@ -122,6 +122,14 @@ select option[disabled]{color:#aaa;font-style:italic}
 .part-add-row input:focus{outline:none;border-color:var(--g)}
 .btn-part-add{background:var(--g);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .15s}
 .btn-part-add:hover{background:var(--gd)}
+
+/* GIGE / RED SELECTOR */
+.dept-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.dept-btn{border:2px solid var(--g3);border-radius:8px;padding:10px 8px;font-size:12px;font-weight:800;cursor:pointer;background:var(--wh);color:var(--g4);font-family:inherit;text-align:center;transition:all .15s;letter-spacing:.5px}
+.dept-btn:hover{border-color:var(--bk);color:var(--bk)}
+.dept-btn.active-gige{border-color:#0055AA;background:#E8F0FB;color:#0055AA}
+.dept-btn.active-red{border-color:#C8102E;background:#FDECEA;color:#C8102E}
+.dept-label{font-size:9px;font-weight:400;display:block;margin-top:2px;letter-spacing:.3px;text-transform:none}
 </style>
 </head>
 <body>
@@ -406,17 +414,19 @@ renderChips();
 }
 
 function toggleFav(id){
-  const tipo=document.getElementById('at'+id)?.value||'';
-  const mot=document.getElementById('am'+id)?.value||'';
-  if(!tipo||!mot){alert('Selecciona Tipo y Motivo primero.');return}
-  const key=tipo+'||'+mot;
+  const amEl=document.getElementById('am'+id);
+  const tipo=amEl?.getAttribute('data-tipo')||'';
+  const mot=amEl?.getAttribute('data-mot')||'';
+  const dept=cardDept[id]||'';
+  if(!mot){alert('Selecciona Motivo primero.');return}
+  const key=dept+'||'+tipo+'||'+mot;
   const starEl=document.getElementById('fstar'+id);
   const idx=favorites.findIndex(f=>f.key===key);
   if(idx>-1){
     favorites.splice(idx,1);
     if(starEl) starEl.textContent='☆';
   } else {
-    favorites.push({key,tipo,motivo:mot});
+    favorites.push({key,dept,tipo,motivo:mot});
     if(starEl) starEl.textContent='★';
   }
   saveFavs(); renderFavs();
@@ -425,25 +435,63 @@ function toggleFav(id){
 function loadFav(fav){
   const id=addAct();
   setTimeout(()=>{
-    const ts=document.getElementById('at'+id);
-    if(ts){ts.value=fav.tipo;onTipoChange(id,()=>{
-      const ms=document.getElementById('am'+id);
-      if(ms&&fav.motivo){ms.value=fav.motivo;onMotivoChange(id);}
-    })}
-  },10);
+    // set dept first
+    if(fav.dept) setDept(id, fav.dept);
+    // then select the composite motivo value
+    const ms=document.getElementById('am'+id);
+    if(ms&&fav.tipo&&fav.motivo){
+      const composite=fav.tipo+'||'+fav.motivo;
+      ms.value=composite;
+      if(ms.value===composite) onMotivoChange(id);
+    }
+  },30);
 }
 
 // ── SELECTS ───────────────────────────────────────
-const SPECIAL=['GIGE — Programa Propio','RED — Todas las áreas (sin PPP)'];
-function bTipo(){
-  let h='<option value="" disabled selected>-- Tipo de Asesoría --</option>';
-  h+='<optgroup label="—— Programas especiales ——">';
-  SPECIAL.forEach(t=>{if(DB[t]) h+=`<option value="${t}">${t}</option>`;});
-  h+='</optgroup>';
-  h+='<optgroup label="—— Otras áreas ——">';
-  Object.keys(DB).forEach(t=>{if(!SPECIAL.includes(t)) h+=`<option value="${t}">${t}</option>`;});
-  h+='</optgroup>';
-  return h;
+// GIGE uses: Programa Propio (PPP) keys only
+// RED uses: everything else (all non-PPP keys)
+const GIGE_KEYS = ['GIGE — Programa Propio','Programa Propio (PPP)'];
+const RED_KEYS  = Object.keys(DB).filter(k => !GIGE_KEYS.includes(k));
+
+// dept state per card id
+const cardDept = {};
+
+function setDept(id, dept){
+  cardDept[id] = dept;
+
+  // toggle button styles
+  const bg = document.getElementById('btn-gige-'+id);
+  const br = document.getElementById('btn-red-'+id);
+  if(bg) { bg.classList.toggle('active-gige', dept==='GIGE'); bg.classList.remove('active-red'); }
+  if(br) { br.classList.toggle('active-red',  dept==='RED');  br.classList.remove('active-gige'); }
+
+  // build motivo select from the right group
+  const keys = dept==='GIGE' ? GIGE_KEYS : RED_KEYS;
+  let h='<option value="" disabled selected>-- Selecciona Motivo --</option>';
+  keys.forEach(tipo=>{
+    if(!DB[tipo]) return;
+    const label = tipo.replace('GIGE — ','').replace('RED — ','').replace(' (sin PPP)','');
+    h+=`<optgroup label="${label}">`;
+    Object.keys(DB[tipo]).forEach(m=>{
+      h+=`<option value="${tipo}||${m}">${m}</option>`;
+    });
+    h+='</optgroup>';
+  });
+
+  const ms = document.getElementById('am'+id);
+  ms.innerHTML = h;
+  ms.value = '';
+
+  // reset submotivo
+  const ss = document.getElementById('as'+id);
+  ss.innerHTML='<option value="" disabled selected>-- Submotivo (opcional) --</option>';
+  ss.disabled=true;
+
+  // show motivo wrap, hide sub wrap
+  document.getElementById('motivo-wrap-'+id).style.display='block';
+  document.getElementById('sub-wrap-'+id).style.display='none';
+
+  updBadge(id);
 }
 function bMotivo(tipo){
   if(!tipo||!DB[tipo]) return '<option value="" disabled selected>-- Selecciona Tipo primero --</option>';
@@ -458,19 +506,30 @@ function bSub(tipo,mot){
   return h;
 }
 
-function onTipoChange(id,cb){
-  const t=v('at'+id);
-  const ms=document.getElementById('am'+id);
-  ms.innerHTML=bMotivo(t); ms.disabled=!t;
-  const ss=document.getElementById('as'+id);
-  ss.innerHTML='<option value="" disabled selected>-- Submotivo (opcional) --</option>'; ss.disabled=true;
-  updBadge(id);
-  if(cb) cb();
-}
+// onTipoChange removed — replaced by setDept()
 function onMotivoChange(id){
-  const t=v('at'+id), m=v('am'+id);
+  const raw=v('am'+id); // format: "tipo||motivo"
+  if(!raw) return;
+  const sep=raw.indexOf('||');
+  const t=raw.substring(0,sep);
+  const m=raw.substring(sep+2);
+
+  // store parsed values for gd()
+  document.getElementById('am'+id).setAttribute('data-tipo', t);
+  document.getElementById('am'+id).setAttribute('data-mot', m);
+
+  // build submotivo options
   const ss=document.getElementById('as'+id);
-  ss.innerHTML=bSub(t,m); ss.disabled=!m;
+  if(DB[t]&&DB[t][m]&&DB[t][m].length){
+    let h='<option value="" disabled selected>-- Submotivo (opcional) --</option>';
+    DB[t][m].forEach(s=>{h+=`<option value="${s}">${s}</option>`});
+    ss.innerHTML=h; ss.disabled=false;
+    document.getElementById('sub-wrap-'+id).style.display='block';
+  } else {
+    ss.innerHTML='<option value="" disabled selected>-- Sin submotivos --</option>';
+    ss.disabled=true;
+    document.getElementById('sub-wrap-'+id).style.display='none';
+  }
   updBadge(id);
   // star sync
   const key=t+'||'+m;
@@ -486,9 +545,16 @@ function onSubChange(id){
   }
 }
 function updBadge(id){
-  const m=v('am'+id)||'';
+  const amEl=document.getElementById('am'+id);
+  const m=amEl?.getAttribute('data-mot')||'';
+  const dept=cardDept[id]||'';
   const bg=document.getElementById('abg'+id);
-  if(bg) bg.textContent=m||'Nueva Actividad';
+  if(bg){
+    bg.textContent=m||(dept?'['+dept+'] Elige motivo':'Nueva Actividad');
+    // color by dept
+    bg.style.background=dept==='GIGE'?'#E8F0FB':dept==='RED'?'#FDECEA':'var(--gl)';
+    bg.style.color=dept==='GIGE'?'#0055AA':dept==='RED'?'#C8102E':'var(--gd)';
+  }
 }
 
 // ── ACTIVIDADES ───────────────────────────────────
@@ -511,20 +577,38 @@ function addAct(afterId){
       </div>
     </div>
     <div class="ag">
-      <div class="f full"><label>Tipo de Asesoría</label>
-        <select id="at${id}" onchange="onTipoChange(${id})">${bTipo()}</select>
+
+      <!-- DEPT TOGGLE: GIGE o RED -->
+      <div class="full">
+        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Departamento</div>
+        <div class="dept-row">
+          <button class="dept-btn" id="btn-gige-${id}" onclick="setDept(${id},'GIGE')">
+            GIGE
+            <span class="dept-label">Programa Propio (PPP)</span>
+          </button>
+          <button class="dept-btn" id="btn-red-${id}" onclick="setDept(${id},'RED')">
+            RED
+            <span class="dept-label">Todas las áreas (sin PPP)</span>
+          </button>
+        </div>
       </div>
-      <div class="f full"><label>Motivo</label>
-        <select id="am${id}" onchange="onMotivoChange(${id})" disabled>
-          <option value="" disabled selected>-- Selecciona Tipo primero --</option>
+
+      <!-- MOTIVO (aparece después de elegir dept) -->
+      <div class="f full" id="motivo-wrap-${id}" style="display:none;">
+        <label>Motivo</label>
+        <select id="am${id}" onchange="onMotivoChange(${id})">
+          <option value="" disabled selected>-- Selecciona Motivo --</option>
         </select>
       </div>
-      <div class="f full">
-        <label>Submotivo <span class="sub-note">(opcional — uso interno, no aparece en PDF)</span></label>
+
+      <!-- SUBMOTIVO -->
+      <div class="f full" id="sub-wrap-${id}" style="display:none;">
+        <label>Submotivo <span class="sub-note">(uso interno — no aparece en PDF)</span></label>
         <select id="as${id}" onchange="onSubChange(${id})" disabled>
           <option value="" disabled selected>-- Submotivo (opcional) --</option>
         </select>
       </div>
+
       <div class="f"><label>ID Asesoría</label><input id="aid${id}" placeholder="Ej: 11605431"/></div>
       <div class="f"><label>Fecha</label><input type="date" id="af${id}" value="${tod()}"/></div>
       <div class="f full">
@@ -586,15 +670,22 @@ function gd(){
     enombre:v('enombre'),erut:v('erut'),eemail:v('eemail'),
     rnombre:v('rnombre'),rrut:v('rrut'),rcargo:v('rcargo'),remail:v('remail'),
     fcump:v('fcump'),
-    acts:acts.map(a=>({
-      tipo:v('at'+a.id),
-      motivo:v('am'+a.id),          // usado en el PDF como título limpio
-      sub:v('as'+a.id),             // solo uso interno
-      ida:v('aid'+a.id),
-      fecha:v('af'+a.id),
-      desc:document.getElementById('ad'+a.id)?.value||'',
-      acuer:document.getElementById('aa'+a.id)?.value||''
-    }))
+    acts:acts.map(a=>{
+      const amEl=document.getElementById('am'+a.id);
+      const tipo=amEl?.getAttribute('data-tipo')||'';
+      const motivo=amEl?.getAttribute('data-mot')||'';
+      const dept=cardDept[a.id]||'';
+      return {
+        dept,
+        tipo,
+        motivo,
+        sub:v('as'+a.id),
+        ida:v('aid'+a.id),
+        fecha:v('af'+a.id),
+        desc:document.getElementById('ad'+a.id)?.value||'',
+        acuer:document.getElementById('aa'+a.id)?.value||''
+      };
+    })
   };
 }
 
@@ -606,7 +697,7 @@ function updPrev(){
   t+=`PARTICIPANTES:\n${partLines}\n- ${d.enombre} | Experto en Prevención ACHS\n\n`;
   t+=`OBJETIVO:\n${d.obj}\n\nACTIVIDADES (${d.acts.length}):\n`;
   d.acts.forEach((a,i)=>{
-    t+=`\n[${i+1}] ${a.motivo||a.tipo} | ID: ${a.ida} | ${fd(a.fecha)}\n`;
+    t+=`\n[${i+1}] [${a.dept}] ${a.motivo} | ID: ${a.ida} | ${fd(a.fecha)}\n`;
     t+=`    ${(a.desc||'').substring(0,80)}...\n    → ${a.acuer}\n`;
   });
   t+=`\nFIRMAS: ${d.enombre} (${d.erut}) / ${d.rnombre} (${d.rrut})\n`;
