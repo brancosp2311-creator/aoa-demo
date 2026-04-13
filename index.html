@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>AOA Generator — ACHS</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -131,10 +131,286 @@ select option[disabled]{color:#aaa;font-style:italic}
 .dept-btn.active-red{border-color:#C8102E;background:#FDECEA;color:#C8102E}
 .dept-btn.active-hye{border-color:#0a8a45;background:#e8faf1;color:#0a8a45}
 .dept-label{font-size:9px;font-weight:400;display:block;margin-top:2px;letter-spacing:.3px;text-transform:none}
+
+/* ── DARK MODE ─────────────────────────────────────────────────── */
+body.dark{--g:#13C063;--gd:#0a8a45;--gl:#0d2e1e;--bk:#13C063;--g1:#1a1a1a;--g2:#242424;--g3:#333;--g4:#999;--wh:#2a2a2a;--tx:#e8e8e8}
+body.dark .hdr{background:#0d0d0d}
+body.dark .tabs{background:#111}
+body.dark .login-screen-inner{background:#1e1e1e;border:1.5px solid #333}
+body.dark input,body.dark select,body.dark textarea{background:#1e1e1e;color:#e8e8e8;border-color:#444}
+body.dark .act-card{background:#1e1e1e;border-color:#333}
+body.dark .act-card:hover{border-color:var(--g)}
+body.dark .fav-wrap{background:#1e1e1e;border-color:var(--g)}
+body.dark .foot{background:#1a1a1a;color:#666;border-color:#333}
+body.dark .smsg.ok{background:#0d2e1e;color:#4ddb8a;border-color:#1a6639}
+body.dark .smsg.err{background:#2e0d0d;color:#f5a9a9;border-color:#6b2222}
+body.dark .smsg.load{background:#0d1a2e;color:#a9c4f5;border-color:#1a3a6b}
+body.dark .icard{background:#0d2e1e;border-color:#1a4a2e;color:#4ddb8a}
+body.dark .prev{background:#1e1e1e;border-color:#333;color:#ccc}
+body.dark .stitle{color:#ccc;border-color:#444}
+body.dark .ctitle{color:#ccc;border-color:#444}
+body.dark .btn-add{background:#333;color:#e8e8e8}
+body.dark .btn-add:hover{background:#444}
+body.dark .btn-s{background:#2a2a2a;color:#e8e8e8;border-color:#444}
+body.dark .btn-s:hover{border-color:#888}
+body.dark .fav-chip{background:#0d2e1e;border-color:var(--g);color:#4ddb8a}
+body.dark .fav-chip:hover{background:var(--g);color:#fff}
+body.dark .part-chips{background:#1e1e1e;border-color:#444}
+body.dark .part-chip{background:#2a2a2a;border-color:#444}
+body.dark select option{background:#1e1e1e;color:#e8e8e8}
+body.dark .lbl{background:#2a2a2a;color:#ccc}
+body.dark .dept-btn{background:#1e1e1e;color:#888;border-color:#444}
+body.dark .dept-btn:hover{border-color:#888;color:#ccc}
+body.dark .dept-btn.active-gige{background:#0d1a2e;border-color:#3a7acc;color:#7ab3f5}
+body.dark .dept-btn.active-red{background:#2e0d0d;border-color:#cc3a3a;color:#f57a7a}
+body.dark .dept-btn.active-hye{background:#0d2e1e;border-color:var(--g);color:#4ddb8a}
+body.dark .bp-selected{background:#0d2e1e;border-color:var(--g);color:#4ddb8a}
+body.dark .abar{background:#1a1a1a;border-color:#333}
+body.dark .act-top-bar .stitle{color:#ccc}
+body.dark .sub-note{color:#666}
+body.dark .act-footer .btn-add-here{border-color:#444;color:#666}
+body.dark .act-footer .btn-add-here:hover{border-color:var(--g);color:#4ddb8a;background:#0d2e1e}
+body.dark .main-wrap{border-color:#333}
+body.dark #login-screen{background:#111}
+
+/* ── MODO OSCURO TOGGLE ─────────────────────────────────────────── */
+.dark-toggle{background:none;border:1.5px solid rgba(255,255,255,.2);border-radius:6px;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;color:#fff;flex-shrink:0}
+.dark-toggle:hover{background:rgba(255,255,255,.1)}
+
+/* ── TOAST NOTIFICATIONS ─────────────────────────────────────────── */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#111;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;max-width:280px;border-left:3px solid var(--g)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{border-left-color:#C8102E}
+.toast.warn{border-left-color:#f5a000}
+
+/* ── DRAFT BADGE ─────────────────────────────────────────────────── */
+.draft-badge{background:#f5a000;color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;letter-spacing:.3px;display:none}
+.draft-badge.show{display:inline-block}
+
+/* ── TEMPLATE MODAL ─────────────────────────────────────────────── */
+#tpl-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8888;display:none;align-items:center;justify-content:center}
+#tpl-modal.open{display:flex}
+.tpl-box{background:var(--wh);border-radius:10px;width:480px;max-width:95vw;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.tpl-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1.5px solid var(--g3);background:var(--g2)}
+.tpl-head h3{font-size:13px;font-weight:800;color:var(--tx);margin:0}
+.tpl-body{overflow-y:auto;padding:12px;flex:1}
+.tpl-card{background:var(--g1);border:1.5px solid var(--g3);border-radius:7px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
+.tpl-card:hover{border-color:var(--g);background:var(--gl)}
+.tpl-card-name{font-size:12px;font-weight:700;color:var(--tx)}
+.tpl-card-meta{font-size:10px;color:var(--g4);margin-top:2px}
+.tpl-card-actions{display:flex;gap:6px;flex-shrink:0}
+.tpl-btn-use{background:var(--g);color:#fff;border:none;border-radius:5px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.tpl-btn-del{background:none;border:1.5px solid var(--g3);color:var(--g4);border-radius:5px;padding:5px 8px;font-size:11px;cursor:pointer;font-family:inherit}
+.tpl-btn-del:hover{border-color:#C8102E;color:#C8102E}
+.tpl-empty{text-align:center;color:var(--g4);padding:24px;font-size:12px;font-style:italic}
+body.dark .tpl-box{background:#1e1e1e}
+body.dark .tpl-head{background:#242424;border-color:#333}
+body.dark .tpl-card{background:#2a2a2a;border-color:#444}
+body.dark .tpl-card:hover{border-color:var(--g);background:#0d2e1e}
+
+/* ── VALIDATION MODAL ────────────────────────────────────────────── */
+#val-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8889;display:none;align-items:center;justify-content:center}
+#val-modal.open{display:flex}
+.val-box{background:var(--wh);border-radius:10px;width:400px;max-width:95vw;padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.val-title{font-size:14px;font-weight:800;color:#C8102E;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.val-list{list-style:none;padding:0;margin:0 0 16px}
+.val-list li{font-size:12px;color:var(--tx);padding:5px 0;border-bottom:1px solid var(--g2);display:flex;align-items:center;gap:8px}
+.val-list li::before{content:"⚠";color:#f5a000}
+.val-actions{display:flex;justify-content:flex-end;gap:8px}
+body.dark .val-box{background:#1e1e1e}
+
+
+/* ── LAYOUT CON PREVIEW LATERAL ─────────────────────────────────── */
+.app-layout{display:flex;gap:0;align-items:flex-start;position:relative}
+.app-main{flex:1;min-width:0;transition:margin-right .25s}
+.preview-panel{width:0;overflow:hidden;transition:width .25s;flex-shrink:0;position:sticky;top:16px}
+.preview-panel.open{width:340px}
+.preview-inner{width:340px;background:var(--wh);border:1.5px solid var(--g3);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.preview-head{background:var(--bk);color:#fff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700}
+.preview-head span{letter-spacing:.3px}
+.preview-content{padding:14px;font-size:10.5px;line-height:1.7;color:var(--tx);max-height:calc(100vh - 120px);overflow-y:auto;font-family:'Segoe UI',Arial,sans-serif}
+.preview-section{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--g2)}
+.preview-section:last-child{border-bottom:none;margin-bottom:0}
+.preview-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--g4);margin-bottom:4px}
+.preview-value{color:var(--tx);word-break:break-word}
+.preview-act{background:var(--g1);border:1px solid var(--g3);border-radius:6px;padding:8px 10px;margin-bottom:6px}
+.preview-act-title{font-weight:700;color:var(--gd);font-size:11px;margin-bottom:3px}
+.preview-act-dept{display:inline-block;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.preview-act-dept.gige{background:#E8F0FB;color:#0055AA}
+.preview-act-dept.red{background:#FDECEA;color:#C8102E}
+.preview-act-dept.hye{background:var(--gl);color:var(--gd)}
+.preview-act-desc{font-size:10px;color:var(--g4);margin-top:3px;white-space:pre-wrap;word-break:break-word}
+.preview-empty{color:var(--g4);font-style:italic;font-size:11px;text-align:center;padding:20px 0}
+.preview-toggle{background:var(--bk);border:none;color:#fff;padding:7px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:background .15s}
+.preview-toggle:hover{background:#333}
+body.dark .preview-inner{background:#1e1e1e;border-color:#333}
+body.dark .preview-head{background:#0d0d0d}
+body.dark .preview-act{background:#2a2a2a;border-color:#444}
+body.dark .preview-content{color:#ccc}
+body.dark .preview-act-dept.gige{background:#0d1a2e;color:#7ab3f5}
+body.dark .preview-act-dept.red{background:#2e0d0d;color:#f57a7a}
+
+/* Responsive: hide preview on small screens */
+@media(max-width:900px){
+  .preview-panel,.preview-panel.open{width:0;display:none}
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE MÓVIL / TABLET
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .wrap { padding: 8px; }
+  .hdr { padding: 10px 14px; border-radius: 8px 8px 0 0; }
+  .hdr-t h2 { font-size: 12px; }
+  .hdr-t p  { font-size: 9px; }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 14px; }
+  .wrap { padding: 0; max-width: 100%; }
+  .main-wrap { border-radius: 0; border-left: none; border-right: none; box-shadow: none; }
+
+  .hdr { padding: 10px 14px; border-radius: 0; flex-wrap: wrap; gap: 8px; }
+  .hdr-l { gap: 10px; flex: 1; min-width: 0; }
+  .logo-box { width: 38px; height: 38px; flex-shrink: 0; }
+  .logo-box span { font-size: 13px; }
+  .hdr-t h2 { font-size: 12px; line-height: 1.3; }
+  .hdr-t p { display: none; }
+  .hdr-r { gap: 6px; }
+  .copy { display: none; }
+  .v-badge { font-size: 8px; padding: 2px 5px; }
+  .preview-toggle { display: none !important; }
+  .dark-toggle { width: 28px; height: 28px; font-size: 14px; }
+  .draft-badge { font-size: 8px; padding: 2px 5px; }
+
+  .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; display: flex; flex-wrap: nowrap; border-radius: 0; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 10px 14px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+
+  .panel { padding: 12px; }
+
+  .g2, .g3, .ag { grid-template-columns: 1fr; gap: 8px; margin-bottom: 10px; }
+  .full, .ag .full { grid-column: 1 / -1; }
+
+  .dept-row { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .dept-btn { padding: 8px 4px; font-size: 11px; border-radius: 7px; }
+  .dept-label { font-size: 8px; margin-top: 2px; }
+
+  .act-card { padding: 10px 12px; border-radius: 8px; }
+  .act-card-hdr { margin-bottom: 8px; }
+  .act-badge { font-size: 10px; max-width: 60%; }
+  .btn-star, .btn-rm { width: 28px; height: 28px; font-size: 14px; }
+
+  .bp-input { font-size: 14px; padding: 10px; }
+  .bp-opt { font-size: 13px; padding: 10px 12px; }
+  .bp-selected { font-size: 12px; }
+
+  .part-add-row { grid-template-columns: 1fr; gap: 6px; }
+  .btn-part-add { width: 100%; padding: 11px; font-size: 13px; }
+  .part-chip { font-size: 12px; padding: 5px 12px; }
+
+  .fav-wrap { padding: 10px; }
+  .fav-chip { font-size: 11px; padding: 5px 10px; }
+
+  .act-top-bar { flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 10px; }
+  .act-top-bar .btn-add,
+  .act-top-bar .btn-s,
+  #tpl-save-btn { width: 100%; padding: 11px; font-size: 13px; text-align: center; box-sizing: border-box; }
+
+  .abar { flex-wrap: wrap; gap: 8px; padding: 12px; border-radius: 0; }
+  .abar .btn-s { flex: 1 1 calc(50% - 4px); min-width: 0; padding: 10px 6px; font-size: 12px; text-align: center; box-sizing: border-box; }
+  .abar .btn-p { flex: 1 1 100%; padding: 13px; font-size: 14px; order: 10; }
+
+  .foot { font-size: 9px; padding: 6px 10px; border-radius: 0; }
+
+  .f input, .f select, .f textarea { font-size: 14px; padding: 10px; border-radius: 8px; }
+  .f label { font-size: 11px; }
+  .f textarea { min-height: 60px; }
+
+  .tpl-box { width: 95vw; max-height: 85vh; border-radius: 10px; }
+  .tpl-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .tpl-card-actions { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+  .tpl-btn-use { padding: 9px; font-size: 13px; }
+  .tpl-btn-del { padding: 9px 12px; font-size: 13px; }
+
+  .val-box { width: 95vw; padding: 18px; border-radius: 10px; }
+  .val-title { font-size: 13px; }
+  .val-list li { font-size: 12px; }
+  .val-actions { flex-direction: column; gap: 8px; }
+  .val-actions .btn-s, .val-actions .btn-p { width: 100%; padding: 12px; text-align: center; }
+
+  #login-screen { padding: 16px; padding-top: 60px; align-items: flex-start; }
+  #login-screen > div { width: 100%; max-width: 100%; padding: 28px 20px; border-radius: 12px; box-sizing: border-box; }
+
+  #toast-container { bottom: 80px; right: 12px; left: 12px; }
+  .toast { max-width: 100%; font-size: 13px; }
+
+  .ctitle { font-size: 11px; padding: 9px 0; }
+  .btn-add-here { font-size: 12px; padding: 9px; }
+  .stitle { font-size: 11px; }
+
+  .cascade-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 375px) {
+  .hdr-t h2 { font-size: 10px; }
+  .tab { padding: 9px 10px; font-size: 10px; }
+  .dept-btn { padding: 7px 2px; font-size: 10px; }
+  .abar .btn-s { font-size: 11px; padding: 9px 4px; }
+  .logo-box { width: 34px; height: 34px; }
+}
+
 </style>
 </head>
 <body>
-<div class="wrap">
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0f0ee;">
+  <div style="background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.12);padding:40px 36px;width:340px;max-width:95vw;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center;">
+      <div style="background:#13C063;border-radius:9px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="color:#fff;font-size:16px;font-weight:900;letter-spacing:-0.5px;">achs</span>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#111;">Generador AOA</div>
+        <div style="font-size:11px;color:#888;">Acceso restringido · ACHS</div>
+      </div>
+    </div>
+    <div id="login-err" style="display:none;background:#fff0f0;color:#7a1010;border:1.5px solid #f5a9a9;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:600;margin-bottom:14px;">
+      Usuario o contraseña incorrectos.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:4px;">Usuario</label>
+        <input id="login-user" type="text" placeholder="Usuario" autocomplete="username"
+          style="width:100%;border:1.5px solid #d0d0cd;border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;transition:border .15s;"
+          onfocus="this.style.borderColor='#13C063'" onblur="this.style.borderColor='#d0d0cd'"
+          onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()"/>
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:4px;">Contraseña</label>
+        <input id="login-pass" type="password" placeholder="Contraseña" autocomplete="current-password"
+          style="width:100%;border:1.5px solid #d0d0cd;border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;transition:border .15s;"
+          onfocus="this.style.borderColor='#13C063'" onblur="this.style.borderColor='#d0d0cd'"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button onclick="doLogin()"
+        style="background:#13C063;color:#fff;border:none;border-radius:7px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;transition:background .15s;"
+        onmouseover="this.style.background='#0a8a45'" onmouseout="this.style.background='#13C063'">
+        Ingresar
+      </button>
+    </div>
+    <div style="text-align:center;font-size:10px;color:#aaa;margin-top:20px;">
+      © 2026 Branco Sandoval Palma · ACHS · Uso interno exclusivo
+    </div>
+  </div>
+</div>
+
+<div class="wrap" id="main-app" style="display:none;">
+<div class="app-layout">
+<div class="app-main">
 <div class="main-wrap">
 
 <div class="hdr">
@@ -145,9 +421,14 @@ select option[disabled]{color:#aaa;font-style:italic}
       <p>Branco Sandoval Palma · Experto en Prevención · ACHS</p>
     </div>
   </div>
-  <div class="hdr-r">
-    <div class="v-badge">v4.0</div>
-    <div class="copy">© 2026 Branco Sandoval Palma · ACHS<br>Todos los derechos reservados · Uso interno exclusivo</div>
+  <div class="hdr-r" style="display:flex;align-items:center;gap:10px;">
+    <span class="draft-badge" id="draft-badge">BORRADOR</span>
+    <button class="dark-toggle" id="dark-btn" onclick="toggleDark()" title="Modo oscuro">🌙</button>
+    <button class="preview-toggle" id="preview-btn" onclick="togglePreview()" title="Vista previa en tiempo real">👁 Preview</button>
+    <div style="text-align:right;">
+      <div class="v-badge">v4.0</div>
+      <div class="copy">© 2026 Branco Sandoval Palma · ACHS<br>Uso interno exclusivo</div>
+    </div>
   </div>
 </div>
 
@@ -271,11 +552,30 @@ select option[disabled]{color:#aaa;font-style:italic}
 
 <div class="abar">
   <button class="btn-s" onclick="resetF()">Limpiar</button>
+  <button class="btn-s" onclick="saveDraft()" title="Guardar borrador">💾 Guardar</button>
+  <button class="btn-s" onclick="openTplModal()" title="Plantillas">📋 Plantillas</button>
+  <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" title="Enviar por correo (Outlook)" style="color:#0078d4;border-color:#0078d4;">📧 Enviar</button>
   <button class="btn-p green" style="flex:2;" onclick="genPDF()">⬇ Generar PDF</button>
 </div>
 <div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v4.0 · Uso interno exclusivo</div>
+</div><!-- end main-wrap -->
+</div><!-- end app-main -->
+
+<!-- LIVE PREVIEW PANEL -->
+<div class="preview-panel" id="preview-panel">
+  <div class="preview-inner">
+    <div class="preview-head">
+      <span>👁 Vista Previa</span>
+      <button onclick="togglePreview()" title="Cerrar" style="background:none;border:1.5px solid rgba(255,255,255,.3);color:#fff;width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div class="preview-content" id="live-preview-content">
+      <div class="preview-empty">Completa el formulario para ver la vista previa en tiempo real.</div>
+    </div>
+  </div>
 </div>
-</div>
+
+</div><!-- end app-layout -->
+</div><!-- end wrap/main-app -->
 
 <script>
 // ══════════════════════════════════════════
@@ -4818,6 +5118,462 @@ const TEXTOS = {
   "PRE01": {
     "desc": "Se realiza prescripción por fiscalización psicosocial en el centro de trabajo, estableciendo formalmente las medidas requeridas para dar cumplimiento a los protocolos MINSAL de factores de riesgo psicosocial en el plazo determinado.",
     "acuer": "Prescripción de fiscalización psicosocial es derivada a referente con registro formal."
+  },
+  "AVI01": {
+    "desc": "Se realiza asesoría ACHS Virtual al centro de trabajo, orientando al referente en el uso de la plataforma digital ACHS, funcionalidades disponibles, herramientas de autogestión y recursos preventivos en línea.",
+    "acuer": "Registro de asesoría ACHS Virtual queda registrado en sistema."
+  },
+  "AVI02": {
+    "desc": "Se realiza orientación sobre prestaciones económicas disponibles para el centro de trabajo y sus trabajadores, informando sobre subsidios, cobertura de la Ley 16.744 y procesos de tramitación ante ACHS.",
+    "acuer": "Se entrega información de prestaciones económicas a referente institucional."
+  },
+  "AVI04": {
+    "desc": "Se realiza difusión de la nueva función para emitir certificado de tasas al día en línea, orientando al referente en el acceso y uso de esta funcionalidad de autogestión en la plataforma ACHS.",
+    "acuer": "Referente queda habilitado para emitir certificado de tasas en línea de forma autónoma."
+  },
+  "AVI05": {
+    "desc": "Se realiza contacto con el centro de trabajo en respuesta a solicitud de contacto del referente, atendiendo la consulta o requerimiento planteado y coordinando las acciones preventivas necesarias.",
+    "acuer": "Requerimiento del referente es atendido y gestión queda registrada en sistema ACHS."
+  },
+  "CAM01": {
+    "desc": "Se realiza bienvenida a nuevo centro de trabajo adherido a ACHS, presentando los servicios disponibles, plan de trabajo preventivo inicial, equipo de atención asignado y compromisos de trabajo conjunto.",
+    "acuer": "Registro de bienvenida queda en sistema ACHS."
+  },
+  "CAM02": {
+    "desc": "Se realiza notificación al centro de trabajo sobre cambios en el equipo de atención ACHS, presentando al nuevo experto o ejecutivo responsable y reforzando la continuidad del servicio y los compromisos preventivos.",
+    "acuer": "Notificación de cambio de equipo de atención queda registrada en sistema ACHS."
+  },
+  "CEP01": {
+    "desc": "Se realiza carga proactiva del contacto de enfermedad profesional en el sistema Salesforce del centro de trabajo, asegurando la correcta identificación del referente EP y la trazabilidad de los casos en el sistema de gestión.",
+    "acuer": "Contacto EP cargado en Salesforce queda registrado en sistema ACHS."
+  },
+  "CME01": {
+    "desc": "Se realiza seguimiento de casos médicos activos del centro de trabajo, revisando el estado de atención de trabajadores lesionados o con enfermedad profesional, gestionando coordinaciones con la red asistencial ACHS según requerimiento.",
+    "acuer": "Estado de seguimiento de casos médicos queda registrado en sistema ACHS."
+  },
+  "COF01": {
+    "desc": "Se realiza actualización de contactos del centro de trabajo en el sistema ACHS, verificando y actualizando datos del referente, jefatura y personas de contacto para asegurar la correcta comunicación y trazabilidad del servicio.",
+    "acuer": "Contactos del centro de trabajo actualizados en sistema ACHS."
+  },
+  "COF04": {
+    "desc": "Se realiza gestión de contacto con gremio asociado al centro de trabajo, coordinando actividades preventivas, difundiendo servicios ACHS disponibles para el sector y estableciendo acuerdos de trabajo conjunto.",
+    "acuer": "Registro de contacto con gremio queda en sistema ACHS."
+  },
+  "COF05": {
+    "desc": "Se realiza actualización de los datos del encargado de capacitación del centro de trabajo en el sistema ACHS, verificando información de contacto, cargo y vigencia del responsable del proceso formativo.",
+    "acuer": "Datos del encargado de capacitación actualizados en sistema ACHS."
+  },
+  "DSC01": {
+    "desc": "Se realiza difusión de campaña de operativos de salud ACHS en el centro de trabajo, informando al referente sobre la disponibilidad, modalidad de acceso y beneficios de los operativos preventivos para sus trabajadores.",
+    "acuer": "Información de campaña operativos de salud derivada a referente institucional."
+  },
+  "DSC02": {
+    "desc": "Se realiza difusión de la campaña de calidad de vida ACHS en el centro de trabajo, informando al referente sobre las actividades disponibles, inscripción y beneficios para promover el bienestar laboral de los trabajadores.",
+    "acuer": "Información de campaña calidad de vida derivada a referente institucional."
+  },
+  "DSC03": {
+    "desc": "Se realiza difusión de la campaña del mes del corazón ACHS en el centro de trabajo, informando sobre actividades, recursos educativos disponibles y cómo acceder a los servicios de prevención cardiovascular para los trabajadores.",
+    "acuer": "Información de campaña mes del corazón derivada a referente institucional."
+  },
+  "DSC04": {
+    "desc": "Se realiza difusión del programa de prevención del consumo de alcohol y drogas ACHS en el centro de trabajo, informando al referente sobre el programa, sus componentes y cómo implementarlo en la organización.",
+    "acuer": "Información del programa de prevención de alcohol y drogas derivada a referente institucional."
+  },
+  "DSC05": {
+    "desc": "Se realiza difusión de la campaña del mes de la inclusión ACHS en el centro de trabajo, informando sobre actividades, recursos disponibles y cómo promover una cultura de inclusión laboral entre los trabajadores.",
+    "acuer": "Información de campaña mes de la inclusión derivada a referente institucional."
+  },
+  "EXP03": {
+    "desc": "Se realiza actividad de relacionamiento con el cliente del centro de trabajo, fortaleciendo el vínculo con el referente y equipo directivo, identificando necesidades preventivas y oportunidades de mejora del servicio ACHS.",
+    "acuer": "Registro de actividad de relacionamiento queda en sistema ACHS."
+  },
+  "EXP04": {
+    "desc": "Se realiza gestión de empresa con riesgo de fuga según modelo de Score ACHS, contactando al referente para identificar causas de insatisfacción, ofreciendo soluciones y reforzando el compromiso de servicio preventivo.",
+    "acuer": "Gestión de empresa con riesgo de fuga queda registrada en sistema ACHS."
+  },
+  "GAF02": {
+    "desc": "Se realiza gestión de compromisos pendientes con el centro de trabajo, contactando al referente para revisar el estado de acuerdos establecidos en sesiones anteriores y definiendo acciones de seguimiento para su cumplimiento.",
+    "acuer": "Estado de compromisos pendientes queda registrado en sistema ACHS."
+  },
+  "GAF06": {
+    "desc": "Se realiza llamado de fidelización al referente del centro de trabajo, evaluando la satisfacción con el servicio ACHS, identificando necesidades no atendidas y reforzando el compromiso de trabajo preventivo conjunto.",
+    "acuer": "Registro de llamado de fidelización queda en sistema ACHS."
+  },
+  "GAF07": {
+    "desc": "Se realiza difusión y venta del Diagnóstico Digital de Cultura (OCDI) al centro de trabajo, presentando la herramienta, sus beneficios para medir y mejorar la cultura de seguridad y el proceso de implementación.",
+    "acuer": "Información del OCDI derivada a referente para evaluación y decisión."
+  },
+  "MAR01": {
+    "desc": "Se realiza difusión de la campaña Mundo ACHS — Completar Perfil en el centro de trabajo, orientando al referente y trabajadores para completar su perfil en la plataforma digital y acceder a todos los beneficios disponibles.",
+    "acuer": "Información de campaña Mundo ACHS derivada a referente institucional."
+  },
+  "MAR02": {
+    "desc": "Se realiza difusión de la campaña CEM (Customer Experience Management) ACHS en el centro de trabajo, informando al referente sobre la encuesta de satisfacción, su importancia y cómo participar en el proceso de retroalimentación.",
+    "acuer": "Información de campaña CEM derivada a referente institucional."
+  },
+  "MAR03": {
+    "desc": "Se realiza difusión de la campaña Mundo ACHS — Contar Historia en el centro de trabajo, invitando al referente y trabajadores a compartir su experiencia con ACHS en la plataforma digital y promoviendo la participación activa.",
+    "acuer": "Información de campaña Mundo ACHS — Contar Historia derivada a referente."
+  },
+  "MAR04": {
+    "desc": "Se realiza difusión de la campaña Segurito Va a Clases ACHS en el centro de trabajo, informando al referente sobre los recursos educativos disponibles en la plataforma, talleres y actividades del programa para trabajadores.",
+    "acuer": "Información de campaña Segurito Va a Clases derivada a referente institucional."
+  },
+  "MAR07": {
+    "desc": "Se realiza difusión de la campaña ACHS Gestión en el centro de trabajo, informando al referente sobre las herramientas de gestión preventiva disponibles en la plataforma digital y cómo aprovecharlas en su organización.",
+    "acuer": "Información de campaña ACHS Gestión derivada a referente institucional."
+  },
+  "MAR09": {
+    "desc": "Se realiza difusión de la campaña Segurito Online ACHS en el centro de trabajo, informando al referente sobre los recursos digitales de capacitación disponibles en línea y cómo inscribir a sus trabajadores en los cursos.",
+    "acuer": "Información de campaña Segurito Online derivada a referente institucional."
+  },
+  "MAR12": {
+    "desc": "Se realiza difusión de la campaña Saber Llegar ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de accidentes de trayecto y cómo promoverlos entre los trabajadores.",
+    "acuer": "Información de campaña Saber Llegar derivada a referente institucional."
+  },
+  "MAR13": {
+    "desc": "Se realiza difusión de la campaña Día de la Mujer ACHS en el centro de trabajo, informando al referente sobre las actividades, recursos y materiales disponibles para conmemorar y promover la equidad en el entorno laboral.",
+    "acuer": "Información de campaña Día de la Mujer derivada a referente institucional."
+  },
+  "MAR15": {
+    "desc": "Se realiza difusión de la campaña Ofinautas ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de riesgos ergonómicos en trabajo administrativo y oficinas.",
+    "acuer": "Información de campaña Ofinautas derivada a referente institucional."
+  },
+  "MAR16": {
+    "desc": "Se realiza difusión de la campaña Buen Trato Salud ACHS en el centro de trabajo del sector salud, informando al referente sobre los recursos disponibles para la prevención de violencia laboral y promoción del buen trato.",
+    "acuer": "Información de campaña Buen Trato Salud derivada a referente institucional."
+  },
+  "MKT01": {
+    "desc": "Se realiza difusión de la campaña 18 de Septiembre ACHS en el centro de trabajo, informando al referente sobre los recursos preventivos disponibles para las celebraciones nacionales y los riesgos asociados a este período.",
+    "acuer": "Información de campaña 18 de Septiembre derivada a referente institucional."
+  },
+  "MKT02": {
+    "desc": "Se realiza difusión de la campaña de Fin de Año ACHS en el centro de trabajo, informando al referente sobre los recursos preventivos disponibles para el período de fiestas y los riesgos asociados a esta época del año.",
+    "acuer": "Información de campaña Fin de Año derivada a referente institucional."
+  },
+  "MKT03": {
+    "desc": "Se realiza difusión de la campaña Señales de Inclusión ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para promover una cultura de inclusión y diversidad en el entorno laboral.",
+    "acuer": "Información de campaña Señales de Inclusión derivada a referente institucional."
+  },
+  "MKT04": {
+    "desc": "Se realiza difusión de la campaña de Verano ACHS en el centro de trabajo, informando al referente sobre los recursos preventivos disponibles para los riesgos del período estival: calor, UV solar y accidentes de trayecto.",
+    "acuer": "Información de campaña Verano derivada a referente institucional."
+  },
+  "MKT08": {
+    "desc": "Se realiza difusión de la campaña de Vacunación Influenza ACHS en el centro de trabajo, informando al referente sobre los operativos disponibles, proceso de inscripción y beneficios de la vacunación para los trabajadores.",
+    "acuer": "Información de campaña Vacunación Influenza derivada a referente institucional."
+  },
+  "MKT09": {
+    "desc": "Se realiza difusión de la campaña Día del Trabajador ACHS en el centro de trabajo, informando al referente sobre las actividades y recursos disponibles para conmemorar la fecha y promover el bienestar laboral.",
+    "acuer": "Información de campaña Día del Trabajador derivada a referente institucional."
+  },
+  "MKT12": {
+    "desc": "Se realiza difusión de la campaña Dale un Minuto a tu Salud ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la autoevaluación de salud y bienestar de los trabajadores.",
+    "acuer": "Información de campaña Dale un Minuto a tu Salud derivada a referente."
+  },
+  "MKT13": {
+    "desc": "Se realiza difusión de campaña de mailing masivo ACHS al centro de trabajo, informando al referente sobre [TEMA DE LA CAMPAÑA] y los recursos preventivos disponibles para sus trabajadores.",
+    "acuer": "Información de campaña mailing masivo derivada a referente institucional."
+  },
+  "MKT14": {
+    "desc": "Se realiza difusión de la campaña Botas Bien Puestas ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de accidentes por calzado inadecuado en el entorno de trabajo.",
+    "acuer": "Información de campaña Botas Bien Puestas derivada a referente institucional."
+  },
+  "MKT15": {
+    "desc": "Se realiza difusión de la campaña Se Me Cuida ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para promover el autocuidado y la cultura preventiva entre los trabajadores.",
+    "acuer": "Información de campaña Se Me Cuida derivada a referente institucional."
+  },
+  "MKT16": {
+    "desc": "Se realiza difusión de la campaña No Te Quedes en Mute ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para promover la comunicación abierta en materia de seguridad entre los trabajadores.",
+    "acuer": "Información de campaña No Te Quedes en Mute derivada a referente institucional."
+  },
+  "MKT17": {
+    "desc": "Se realiza difusión de la campaña Cuéntame ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para fomentar el reporte de condiciones inseguras e incidentes entre los trabajadores.",
+    "acuer": "Información de campaña Cuéntame derivada a referente institucional."
+  },
+  "MKT18": {
+    "desc": "Se realiza difusión de la campaña Porrazos ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de caídas al mismo nivel y los comportamientos de riesgo asociados.",
+    "acuer": "Información de campaña Porrazos derivada a referente institucional."
+  },
+  "MKT19": {
+    "desc": "Se realiza difusión de la campaña Cuando Calienta el Sol ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de golpe de calor y exposición a radiación UV en el trabajo.",
+    "acuer": "Información de campaña Cuando Calienta el Sol derivada a referente institucional."
+  },
+  "MKT20": {
+    "desc": "Se realiza difusión de la campaña de Marzo ACHS en el centro de trabajo, informando al referente sobre los recursos preventivos disponibles para el inicio del año laboral y los riesgos propios de esta época.",
+    "acuer": "Información de campaña Marzo derivada a referente institucional."
+  },
+  "MKT21": {
+    "desc": "Se realiza difusión de la campaña de Invierno ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de riesgos propios de la temporada invernal en el entorno laboral.",
+    "acuer": "Información de campaña Invierno derivada a referente institucional."
+  },
+  "MKT22": {
+    "desc": "Se realiza difusión de la campaña App Capacitaciones ACHS en el centro de trabajo, informando al referente y trabajadores sobre la descarga, acceso y uso de la aplicación móvil de capacitaciones de ACHS.",
+    "acuer": "Información de campaña App Capacitaciones derivada a referente institucional."
+  },
+  "MKT23": {
+    "desc": "Se realiza difusión de la campaña Buen Trato Educación ACHS en el centro de trabajo del sector educación, informando al referente sobre los recursos disponibles para la prevención de violencia laboral y promoción del buen trato.",
+    "acuer": "Información de campaña Buen Trato Educación derivada a referente institucional."
+  },
+  "MKT24": {
+    "desc": "Se realiza difusión de la campaña Buen Trato Transversal ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de violencia laboral y la promoción de ambientes de trabajo saludables.",
+    "acuer": "Información de campaña Buen Trato Transversal derivada a referente institucional."
+  },
+  "MKT25": {
+    "desc": "Se realiza difusión de la campaña Buen Trato Genérico ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para promover el buen trato entre compañeros y hacia los usuarios del servicio.",
+    "acuer": "Información de campaña Buen Trato Genérico derivada a referente institucional."
+  },
+  "MKT26": {
+    "desc": "Se realiza difusión de la campaña Muévelo, Muévelo ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para promover la actividad física, pausas activas y hábitos saludables entre los trabajadores.",
+    "acuer": "Información de campaña Muévelo, Muévelo derivada a referente institucional."
+  },
+  "MKT27": {
+    "desc": "Se realiza difusión de la campaña Todo Parte con una Chispa ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de incendios y el manejo seguro de materiales inflamables.",
+    "acuer": "Información de campaña Todo Parte con una Chispa derivada a referente institucional."
+  },
+  "MKT28": {
+    "desc": "Se realiza difusión de la campaña de difusión del protocolo psicosocial ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la implementación del protocolo CEAL y la gestión del riesgo psicosocial.",
+    "acuer": "Información de campaña difusión protocolo psicosocial derivada a referente institucional."
+  },
+  "MKT29": {
+    "desc": "Se realiza difusión de la campaña Usted Sí Sabe ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para empoderar a los trabajadores en la identificación de riesgos y conductas seguras.",
+    "acuer": "Información de campaña Usted Sí Sabe derivada a referente institucional."
+  },
+  "MKT30": {
+    "desc": "Se realiza difusión de la campaña Infórmate y Enfócate ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para promover la atención plena y la reducción de distracciones en el trabajo seguro.",
+    "acuer": "Información de campaña Infórmate y Enfócate derivada a referente institucional."
+  },
+  "MKT31": {
+    "desc": "Se realiza difusión de la campaña Pequeños Accidentes, Grandes Consecuencias ACHS en el centro de trabajo, informando al referente sobre los recursos para promover la notificación de incidentes y el aprendizaje de eventos leves.",
+    "acuer": "Información de campaña Pequeños Accidentes, Grandes Consecuencias derivada a referente."
+  },
+  "MKT32": {
+    "desc": "Se realiza difusión de la campaña Si lo Ves, Dímelo ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para fomentar el reporte de condiciones inseguras y promover la participación activa en seguridad.",
+    "acuer": "Información de campaña Si lo Ves, Dímelo derivada a referente institucional."
+  },
+  "MKT33": {
+    "desc": "Se realiza difusión de la campaña Esto No Pasa ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de accidentes graves y fatales y la gestión de controles críticos.",
+    "acuer": "Información de campaña Esto No Pasa derivada a referente institucional."
+  },
+  "MKT34": {
+    "desc": "Se realiza difusión de la campaña ACHS Virtual en el centro de trabajo, informando al referente sobre las funcionalidades disponibles en la plataforma digital de ACHS y cómo aprovecharlas para la gestión preventiva.",
+    "acuer": "Información de campaña ACHS Virtual derivada a referente institucional."
+  },
+  "MKT35": {
+    "desc": "Se realiza difusión de la campaña Plataforma CPHS ACHS en el centro de trabajo, informando al referente y comité paritario sobre las funcionalidades de la plataforma digital para la gestión del CPHS.",
+    "acuer": "Información de campaña Plataforma CPHS derivada a referente institucional."
+  },
+  "MKT36": {
+    "desc": "Se realiza difusión de la campaña Kyan Health ACHS en el centro de trabajo, informando al referente sobre la plataforma de bienestar mental disponible para los trabajadores y cómo acceder a sus servicios de apoyo psicológico.",
+    "acuer": "Información de campaña Kyan Health derivada a referente institucional."
+  },
+  "MKT37": {
+    "desc": "Se realiza difusión de la campaña Lesiones Graves y Fatales (LGF) ACHS en el centro de trabajo, informando al referente sobre los recursos disponibles para la prevención de eventos con potencial de lesión grave o fatal.",
+    "acuer": "Información de campaña LGF derivada a referente institucional."
+  },
+  "MTC01": {
+    "desc": "Se realiza aplicación del OCDI online (Observación de Cultura Digital e Indicadores) en el centro de trabajo, evaluando el estado de la cultura de seguridad mediante la herramienta digital y generando el informe de resultados.",
+    "acuer": "Resultados del OCDI online son derivados a referente y jefatura institucional."
+  },
+  "MTC02": {
+    "desc": "Se realiza gestión del proceso de venta FDT (Foco en Daño al Trabajador) al centro de trabajo, presentando la propuesta técnica, condiciones del programa y compromisos requeridos para su implementación.",
+    "acuer": "Estado del proceso de venta FDT queda registrado en sistema ACHS."
+  },
+  "OCA01": {
+    "desc": "Se realiza oferta de capacitación ACHS al centro de trabajo, informando al referente sobre los cursos, talleres y actividades formativas disponibles en el catálogo ACHS, modalidades de acceso y proceso de inscripción.",
+    "acuer": "Información de oferta de capacitación derivada a referente institucional."
+  },
+  "PSL01": {
+    "desc": "Se realiza refuerzo comunicacional de la iniciativa de Salud No Laboral ACHS en el centro de trabajo, informando al referente sobre los servicios y beneficios disponibles para trabajadores en el área de salud no relacionada con accidentes o EP.",
+    "acuer": "Información de iniciativa Salud No Laboral derivada a referente institucional."
+  },
+  "PSL02": {
+    "desc": "Se realiza comunicación sobre convenios de Salud No Laboral ACHS vigentes para el centro de trabajo, informando al referente sobre los convenios disponibles, coberturas, condiciones de acceso y proceso de utilización para trabajadores.",
+    "acuer": "Información de convenios Salud No Laboral derivada a referente institucional."
+  },
+  "REC01": {
+    "desc": "Se realiza seguimiento del tracking de empresas en el sistema ACHS, verificando el estado de las acciones pendientes con el centro de trabajo, actualizando registros y coordinando las gestiones requeridas para la atención del cliente.",
+    "acuer": "Estado de tracking de empresa actualizado en sistema ACHS."
+  },
+  "REC02": {
+    "desc": "Se realiza gestión de reclamo del centro de trabajo, recibiendo el reclamo del referente, registrándolo en el sistema correspondiente, coordinando la solución y haciendo seguimiento hasta el cierre satisfactorio del caso.",
+    "acuer": "Reclamo registrado y en proceso de resolución en sistema ACHS."
+  },
+  "REC03": {
+    "desc": "Se realiza atención de requerimiento del centro de trabajo, recibiendo la solicitud del referente, gestionando la respuesta o derivación correspondiente y haciendo seguimiento hasta la resolución del requerimiento planteado.",
+    "acuer": "Requerimiento registrado y atendido en sistema ACHS."
+  },
+  "REC04": {
+    "desc": "Se realiza gestión del proceso D.S. 67 para el centro de trabajo, apoyando al referente en la comprensión del proceso de evaluación de cotización adicional, etapas, plazos y requisitos para la gestión de su caso.",
+    "acuer": "Estado del proceso D.S. 67 queda registrado en sistema ACHS."
+  },
+  "REC05": {
+    "desc": "Se realiza apoyo al centro de trabajo en el proceso D.S. 67 — rebaja y apelación, orientando al referente sobre los requisitos, plazos, documentación necesaria y procedimiento para solicitar rebaja o apelar la evaluación.",
+    "acuer": "Estado del proceso de rebaja/apelación D.S. 67 queda registrado en sistema ACHS."
+  },
+  "REC06": {
+    "desc": "Se realiza reforzamiento del proceso de apelación D.S. 67 con el referente del centro de trabajo, recordando plazos críticos, requisitos pendientes y apoyando en la preparación de la documentación necesaria para la apelación.",
+    "acuer": "Estado de reforzamiento proceso apelación D.S. 67 queda registrado en sistema ACHS."
+  },
+  "REC07": {
+    "desc": "Se realiza gestión de alerta de desafiliación de empresa mediana, contactando al referente para identificar las causas del proceso de desafiliación, ofreciendo soluciones y reforzando el valor del servicio preventivo ACHS.",
+    "acuer": "Gestión de alerta de desafiliación queda registrada en sistema ACHS."
+  },
+  "RLB01": {
+    "desc": "Se realiza oferta y gestión de capacitaciones ACHS para el centro de trabajo, presentando el catálogo de cursos disponibles, modalidades de acceso, calendario de actividades y proceso de inscripción para los trabajadores.",
+    "acuer": "Información de capacitaciones ACHS derivada a referente institucional."
+  },
+  "SEL01": {
+    "desc": "Se realiza gestión de acuerdos SEL (Servicios Especiales de Ley) con el centro de trabajo, revisando los servicios contratados, estado de ejecución y coordinando las acciones necesarias para el cumplimiento de los compromisos.",
+    "acuer": "Estado de acuerdos SEL actualizado en sistema ACHS."
+  },
+  "SEL02": {
+    "desc": "Se realiza gestión de ventas SEL (Servicios Especiales de Ley) con el centro de trabajo, presentando la propuesta de servicios adicionales disponibles, condiciones comerciales y proceso de contratación.",
+    "acuer": "Estado de proceso de venta SEL queda registrado en sistema ACHS."
+  },
+  "SGA01": {
+    "desc": "Se realiza difusión del modelo de Sistema de Gestión ACHS 45.001 en el centro de trabajo, presentando el estándar, sus beneficios, etapas de implementación y el proceso de certificación disponible para la organización.",
+    "acuer": "Información del modelo ACHS 45.001 derivada a referente institucional."
+  },
+  "SLM01": {
+    "desc": "Se realiza inicio de la campaña de Salud Mental ACHS en el centro de trabajo, presentando al referente los objetivos de la campaña, recursos disponibles para los trabajadores y las actividades programadas para el período.",
+    "acuer": "Información de inicio de campaña Salud Mental derivada a referente institucional."
+  },
+  "SLM02": {
+    "desc": "Se realiza seguimiento de la campaña de Salud Mental ACHS en el centro de trabajo, revisando el avance de las actividades programadas, evaluando participación de los trabajadores y apoyando al referente en la implementación.",
+    "acuer": "Estado de seguimiento de campaña Salud Mental queda registrado en sistema ACHS."
+  },
+  "SLM03": {
+    "desc": "Se realiza cierre de la campaña de Salud Mental ACHS en el centro de trabajo, presentando al referente los resultados de la campaña, participación lograda, impacto en los trabajadores y compromisos de continuidad.",
+    "acuer": "Informe de cierre de campaña Salud Mental es derivado a referente institucional."
+  },
+  "SUB01": {
+    "desc": "Se realiza gestión de subsidios a prescribir para trabajadores del centro de trabajo, coordinando con el referente la identificación de casos con subsidio pendiente de prescripción y apoyando en el proceso de tramitación ante ACHS.",
+    "acuer": "Gestión de subsidios a prescribir queda registrada en sistema ACHS."
+  },
+  "SUB02": {
+    "desc": "Se realiza gestión de vales vista pendientes de cobro por trabajadores del centro de trabajo, coordinando con el referente la identificación de casos con vales pendientes y apoyando en el proceso de cobro o regularización.",
+    "acuer": "Gestión de vales vista pendientes de cobro queda registrada en sistema ACHS."
+  },
+  "SUB03": {
+    "desc": "Se realiza gestión de vales vista reabonados a cuenta ACHS por trabajadores del centro de trabajo, coordinando con el referente la identificación de los casos afectados y el proceso de restitución o regularización de los fondos.",
+    "acuer": "Gestión de vales vista reabonados queda registrada en sistema ACHS."
+  },
+  "SVE01": {
+    "desc": "Se realiza llamada de bienvenida al nuevo centro de trabajo en el marco del Soporte Virtual Especializado (SVE), presentando el servicio, el equipo de atención asignado, los canales de contacto y el plan de trabajo preventivo inicial.",
+    "acuer": "Registro de llamada de bienvenida SVE queda en sistema ACHS."
+  },
+  "UCA01": {
+    "desc": "Se realiza gestión de omisión de trabajadores del centro de trabajo, coordinando con el referente la regularización de trabajadores no declarados en la nómina ACHS, verificando información e iniciando el proceso de incorporación al seguro.",
+    "acuer": "Gestión de omisión de trabajadores queda registrada en sistema ACHS."
+  },
+  "CCM01": {
+    "desc": "Se realiza coordinación de servicios ESACHS para el centro minero, gestionando la contratación, programación y seguimiento de los servicios especializados de seguridad e higiene requeridos por la faena.",
+    "acuer": "Estado de coordinación de servicios ESACHS queda registrado en sistema ACHS."
+  },
+  "CCM02": {
+    "desc": "Se realiza emisión del certificado de tasas por empresa y/o sucursal para el centro minero, generando el documento oficial que acredita el estado de cotización y tasas aplicables conforme a la normativa vigente.",
+    "acuer": "Certificado de tasas emitido es derivado a referente institucional."
+  },
+  "CCM03": {
+    "desc": "Se realiza gestión de solicitud de cursos e-learning para el personal del centro minero, coordinando el acceso a la plataforma de capacitación en línea ACHS, inscripción de trabajadores y seguimiento de avance.",
+    "acuer": "Solicitud de cursos e-learning gestionada y acceso habilitado en sistema ACHS."
+  },
+  "CCM04": {
+    "desc": "Se realiza seguimiento del pago de facturas SEL del centro minero, verificando el estado de las facturas emitidas por servicios especiales, coordinando con el referente las gestiones necesarias para regularizar los pagos pendientes.",
+    "acuer": "Estado de seguimiento de pago facturas SEL queda registrado en sistema ACHS."
+  },
+  "CCM05": {
+    "desc": "Se realiza seguimiento de deudas por no pago de cotizaciones de ley del centro minero, verificando el estado de las deudas registradas, coordinando con el referente las gestiones para la regularización del pago de cotizaciones.",
+    "acuer": "Estado de seguimiento de deudas por cotizaciones queda registrado en sistema ACHS."
+  },
+  "CCM07": {
+    "desc": "Se realiza gestión de ingreso de casos médicos del centro minero en el sistema ACHS, coordinando el registro de trabajadores lesionados o con enfermedad profesional y asegurando la correcta tramitación de las prestaciones.",
+    "acuer": "Casos médicos ingresados quedan registrados en sistema ACHS."
+  },
+  "CCM08": {
+    "desc": "Se realiza gestión SEL/CIEL para el centro minero, coordinando los servicios especiales de ley y prestaciones médicas complementarias, verificando coberturas, autorizaciones y estado de tramitación de los casos.",
+    "acuer": "Estado de gestión SEL/CIEL queda registrado en sistema ACHS."
+  },
+  "CCM09": {
+    "desc": "Se realiza creación de SOLPED (Solicitud de Pedido) para el centro minero, gestionando la solicitud formal de bienes o servicios requeridos para la implementación de actividades preventivas en la faena.",
+    "acuer": "SOLPED creada queda registrada en sistema de gestión ACHS."
+  },
+  "EPM01": {
+    "desc": "Se realiza diagnóstico inicial de la estrategia de prevención minería en [FAENA/ÁREA], evaluando las condiciones de seguridad actuales, perfil de accidentabilidad, riesgos prioritarios y brechas de gestión preventiva del centro.",
+    "acuer": "Informe de diagnóstico inicial estrategia minería es derivado a referente y jefatura de faena."
+  },
+  "EPM02": {
+    "desc": "Se realiza evaluación de medidas preventivas de la estrategia minería en [FAENA/ÁREA], verificando el estado de implementación de los controles establecidos, efectividad de las medidas y avance respecto al plan definido.",
+    "acuer": "Informe de evaluación de medidas preventivas estrategia minería es derivado a referente."
+  },
+  "EPM03": {
+    "desc": "Se realiza levantamiento de medidas específicas de la estrategia minería en [FAENA/ÁREA], identificando controles adicionales requeridos para riesgos específicos del proceso minero y definiendo el plan de implementación.",
+    "acuer": "Informe de levantamiento de medidas específicas estrategia minería es derivado a referente."
+  },
+  "EPM04": {
+    "desc": "Se realiza diagnóstico de cierre de la estrategia minería en [FAENA/ÁREA], evaluando el estado final de cumplimiento de los compromisos establecidos, logros alcanzados y oportunidades de mejora para el siguiente período.",
+    "acuer": "Informe de diagnóstico de cierre estrategia minería es derivado a referente y jefatura de faena."
+  },
+  "EPV01": {
+    "desc": "Se realiza verificación de medidas de control y acciones correctivas minería en [FAENA/ÁREA], evaluando el estado de implementación de los controles prescritos y el cumplimiento de compromisos en el período evaluado.",
+    "acuer": "Informe de verificación de medidas de control minería es derivado a referente de faena."
+  },
+  "EPV02": {
+    "desc": "Se realiza elaboración del informe de verificación de medidas de control y acciones correctivas minería en [FAENA/ÁREA], documentando el estado de implementación, evidencias disponibles y brechas pendientes de cierre.",
+    "acuer": "Informe formal de verificación de medidas minería es derivado a referente y jefatura de faena."
+  },
+  "GST01": {
+    "desc": "Se realiza actividad preventiva de inicio de turno en [FAENA/ÁREA], apoyando al supervisor en la realización de la charla de inicio de turno, revisando los riesgos del día, condiciones del entorno y compromisos de trabajo seguro.",
+    "acuer": "Registro de actividad preventiva inicio de turno queda en poder del referente de faena."
+  },
+  "DRE01": {
+    "desc": "Se realiza asesoría técnica PYME en formato SVE (Soporte Virtual Especializado), apoyando al referente del centro de trabajo en la resolución de consultas técnicas preventivas, planificación de actividades y gestión de compromisos pendientes.",
+    "acuer": "Se entrega AOA para gestión interna con estado de asesoría técnica PYME SVE."
+  },
+  "FPM01": {
+    "desc": "Se realiza apoyo en el Plan de Prevención (PDP) del centro de trabajo en formato SVE, revisando el estado de avance del plan, apoyando en la actualización de actividades y verificando el cumplimiento de compromisos establecidos.",
+    "acuer": "Estado de avance del Plan de Prevención PDP es registrado en AOA para seguimiento."
+  },
+  "FPM02": {
+    "desc": "Se realiza asesoría de gestión de aspectos legales en formato SVE, evaluando el cumplimiento de obligaciones normativas del centro de trabajo en materia de SST mediante plataforma digital y orientando en las acciones de regularización.",
+    "acuer": "Informe de gestión de aspectos legales SVE es derivado a referente institucional."
+  },
+  "FPM03": {
+    "desc": "Se realiza asesoría de gestión de riesgos de emergencia en formato SVE, apoyando al referente en la actualización del plan de emergencia, revisión de recursos disponibles y planificación de simulacros mediante plataforma digital.",
+    "acuer": "Se entrega AOA con estado de avance de gestión de riesgos de emergencia SVE."
+  },
+  "FPM04": {
+    "desc": "Se realiza asesoría de Comités Paritarios en formato SVE, apoyando al referente y al CPHS en la gestión del comité, revisión del programa de trabajo, investigación de accidentes y cumplimiento de sus obligaciones legales.",
+    "acuer": "Se entrega AOA para gestión interna del CPHS en formato SVE."
+  },
+  "FPM06": {
+    "desc": "Se realiza asesoría inicial de prevención PYME en formato SVE, evaluando las condiciones de seguridad del centro de trabajo mediante plataforma digital, identificando peligros prioritarios y estableciendo el plan de trabajo preventivo inicial.",
+    "acuer": "Plan de trabajo preventivo inicial PYME SVE es derivado a referente para validación."
+  },
+  "FPM08": {
+    "desc": "Se realiza asesoría inicial de prevención PYME presencial en el centro de trabajo, evaluando in situ las condiciones de seguridad, identificando peligros prioritarios y estableciendo el plan de trabajo preventivo inicial conforme a metodología ACHS.",
+    "acuer": "Plan de trabajo preventivo inicial PYME presencial es derivado a referente para validación."
+  },
+  "FPM09": {
+    "desc": "Se realiza asesoría de seguimiento para PYME presencial en el centro de trabajo, revisando el avance de compromisos establecidos, verificando implementación de medidas y actualizando el plan de trabajo preventivo según estado actual.",
+    "acuer": "Estado de avance del seguimiento PYME presencial es registrado en AOA para seguimiento."
+  },
+  "FPM10": {
+    "desc": "Se realiza asesoría de seguimiento para PYME remota en formato SVE, revisando mediante plataforma digital el avance de compromisos establecidos, verificando implementación de medidas y actualizando el plan de trabajo preventivo.",
+    "acuer": "Estado de avance del seguimiento PYME remota SVE es registrado en AOA para seguimiento."
+  },
+  "FPR01": {
+    "desc": "Se realiza intervención táctica ITA en formato SVE, apoyando al referente del centro de trabajo mediante plataforma digital en la revisión de accidentabilidad, análisis de casos y definición de medidas de control para focos críticos.",
+    "acuer": "Informe de intervención táctica ITA SVE es derivado a referente institucional."
+  },
+  "FPR02": {
+    "desc": "Se realiza campaña Tienes un Minutito — visita en el camino en el centro de trabajo, realizando una visita preventiva breve y no programada al referente para revisar el estado de la gestión preventiva y reforzar compromisos.",
+    "acuer": "Registro de visita en el camino queda en poder del referente institucional."
+  },
+  "FPR03": {
+    "desc": "Se realiza difusión de protocolos psicosociales en formato SVE, informando al referente del centro de trabajo sobre el protocolo de evaluación de ambientes laborales CEAL, sus etapas de implementación y obligaciones normativas aplicables.",
+    "acuer": "Información de protocolos psicosociales SVE derivada a referente institucional."
   }
 };
 
@@ -4927,6 +5683,7 @@ function addAct(afterId){
 
       <div class="f"><label>ID Asesoría</label><input id="aid${id}" placeholder="Ej: 11605431"/></div>
       <div class="f"><label>Fecha</label><input type="date" id="af${id}" value="${tod()}"/></div>
+      <div class="f"><label>Fecha Cumplimiento <span class="sub-note">(opcional — sobreescribe la global)</span></label><input type="date" id="afc${id}"/></div>
       <div class="f full">
         <label>Descripción</label>
         <textarea id="ad${id}" placeholder="Descripción de la actividad realizada..." oninput="ar(this)" style="overflow:hidden;min-height:48px;"></textarea>
@@ -4998,6 +5755,7 @@ function gd(){
         sub:v('as'+a.id),
         ida:v('aid'+a.id),
         fecha:v('af'+a.id),
+        fcump_act:v('afc'+a.id), // fecha cumplimiento por actividad
         desc:document.getElementById('ad'+a.id)?.value||'',
         acuer:document.getElementById('aa'+a.id)?.value||''
       };
@@ -5049,7 +5807,7 @@ function buildDoc(d){
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;"><b>${titulo}</b>${desc}</td>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${a.acuer}</td>
       <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${d.enombre}<br>Experto ACHS</td>
-      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${fc}</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${a.fcump_act?fd(a.fcump_act):fc}</td>
     </tr>`;
   });
 
@@ -5136,10 +5894,110 @@ th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;bor
 </table>
 
 <div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v4.0 · Uso interno exclusivo</div>
+
+<!-- OUTLOOK MODAL -->
+<div id="outlook-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--wh);border-radius:10px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+
+    <!-- Modal Header -->
+    <div style="background:#0078d4;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">📧</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;letter-spacing:.3px;">Enviar por Correo</div>
+          <div style="font-size:10px;opacity:.8;">Se abrirá Outlook con el mensaje pre-completado</div>
+        </div>
+      </div>
+      <button onclick="closeOutlookModal()" style="background:none;border:1.5px solid rgba(255,255,255,.4);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding:18px;">
+
+      <!-- Para -->
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Para (correo receptor)</label>
+        <input id="outlook-to" type="email" placeholder="correo@institución.cl"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
+        <div style="font-size:10px;color:var(--g4);margin-top:4px;">Se pre-carga con el correo del receptor configurado en la pestaña Firmas</div>
+      </div>
+
+      <!-- CC -->
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">CC (opcional)</label>
+        <input id="outlook-cc" type="email" placeholder="copia@institución.cl"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
+      </div>
+
+      <!-- Asunto -->
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Asunto</label>
+        <input id="outlook-subject" type="text"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
+      </div>
+
+      <!-- Preview del cuerpo -->
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;">Cuerpo del mensaje</label>
+          <button onclick="regenerateOutlookBody()" style="background:none;border:1.5px solid var(--g3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;color:var(--g4);font-family:inherit;" title="Regenerar desde el formulario">↺ Regenerar</button>
+        </div>
+        <textarea id="outlook-body" rows="14"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:10px;font-size:11.5px;font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:var(--tx);background:var(--wh);box-sizing:border-box;resize:vertical;transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"></textarea>
+        <div style="font-size:10px;color:var(--g4);margin-top:4px;">Puedes editar el mensaje antes de enviar. Los cambios no se guardan en el formulario.</div>
+      </div>
+
+      <!-- Info box -->
+      <div style="background:#f0f6ff;border:1.5px solid #c0d8f5;border-radius:7px;padding:10px 12px;font-size:11px;color:#1a4a8a;margin-bottom:16px;line-height:1.6;">
+        <strong>¿Cómo funciona?</strong> Al hacer clic en "Abrir en Outlook", se abrirá tu cliente de correo con el mensaje pre-completado. El documento AOA deberás adjuntarlo manualmente si es necesario.
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+        <button onclick="closeOutlookModal()" class="btn-s" style="font-size:12px;">Cancelar</button>
+        <button onclick="copyOutlookBody()" class="btn-s" style="font-size:12px;border-color:#0078d4;color:#0078d4;">📋 Copiar mensaje</button>
+        <button onclick="sendOutlook()" style="background:#0078d4;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;"
+          onmouseover="this.style.background='#005fa3'" onmouseout="this.style.background='#0078d4'">
+          📤 Abrir en Outlook
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- TEMPLATE MODAL -->
+<div id="tpl-modal">
+  <div class="tpl-box">
+    <div class="tpl-head">
+      <h3>📋 Plantillas guardadas</h3>
+      <button class="btn-rm" onclick="closeTplModal()" title="Cerrar">✕</button>
+    </div>
+    <div class="tpl-body" id="tpl-list"></div>
+  </div>
+</div>
+
+<!-- VALIDATION MODAL -->
+<div id="val-modal">
+  <div class="val-box">
+    <div class="val-title">⛔ Revisar antes de generar</div>
+    <ul class="val-list" id="val-list"></ul>
+    <div class="val-actions">
+      <button class="btn-s" onclick="closeValModal()">Corregir</button>
+      <button class="btn-p green" onclick="closeValModal();genPDFForce()">Generar igual</button>
+    </div>
+  </div>
+</div>
+
 </body></html>`;
 }
 
-function genPDF(){
+function genPDFOriginal_unused(){
   const d=gd();
   showS('Generando PDF...','load');
   setTimeout(()=>{
@@ -5154,14 +6012,26 @@ function genPDF(){
   },200);
 }
 
-function resetF(){
-  if(!confirm('¿Limpiar todos los datos?'))return;
+function resetF(silent=false){
+  if(!silent&&!confirm('¿Limpiar todos los datos?'))return;
   acts=[];acnt=0;
+  Object.keys(cardDept).forEach(k=>delete cardDept[k]);
   document.getElementById('acts-wrap').innerHTML='';
   document.getElementById('empty-msg').style.display='block';
   document.getElementById('cnt').textContent='0';
-  document.getElementById('fecha_a').value='';
+  document.getElementById('fecha_a').value=tod();
   document.getElementById('fcump').value='';
+  document.getElementById('razon').value='';
+  document.getElementById('bp').value='';
+  const sub=document.getElementById('razon-sub');
+  if(sub){sub.textContent='';sub.style.display='none';}
+  document.getElementById('bp-selected').classList.remove('show');
+  document.getElementById('bp-search').value='';
+  participantes=[];
+  renderChips();
+  isDirty=false;
+  const b=document.getElementById('draft-badge');
+  if(b) b.classList.remove('show');
 }
 
 // ── BP DATA ───────────────────────────────────────
@@ -5291,6 +6161,692 @@ document.addEventListener('keydown',e=>{
 document.getElementById('fecha_a').value=tod();
 document.getElementById('fcump').value='2026-04-30';
 renderFavs();
+renderChips();
+
+// ══════════════════════════════════════════════════════════════════
+// DARK MODE
+// ══════════════════════════════════════════════════════════════════
+function toggleDark(){
+  const isDark=document.body.classList.toggle('dark');
+  localStorage.setItem('aoa_dark',isDark?'1':'0');
+  document.getElementById('dark-btn').textContent=isDark?'☀':'🌙';
+}
+if(localStorage.getItem('aoa_dark')==='1'){
+  document.body.classList.add('dark');
+  const btn=document.getElementById('dark-btn');
+  if(btn) btn.textContent='☀';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+function toast(msg,type='ok',duration=3000){
+  const c=document.getElementById('toast-container');
+  if(!c) return;
+  const t=document.createElement('div');
+  t.className='toast'+(type==='err'?' err':type==='warn'?' warn':'');
+  t.textContent=msg;
+  c.appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),350);},duration);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AUTOSAVE / BORRADORES
+// ══════════════════════════════════════════════════════════════════
+let autosaveTimer=null;
+let isDirty=false;
+
+function markDirty(){
+  isDirty=true;
+  const b=document.getElementById('draft-badge');
+  if(b) b.classList.add('show');
+  clearTimeout(autosaveTimer);
+  autosaveTimer=setTimeout(()=>saveDraft(true),30000);
+}
+
+function getActsSnapshot(){
+  return acts.map(a=>({
+    id:a.id,
+    dept:cardDept[a.id]||'',
+    tipo:document.getElementById('am'+a.id)?.getAttribute('data-tipo')||'',
+    motivo:document.getElementById('am'+a.id)?.getAttribute('data-mot')||'',
+    sub:v('as'+a.id),
+    ida:v('aid'+a.id),
+    fecha:v('af'+a.id),
+    fcump_act:v('afc'+a.id),
+    desc:document.getElementById('ad'+a.id)?.value||'',
+    acuer:document.getElementById('aa'+a.id)?.value||''
+  }));
+}
+
+function saveDraft(silent=false){
+  const d=gd();
+  const snap={
+    timestamp:new Date().toISOString(),
+    formData:d,
+    actsState:getActsSnapshot(),
+    acnt,
+    cardDept:{...cardDept},
+    participantes:[...participantes]
+  };
+  try{
+    localStorage.setItem('aoa_draft',JSON.stringify(snap));
+    isDirty=false;
+    const b=document.getElementById('draft-badge');
+    if(b) b.classList.remove('show');
+    if(!silent) toast('✓ Borrador guardado','ok');
+  }catch(e){ toast('Error al guardar borrador','err'); }
+}
+
+function restoreActsFromSnapshot(actsState){
+  acts=[];
+  document.getElementById('acts-wrap').innerHTML='';
+  document.getElementById('cnt').textContent='0';
+  for(const a of (actsState||[])){
+    acnt=a.id-1;
+    const newId=addAct();
+    if(a.dept) setDept(newId,a.dept);
+    setTimeout(()=>{
+      const ms=document.getElementById('am'+newId);
+      if(ms&&a.tipo&&a.motivo){
+        const cv=a.tipo+'||'+a.motivo;
+        ms.value=cv;
+        if(ms.value===cv) onMotivoChange(newId);
+      }
+      setTimeout(()=>{
+        const ss=document.getElementById('as'+newId);
+        if(ss&&a.sub) ss.value=a.sub;
+        const descEl=document.getElementById('ad'+newId);
+        if(descEl){descEl.value=a.desc||'';ar(descEl);}
+        const acuerEl=document.getElementById('aa'+newId);
+        if(acuerEl){acuerEl.value=a.acuer||'';ar(acuerEl);}
+        document.getElementById('aid'+newId).value=a.ida||'';
+        document.getElementById('af'+newId).value=a.fecha||tod();
+        const afc=document.getElementById('afc'+newId);
+        if(afc) afc.value=a.fcump_act||'';
+      },60);
+    },25);
+  }
+  document.getElementById('empty-msg').style.display=(actsState||[]).length?'none':'block';
+  document.getElementById('cnt').textContent=(actsState||[]).length;
+}
+
+function loadDraft(){
+  const raw=localStorage.getItem('aoa_draft');
+  if(!raw) return;
+  try{
+    const snap=JSON.parse(raw);
+    const dt=new Date(snap.timestamp).toLocaleString('es-CL');
+    if(!confirm('Hay un borrador del '+dt+'. ¿Deseas restaurarlo?')) return;
+    const d=snap.formData;
+    document.getElementById('razon').value=d.razon||'';
+    document.getElementById('bp').value=d.bp||'';
+    document.getElementById('fecha_a').value=d.fecha_a||tod();
+    document.getElementById('fcump').value=d.fcump||'';
+    const objEl=document.getElementById('obj');
+    objEl.value=d.obj||''; ar(objEl);
+    if(d.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+    else document.querySelector('input[name="mod"][value="PRESENCIAL"]').checked=true;
+    ['enombre','erut','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
+      document.getElementById(id).value=d[id]||'';
+    });
+    if(d.razon_sub){
+      const sub=document.getElementById('razon-sub');
+      if(sub){sub.textContent='▶ '+d.razon_sub;sub.style.display='block';}
+      document.getElementById('bp-selected-txt').textContent=d.razon_sub+' — '+d.bp;
+      document.getElementById('bp-selected').classList.add('show');
+    }
+    participantes=[...(snap.participantes||[])];
+    renderChips();
+    acnt=snap.acnt||0;
+    restoreActsFromSnapshot(snap.actsState);
+    toast('✓ Borrador restaurado del '+dt,'ok',4000);
+  }catch(e){ toast('Error al restaurar borrador: '+e.message,'err'); }
+}
+
+document.addEventListener('input',e=>{if(e.target.closest('#main-app')) markDirty();});
+document.addEventListener('change',e=>{if(e.target.closest('#main-app')) markDirty();});
+window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue='';}});
+setTimeout(()=>{if(localStorage.getItem('aoa_draft')) loadDraft();},600);
+
+// ══════════════════════════════════════════════════════════════════
+// PLANTILLAS
+// ══════════════════════════════════════════════════════════════════
+let templates=[];
+try{templates=JSON.parse(localStorage.getItem('aoa_templates')||'[]');}catch(e){}
+function saveTemplates(){localStorage.setItem('aoa_templates',JSON.stringify(templates));}
+
+function openTplModal(){renderTplList();document.getElementById('tpl-modal').classList.add('open');}
+function closeTplModal(){document.getElementById('tpl-modal').classList.remove('open');}
+
+function renderTplList(){
+  const list=document.getElementById('tpl-list');
+  if(!templates.length){
+    list.innerHTML='<div class="tpl-empty">Sin plantillas guardadas.<br><br>Rellena un AOA y usa <strong>"💾 Guardar plantilla"</strong> para crear la primera.</div>';
+    return;
+  }
+  list.innerHTML=templates.map((t,i)=>`
+    <div class="tpl-card">
+      <div>
+        <div class="tpl-card-name">📋 ${t.name}</div>
+        <div class="tpl-card-meta">${t.bp||''} · ${(t.actsState||[]).length} actividades · ${new Date(t.saved).toLocaleDateString('es-CL')}</div>
+      </div>
+      <div class="tpl-card-actions">
+        <button class="tpl-btn-use" onclick="loadTemplate(${i});closeTplModal()">Usar</button>
+        <button class="tpl-btn-del" onclick="deleteTemplate(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function saveAsTemplate(){
+  const d=gd();
+  const name=prompt('Nombre para esta plantilla:',document.getElementById('bp-selected-txt')?.textContent||'Mi plantilla');
+  if(!name) return;
+  templates.unshift({name,saved:new Date().toISOString(),bp:d.bp,razon:d.razon,razon_sub:d.razon_sub,obj:d.obj,mod:d.mod,participantes:[...participantes],actsState:getActsSnapshot()});
+  saveTemplates();
+  toast('✓ Plantilla "'+name+'" guardada','ok');
+}
+
+function loadTemplate(idx){
+  const t=templates[idx];
+  if(!t||!confirm('Esto reemplazará el formulario actual. ¿Continuar?')) return;
+  resetF(true);
+  document.getElementById('razon').value=t.razon||'';
+  document.getElementById('bp').value=t.bp||'';
+  const objEl=document.getElementById('obj');
+  objEl.value=t.obj||''; ar(objEl);
+  document.getElementById('fecha_a').value=tod();
+  if(t.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+  if(t.razon_sub){
+    const sub=document.getElementById('razon-sub');
+    if(sub){sub.textContent='▶ '+t.razon_sub;sub.style.display='block';}
+    document.getElementById('bp-selected-txt').textContent=t.razon_sub+' — '+t.bp;
+    document.getElementById('bp-selected').classList.add('show');
+  }
+  participantes=[...(t.participantes||[])];
+  renderChips();
+  acnt=0;
+  restoreActsFromSnapshot((t.actsState||[]).map((a,i)=>({...a,id:i+1,ida:'',fecha:tod(),fcump_act:''})));
+  toast('✓ Plantilla "'+t.name+'" cargada. Ajusta fechas e IDs.','ok',4500);
+}
+
+function deleteTemplate(idx){
+  if(!confirm('¿Eliminar esta plantilla?')) return;
+  templates.splice(idx,1);
+  saveTemplates();
+  renderTplList();
+  toast('Plantilla eliminada','warn');
+}
+
+document.getElementById('tpl-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('tpl-modal')) closeTplModal();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// VALIDACIÓN ANTES DE GENERAR
+// ══════════════════════════════════════════════════════════════════
+function validateAOA(){
+  const errors=[];
+  const d=gd();
+  if(!d.bp) errors.push('Falta seleccionar un Centro / BP');
+  if(!d.fecha_a) errors.push('Falta la fecha de la asesoría');
+  if(!d.obj.trim()) errors.push('Falta el objetivo de la asesoría');
+  if(!participantes.length) errors.push('No hay participantes del centro registrados');
+  if(!acts.length) errors.push('No hay actividades registradas');
+  acts.forEach((a,i)=>{
+    const motivo=document.getElementById('am'+a.id)?.getAttribute('data-mot')||'';
+    const dept=cardDept[a.id]||'';
+    if(!dept) errors.push('Actividad '+(i+1)+': falta seleccionar GIGE / RED / HYE');
+    else if(!motivo) errors.push('Actividad '+(i+1)+': falta seleccionar el motivo');
+    if(!v('aid'+a.id)) errors.push('Actividad '+(i+1)+': falta el ID de asesoría');
+    if(!v('af'+a.id)) errors.push('Actividad '+(i+1)+': falta la fecha');
+  });
+  return errors;
+}
+
+function closeValModal(){document.getElementById('val-modal').classList.remove('open');}
+let _genPDFFn=null;
+
+window.genPDF=function(){
+  const errors=validateAOA();
+  if(errors.length){
+    const list=document.getElementById('val-list');
+    list.innerHTML=errors.map(e=>`<li>${e}</li>`).join('');
+    document.getElementById('val-modal').classList.add('open');
+  } else {
+    _runGenPDF();
+  }
+};
+function genPDFForce(){_runGenPDF();}
+function _runGenPDF(){
+  const d=gd();
+  showS('Generando PDF...','load');
+  setTimeout(()=>{
+    try{
+      const html=buildDoc(d);
+      const win=window.open('','_blank','width=900,height=700');
+      if(!win){showS('Permite ventanas emergentes en el navegador.','err');return;}
+      win.document.open();win.document.write(html);win.document.close();
+      setTimeout(()=>{win.focus();win.print();},800);
+      showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo.','ok');
+      toast('✓ PDF generado correctamente','ok');
+      isDirty=false;
+    }catch(e){showS('Error: '+e.message,'err');}
+  },200);
+}
+
+document.getElementById('val-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('val-modal')) closeValModal();
+});
+
+// Add "Guardar plantilla" button to acts tab after DOM ready
+setTimeout(()=>{
+  const topBar=document.querySelector('.act-top-bar');
+  if(topBar&&!document.getElementById('tpl-save-btn')){
+    const btn=document.createElement('button');
+    btn.id='tpl-save-btn';
+    btn.className='btn-s';
+    btn.style.cssText='font-size:11px;white-space:nowrap;';
+    btn.textContent='💾 Guardar plantilla';
+    btn.onclick=saveAsTemplate;
+    topBar.insertBefore(btn,topBar.querySelector('.btn-add'));
+  }
+},300);
+
+// ══════════════════════════════════════════════════════════════════
+// LIVE PREVIEW (punto 4)
+// ══════════════════════════════════════════════════════════════════
+let previewOpen = false;
+let previewTimer = null;
+
+function togglePreview(){
+  previewOpen = !previewOpen;
+  const panel = document.getElementById('preview-panel');
+  const btn   = document.getElementById('preview-btn');
+  panel.classList.toggle('open', previewOpen);
+  if(btn) btn.textContent = previewOpen ? '✕ Preview' : '👁 Preview';
+  if(previewOpen) renderLivePreview();
+}
+
+function schedulePreview(){
+  if(!previewOpen) return;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(renderLivePreview, 400);
+}
+
+function renderLivePreview(){
+  const el = document.getElementById('live-preview-content');
+  if(!el) return;
+
+  const d = gd();
+  let html = '';
+
+  // ── Header info ─────────────────────────────────────────────────
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || '';
+  html += `<div class="preview-section">
+    <div class="preview-label">Centro / BP</div>
+    <div class="preview-value"><strong>${d.razon||'<em style="color:var(--g4)">Sin seleccionar</em>'}</strong>${centro?'<br><span style="font-size:10px;color:var(--gd);">▶ '+centro+'</span>':''}</div>
+  </div>`;
+
+  // ── Fecha + Modalidad ────────────────────────────────────────────
+  if(d.fecha_a || d.mod){
+    html += `<div class="preview-section">
+      <div class="preview-label">Fecha · Modalidad</div>
+      <div class="preview-value">${d.fecha_a?fd(d.fecha_a):'<em style="color:var(--g4)">Sin fecha</em>'} · ${d.mod}</div>
+    </div>`;
+  }
+
+  // ── Participantes ────────────────────────────────────────────────
+  if(participantes.length){
+    const parts = participantes.map(p=>`<div style="padding:2px 0;border-bottom:1px solid var(--g2);">👤 <strong>${p.nombre}</strong>${p.cargo?' <span style="color:var(--g4);font-size:10px;">· '+p.cargo+'</span>':''}</div>`).join('');
+    const experto = `<div style="padding:2px 0;">🔬 <strong>${d.enombre}</strong> <span style="color:var(--g4);font-size:10px;">· Experto ACHS</span></div>`;
+    html += `<div class="preview-section">
+      <div class="preview-label">Participantes (${participantes.length+1})</div>
+      <div class="preview-value">${parts}${experto}</div>
+    </div>`;
+  }
+
+  // ── Objetivo ─────────────────────────────────────────────────────
+  if(d.obj && d.obj.trim()){
+    const objPreview = d.obj.length > 120 ? d.obj.substring(0,120)+'…' : d.obj;
+    html += `<div class="preview-section">
+      <div class="preview-label">Objetivo</div>
+      <div class="preview-value" style="font-size:10px;color:var(--g4);">${objPreview}</div>
+    </div>`;
+  }
+
+  // ── Actividades ──────────────────────────────────────────────────
+  if(acts.length){
+    html += `<div class="preview-section">
+      <div class="preview-label">Actividades (${acts.length})</div>`;
+
+    acts.forEach((a,i)=>{
+      const dept    = cardDept[a.id]||'';
+      const amEl    = document.getElementById('am'+a.id);
+      const motivo  = amEl?.getAttribute('data-mot')||'';
+      const ida     = v('aid'+a.id);
+      const fecha   = v('af'+a.id);
+      const desc    = document.getElementById('ad'+a.id)?.value||'';
+      const acuer   = document.getElementById('aa'+a.id)?.value||'';
+      const fcAct   = v('afc'+a.id);
+
+      // Clean motivo for display (remove code)
+      const motivoClean = motivo.replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+
+      const deptClass = dept==='GIGE'?'gige':dept==='RED'?'red':dept==='HYE'?'hye':'';
+      const deptLabel = dept||'Sin dept';
+      const statusColor = (!dept||!motivo||!ida) ? '#f5a000' : 'var(--g)';
+      const statusIcon  = (!dept||!motivo||!ida) ? '⚠' : '✓';
+
+      html += `<div class="preview-act">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+          <div style="flex:1;min-width:0;">
+            ${dept?`<span class="preview-act-dept ${deptClass}">${deptLabel}</span>`:'<span class="preview-act-dept" style="background:#fff0e0;color:#f5a000;">Sin dpto</span>'}
+            <div class="preview-act-title">${motivoClean||'<em style="color:var(--g4);font-weight:400;">Sin motivo</em>'}</div>
+            ${ida?`<div style="font-size:9px;color:var(--g4);">ID: ${ida} · ${fecha?fd(fecha):''}</div>`:'<div style="font-size:9px;color:#f5a000;">⚠ Sin ID</div>'}
+          </div>
+          <span style="font-size:14px;color:${statusColor};flex-shrink:0;">${statusIcon}</span>
+        </div>
+        ${desc?`<div class="preview-act-desc">${desc.length>80?desc.substring(0,80)+'…':desc}</div>`:''}
+        ${fcAct?`<div style="font-size:9px;color:var(--gd);margin-top:3px;">📅 Cumpl: ${fd(fcAct)}</div>`:''}
+      </div>`;
+    });
+
+    html += '</div>';
+  } else {
+    html += `<div class="preview-empty">Sin actividades registradas.</div>`;
+  }
+
+  // ── Firmas ───────────────────────────────────────────────────────
+  if(d.rnombre || d.fcump){
+    html += `<div class="preview-section">
+      <div class="preview-label">Receptor · Fecha cumplimiento global</div>
+      <div class="preview-value">${d.rnombre||'—'} ${d.fcump?'· '+fd(d.fcump):''}</div>
+    </div>`;
+  }
+
+  // ── Status summary ───────────────────────────────────────────────
+  const errors = validateAOA ? validateAOA() : [];
+  if(errors.length){
+    html += `<div style="background:#fff0e0;border:1px solid #f5a000;border-radius:6px;padding:8px 10px;margin-top:4px;">
+      <div style="font-size:9px;font-weight:800;color:#b37000;text-transform:uppercase;margin-bottom:4px;">⚠ Pendientes (${errors.length})</div>
+      ${errors.slice(0,3).map(e=>`<div style="font-size:10px;color:#8a5000;padding:1px 0;">· ${e}</div>`).join('')}
+      ${errors.length>3?`<div style="font-size:10px;color:#8a5000;">…y ${errors.length-3} más</div>`:''}
+    </div>`;
+  } else if(acts.length) {
+    html += `<div style="background:var(--gl);border:1px solid var(--g);border-radius:6px;padding:8px 10px;margin-top:4px;font-size:11px;font-weight:700;color:var(--gd);">✓ Listo para generar PDF</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// Hook: re-render preview on any input/change
+document.addEventListener('input', ()=>schedulePreview());
+document.addEventListener('change', ()=>schedulePreview());
+
+// Also hook into acts add/remove by wrapping schedulePreview into key functions
+const _origAddAct = addAct;
+const _origRmAct  = rmAct;
+window.addAct = function(afterId){
+  const id = _origAddAct(afterId);
+  schedulePreview();
+  return id;
+};
+window.rmAct = function(id){
+  _origRmAct(id);
+  schedulePreview();
+};
+
+// ── LOGIN ──────────────────────────────────────────
+const USERS = {
+  'admin': 'admin',
+  'branco': 'achs2026',
+};
+
+function doLogin(){
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if(USERS[u] && USERS[u] === p){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('main-app').style.display='block';
+    err.style.display='none';
+    // restore body bg
+    document.body.style.background='';
+  } else {
+    err.style.display='block';
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+// Allow Enter on user field to move to pass, already handled inline
+// Focus user field on load
+window.addEventListener('load', ()=>{
+  const u = document.getElementById('login-user');
+  if(u) u.focus();
+});
+
+
+// ── MOBILE: Fix iOS input zoom by keeping font-size ≥ 16px on focus ──────
+// (handled via CSS font-size:14px on inputs — iOS only zooms if < 16px)
+// ── MOBILE: Collapsible sections default open on mobile ───────────────────
+function isMobile(){ return window.innerWidth <= 640; }
+
+// On mobile, collapse the Experto ACHS section in datos tab by default
+// to save vertical space — user can expand
+if(isMobile()){
+  // Auto-scroll to top of acts-wrap when adding a new act
+  const _addActMobile = window.addAct;
+  window.addAct = function(afterId){
+    const id = _addActMobile(afterId);
+    if(!afterId){
+      setTimeout(()=>{
+        const card = document.getElementById('ac'+id);
+        if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 100);
+    }
+    return id;
+  };
+}
+
+// ── MOBILE: Swipe tabs support ────────────────────────────────────────────
+(function(){
+  const tabs = document.querySelector('.tabs');
+  if(!tabs) return;
+  let startX = 0;
+  tabs.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
+  tabs.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - startX;
+    if(Math.abs(dx) < 40) return; // not a real swipe
+    const allTabs = [...document.querySelectorAll('.tab')];
+    const active  = allTabs.findIndex(t=>t.classList.contains('active'));
+    const next = dx < 0 ? Math.min(active+1, allTabs.length-1) : Math.max(active-1, 0);
+    if(next !== active) allTabs[next].click();
+  }, {passive:true});
+})();
+
+
+// ══════════════════════════════════════════════════════════════════
+// OUTLOOK / CORREO ELECTRÓNICO
+// ══════════════════════════════════════════════════════════════════
+
+function buildOutlookBody(){
+  const d = gd();
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '[CENTRO]';
+  const fechaAseq = d.fecha_a ? fd(d.fecha_a) : '[FECHA]';
+  const modalidad = d.mod || 'Presencial';
+  const receptor = d.rnombre || '[NOMBRE RECEPTOR]';
+  const experto = d.enombre || 'Branco Sandoval Palma';
+  const expertoCargo = 'Experto en Prevención';
+  const expertoEmail = d.eemail || 'bmsandovalp@achs.cl';
+  const fcump = d.fcump ? fd(d.fcump) : '[FECHA CUMPLIMIENTO]';
+
+  // Build activities summary — resumen básico como evidencia
+  let actsSummary = '';
+  if(acts.length){
+    acts.forEach((a, i) => {
+      const amEl = document.getElementById('am'+a.id);
+      const motivo = (amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+      const acuer = document.getElementById('aa'+a.id)?.value || 'Se entrega AOA para gestión interna.';
+      if(motivo){
+        actsSummary += `   ${i+1}. ${motivo}\n`;
+        actsSummary += `      → ${acuer}\n`;
+      }
+    });
+  } else {
+    actsSummary = '   (Sin actividades registradas)\n';
+  }
+
+  // Build participants list
+  let partsList = '';
+  participantes.forEach(p => {
+    partsList += `   · ${p.nombre}${p.cargo?' — '+p.cargo:''}\n`;
+  });
+  partsList += `   · ${experto} — ${expertoCargo} ACHS\n`;
+
+  const body = `Estimado/a ${receptor},
+
+Junto con saludar, por medio del presente correo le informo que el día ${fechaAseq} se realizó la Asesoría de Organismo Administrador (AOA) en modalidad ${modalidad} en ${centro}, en el marco del servicio preventivo que la Asociación Chilena de Seguridad (ACHS) entrega a su institución.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DETALLE DE LA ASESORÍA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Centro de trabajo: ${centro}
+• Fecha de asesoría: ${fechaAseq}
+• Modalidad: ${modalidad}
+• Fecha de cumplimiento compromisos: ${fcump}
+
+PARTICIPANTES:
+${partsList}
+ACTIVIDADES REALIZADAS:
+${actsSummary}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Adjunto encontrará el Registro de Asesoría (AOA) para su revisión y firma. Le solicito atentamente devolver el documento firmado a la brevedad, o confirmar su recepción mediante respuesta a este correo.
+
+Para cualquier consulta o coordinación, no dude en contactarse:
+
+${experto}
+${expertoCargo} — ACHS
+📧 ${expertoEmail}
+
+Quedo a su disposición.
+
+Saludos cordiales,
+
+${experto}
+${expertoCargo}
+Asociación Chilena de Seguridad (ACHS)
+${expertoEmail}`;
+
+  return body;
+}
+
+function buildOutlookSubject(){
+  const d = gd();
+  const bp = d.bp || 'BP';
+  const fechaAseq = d.fecha_a ? fd(d.fecha_a) : '';
+  return `AOA | BP ${bp}${fechaAseq?' | '+fechaAseq:''}`;
+}
+
+function openOutlookModal(){
+  const d = gd();
+
+  // Pre-fill fields from form data
+  document.getElementById('outlook-to').value = d.remail || '';
+  document.getElementById('outlook-cc').value = d.eemail || '';
+  document.getElementById('outlook-subject').value = buildOutlookSubject();
+  document.getElementById('outlook-body').value = buildOutlookBody();
+
+  document.getElementById('outlook-modal').style.display = 'flex';
+}
+
+function closeOutlookModal(){
+  document.getElementById('outlook-modal').style.display = 'none';
+}
+
+function regenerateOutlookBody(){
+  document.getElementById('outlook-subject').value = buildOutlookSubject();
+  document.getElementById('outlook-body').value = buildOutlookBody();
+  toast('✓ Mensaje regenerado desde el formulario', 'ok');
+}
+
+function copyOutlookBody(){
+  const body = document.getElementById('outlook-body').value;
+  const subject = document.getElementById('outlook-subject').value;
+  const fullText = 'Asunto: ' + subject + '\n\n' + body;
+  navigator.clipboard.writeText(fullText).then(()=>{
+    toast('✓ Mensaje copiado al portapapeles', 'ok');
+  }).catch(()=>{
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = fullText;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('✓ Mensaje copiado al portapapeles', 'ok');
+  });
+}
+
+function sendOutlook(){
+  const to      = document.getElementById('outlook-to').value.trim();
+  const cc      = document.getElementById('outlook-cc').value.trim();
+  const subject = document.getElementById('outlook-subject').value;
+  const body    = document.getElementById('outlook-body').value;
+
+  if(!to){
+    document.getElementById('outlook-to').focus();
+    document.getElementById('outlook-to').style.borderColor = '#C8102E';
+    toast('Ingresa el correo del destinatario', 'err');
+    return;
+  }
+
+  // Encode for mailto
+  const params = [
+    cc ? 'cc='+encodeURIComponent(cc) : '',
+    'subject='+encodeURIComponent(subject),
+    'body='+encodeURIComponent(body)
+  ].filter(Boolean).join('&');
+
+  const mailto = 'mailto:'+encodeURIComponent(to)+'?'+params;
+
+  // Open — works with Outlook, Apple Mail, Gmail app, etc.
+  window.location.href = mailto;
+
+  toast('📧 Abriendo cliente de correo...', 'ok', 3000);
+  setTimeout(closeOutlookModal, 1500);
+}
+
+// Close on backdrop click
+document.getElementById('outlook-modal').addEventListener('click', e=>{
+  if(e.target === document.getElementById('outlook-modal')) closeOutlookModal();
+});
+
+// Dark mode support for outlook modal inputs
+function applyDarkOutlook(){
+  const isDark = document.body.classList.contains('dark');
+  const inputs = document.querySelectorAll('#outlook-modal input, #outlook-modal textarea');
+  inputs.forEach(el=>{
+    el.style.background = isDark ? '#1e1e1e' : '';
+    el.style.color = isDark ? '#e8e8e8' : '';
+    el.style.borderColor = isDark ? '#444' : '';
+  });
+  const modal = document.querySelector('#outlook-modal > div');
+  if(modal) modal.style.background = isDark ? '#1e1e1e' : '';
+}
+
+const _origToggleDark = toggleDark;
+window.toggleDark = function(){
+  _origToggleDark();
+  applyDarkOutlook();
+};
+
 </script>
 </body>
 </html>
