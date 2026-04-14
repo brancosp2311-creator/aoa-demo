@@ -634,6 +634,7 @@ body.dark .mail-client-btn.selected.gmail{background:#2e0d0d;}
 </div><!-- end wrap/main-app -->
 
 <script>
+
 // ══════════════════════════════════════════
 // DB — Tipos de Asesoría con Motivos y Submotivos
 // GIGE = solo FTG de PPP / RED = sin PPP
@@ -6375,11 +6376,7 @@ renderChips();
 // ══════════════════════════════════════════════════════════════════
 // DARK MODE
 // ══════════════════════════════════════════════════════════════════
-function toggleDark(){
-  const isDark=document.body.classList.toggle('dark');
-  localStorage.setItem('aoa_dark',isDark?'1':'0');
-  document.getElementById('dark-btn').textContent=isDark?'☀':'🌙';
-}
+
 if(localStorage.getItem('aoa_dark')==='1'){
   document.body.classList.add('dark');
   const btn=document.getElementById('dark-btn');
@@ -6389,209 +6386,46 @@ if(localStorage.getItem('aoa_dark')==='1'){
 // ══════════════════════════════════════════════════════════════════
 // TOAST
 // ══════════════════════════════════════════════════════════════════
-function toast(msg,type='ok',duration=3000){
-  const c=document.getElementById('toast-container');
-  if(!c) return;
-  const t=document.createElement('div');
-  t.className='toast'+(type==='err'?' err':type==='warn'?' warn':'');
-  t.textContent=msg;
-  c.appendChild(t);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),350);},duration);
-}
+
 
 // ══════════════════════════════════════════════════════════════════
 // AUTOSAVE / BORRADORES
 // ══════════════════════════════════════════════════════════════════
-let autosaveTimer=null;
-let isDirty=false;
 
-function markDirty(){
-  isDirty=true;
-  const b=document.getElementById('draft-badge');
-  if(b) b.classList.add('show');
-  clearTimeout(autosaveTimer);
-  autosaveTimer=setTimeout(()=>saveDraft(true),30000);
-}
 
-function getActsSnapshot(){
-  return acts.map(a=>({
-    id:a.id,
-    dept:cardDept[a.id]||'',
-    tipo:document.getElementById('am'+a.id)?.getAttribute('data-tipo')||'',
-    motivo:document.getElementById('am'+a.id)?.getAttribute('data-mot')||'',
-    sub:v('as'+a.id),
-    ida:v('aid'+a.id),
-    fecha:v('af'+a.id),
-    fcump_act:v('afc'+a.id),
-    desc:document.getElementById('ad'+a.id)?.value||'',
-    acuer:document.getElementById('aa'+a.id)?.value||''
-  }));
-}
 
-function saveDraft(silent=false){
-  const d=gd();
-  const snap={
-    timestamp:new Date().toISOString(),
-    formData:d,
-    actsState:getActsSnapshot(),
-    acnt,
-    cardDept:{...cardDept},
-    participantes:[...participantes]
-  };
-  try{
-    localStorage.setItem('aoa_draft',JSON.stringify(snap));
-    isDirty=false;
-    const b=document.getElementById('draft-badge');
-    if(b) b.classList.remove('show');
-    if(!silent) toast('✓ Borrador guardado','ok');
-  }catch(e){ toast('Error al guardar borrador','err'); }
-}
 
-function restoreActsFromSnapshot(actsState){
-  acts=[];
-  document.getElementById('acts-wrap').innerHTML='';
-  document.getElementById('cnt').textContent='0';
-  for(const a of (actsState||[])){
-    acnt=a.id-1;
-    const newId=addAct();
-    if(a.dept) setDept(newId,a.dept);
-    setTimeout(()=>{
-      const ms=document.getElementById('am'+newId);
-      if(ms&&a.tipo&&a.motivo){
-        const cv=a.tipo+'||'+a.motivo;
-        ms.value=cv;
-        if(ms.value===cv) onMotivoChange(newId);
-      }
-      setTimeout(()=>{
-        const ss=document.getElementById('as'+newId);
-        if(ss&&a.sub) ss.value=a.sub;
-        const descEl=document.getElementById('ad'+newId);
-        if(descEl){descEl.value=a.desc||'';ar(descEl);}
-        const acuerEl=document.getElementById('aa'+newId);
-        if(acuerEl){acuerEl.value=a.acuer||'';ar(acuerEl);}
-        document.getElementById('aid'+newId).value=a.ida||'';
-        document.getElementById('af'+newId).value=a.fecha||tod();
-        const afc=document.getElementById('afc'+newId);
-        if(afc) afc.value=a.fcump_act||'';
-      },60);
-    },25);
-  }
-  document.getElementById('empty-msg').style.display=(actsState||[]).length?'none':'block';
-  document.getElementById('cnt').textContent=(actsState||[]).length;
-}
 
-function loadDraft(){
-  const raw=localStorage.getItem('aoa_draft');
-  if(!raw) return;
-  try{
-    const snap=JSON.parse(raw);
-    const dt=new Date(snap.timestamp).toLocaleString('es-CL');
-    if(!confirm('Hay un borrador del '+dt+'. ¿Deseas restaurarlo?')) return;
-    const d=snap.formData;
-    document.getElementById('razon').value=d.razon||'';
-    document.getElementById('bp').value=d.bp||'';
-    document.getElementById('fecha_a').value=d.fecha_a||tod();
-    document.getElementById('fcump').value=d.fcump||'';
-    const objEl=document.getElementById('obj');
-    objEl.value=d.obj||''; ar(objEl);
-    if(d.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
-    else document.querySelector('input[name="mod"][value="PRESENCIAL"]').checked=true;
-    ['enombre','erut','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
-      document.getElementById(id).value=d[id]||'';
-    });
-    if(d.razon_sub){
-      const sub=document.getElementById('razon-sub');
-      if(sub){sub.textContent='▶ '+d.razon_sub;sub.style.display='block';}
-      document.getElementById('bp-selected-txt').textContent=d.razon_sub+' — '+d.bp;
-      document.getElementById('bp-selected').classList.add('show');
-    }
-    participantes=[...(snap.participantes||[])];
-    renderChips();
-    acnt=snap.acnt||0;
-    restoreActsFromSnapshot(snap.actsState);
-    toast('✓ Borrador restaurado del '+dt,'ok',4000);
-  }catch(e){ toast('Error al restaurar borrador: '+e.message,'err'); }
-}
 
-document.addEventListener('input',e=>{ if(e.target.closest('#main-app')) markDirty(); });
-document.addEventListener('change',e=>{ if(e.target.closest('#main-app')) markDirty(); });
-window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue='';}});
+
+
+
+
+
+
+
+;
 // Restaurar borrador al cargar
-setTimeout(()=>{ if(localStorage.getItem('aoa_draft')) loadDraft(); }, 600);
+
 
 // ══════════════════════════════════════════════════════════════════
 // PLANTILLAS
 // ══════════════════════════════════════════════════════════════════
-let templates=[];
 try{templates=JSON.parse(localStorage.getItem('aoa_templates')||'[]');}catch(e){}
-function saveTemplates(){localStorage.setItem('aoa_templates',JSON.stringify(templates));}
 
-function openTplModal(){renderTplList();document.getElementById('tpl-modal').classList.add('open');}
-function closeTplModal(){document.getElementById('tpl-modal').classList.remove('open');}
 
-function renderTplList(){
-  const list=document.getElementById('tpl-list');
-  if(!templates.length){
-    list.innerHTML='<div class="tpl-empty">Sin plantillas guardadas.<br><br>Rellena un AOA y usa <strong>"💾 Guardar plantilla"</strong> para crear la primera.</div>';
-    return;
-  }
-  list.innerHTML=templates.map((t,i)=>`
-    <div class="tpl-card">
-      <div>
-        <div class="tpl-card-name">📋 ${t.name}</div>
-        <div class="tpl-card-meta">${t.bp||''} · ${(t.actsState||[]).length} actividades · ${new Date(t.saved).toLocaleDateString('es-CL')}</div>
-      </div>
-      <div class="tpl-card-actions">
-        <button class="tpl-btn-use" onclick="loadTemplate(${i});closeTplModal()">Usar</button>
-        <button class="tpl-btn-del" onclick="deleteTemplate(${i})">🗑</button>
-      </div>
-    </div>`).join('');
-}
 
-function saveAsTemplate(){
-  const d=gd();
-  const name=prompt('Nombre para esta plantilla:',document.getElementById('bp-selected-txt')?.textContent||'Mi plantilla');
-  if(!name) return;
-  templates.unshift({name,saved:new Date().toISOString(),bp:d.bp,razon:d.razon,razon_sub:d.razon_sub,obj:d.obj,mod:d.mod,participantes:[...participantes],actsState:getActsSnapshot()});
-  saveTemplates();
-  toast('✓ Plantilla "'+name+'" guardada','ok');
-}
 
-function loadTemplate(idx){
-  const t=templates[idx];
-  if(!t||!confirm('Esto reemplazará el formulario actual. ¿Continuar?')) return;
-  resetF(true);
-  document.getElementById('razon').value=t.razon||'';
-  document.getElementById('bp').value=t.bp||'';
-  const objEl=document.getElementById('obj');
-  objEl.value=t.obj||''; ar(objEl);
-  document.getElementById('fecha_a').value=tod();
-  if(t.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
-  if(t.razon_sub){
-    const sub=document.getElementById('razon-sub');
-    if(sub){sub.textContent='▶ '+t.razon_sub;sub.style.display='block';}
-    document.getElementById('bp-selected-txt').textContent=t.razon_sub+' — '+t.bp;
-    document.getElementById('bp-selected').classList.add('show');
-  }
-  participantes=[...(t.participantes||[])];
-  renderChips();
-  acnt=0;
-  restoreActsFromSnapshot((t.actsState||[]).map((a,i)=>({...a,id:i+1,ida:'',fecha:tod(),fcump_act:''})));
-  toast('✓ Plantilla "'+t.name+'" cargada. Ajusta fechas e IDs.','ok',4500);
-}
 
-function deleteTemplate(idx){
-  if(!confirm('¿Eliminar esta plantilla?')) return;
-  templates.splice(idx,1);
-  saveTemplates();
-  renderTplList();
-  toast('Plantilla eliminada','warn');
-}
 
-document.getElementById('tpl-modal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('tpl-modal')) closeTplModal();
-});
+
+
+
+
+
+
+
+
 
 // ══════════════════════════════════════════════════════════════════
 // VALIDACIÓN ANTES DE GENERAR
@@ -6616,141 +6450,323 @@ function validateAOA(){
 }
 
 function closeValModal(){document.getElementById('val-modal').classList.remove('open');}
-let _genPDFFn=null;
 
-window.genPDF=function(){
-  const errors=validateAOA();
+
+// ══════════════════════════════════════════════════════════════════
+// PDF GENERATION
+// ══════════════════════════════════════════════════════════════════
+function genPDFForce(){ _runGenPDF(); }
+
+window.genPDF = function(){
+  const errors = validateAOA();
   if(errors.length){
-    const list=document.getElementById('val-list');
-    list.innerHTML=errors.map(e=>`<li>${e}</li>`).join('');
+    const list = document.getElementById('val-list');
+    list.innerHTML = errors.map(e=>`<li>${e}</li>`).join('');
     document.getElementById('val-modal').classList.add('open');
   } else {
     _runGenPDF();
   }
 };
-function genPDFForce(){_runGenPDF();}
+
 function _runGenPDF(){
-  const d=gd();
+  const d = gd();
   showS('Generando PDF...','load');
   setTimeout(()=>{
     try{
-      const html=buildDoc(d);
-      const win=window.open('','_blank','width=900,height=700');
-      if(!win){showS('Permite ventanas emergentes en el navegador.','err');return;}
-      win.document.open();win.document.write(html);win.document.close();
-      setTimeout(()=>{win.focus();win.print();},800);
+      const html = buildDoc(d);
+      const win = window.open('','_blank','width=900,height=700');
+      if(!win){ showS('Permite ventanas emergentes en el navegador.','err'); return; }
+      win.document.open(); win.document.write(html); win.document.close();
+      setTimeout(()=>{ win.focus(); win.print(); }, 800);
       showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo.','ok');
-      toast('✓ PDF generado correctamente','ok');
-      isDirty=false;
-      // ── Registrar en Google Sheets via n8n (silencioso) ──
+      toast('✓ PDF generado','ok');
+      isDirty = false;
+      // Guardar en historial
+      setTimeout(()=>{ if(d.bp||d.razon){ saveToHistory(d); updateHistBadge(); } }, 300);
+      // Registrar en n8n Google Sheets (silencioso)
       n8nRegistrarAOA(d);
-    }catch(e){showS('Error: '+e.message,'err');}
-  },200);
+    } catch(e){ showS('Error: '+e.message,'err'); }
+  }, 200);
 }
 
 document.getElementById('val-modal').addEventListener('click',e=>{
   if(e.target===document.getElementById('val-modal')) closeValModal();
 });
 
-// Add "Guardar plantilla" button to acts tab after DOM ready
-setTimeout(()=>{
-  const topBar=document.querySelector('.act-top-bar');
-  if(topBar&&!document.getElementById('tpl-save-btn')){
-    const btn=document.createElement('button');
-    btn.id='tpl-save-btn';
-    btn.className='btn-s';
-    btn.style.cssText='font-size:11px;white-space:nowrap;';
-    btn.textContent='💾 Guardar plantilla';
-    btn.onclick=saveAsTemplate;
-    topBar.insertBefore(btn,topBar.querySelector('.btn-add'));
-  }
-},300);
-
 // ══════════════════════════════════════════════════════════════════
-// n8n INTEGRATION CONFIG
+// n8n INTEGRATION
 // ══════════════════════════════════════════════════════════════════
 const N8N = {
-  enabled: true, // cambiar a false para desactivar todas las integraciones
+  enabled: true,
   base: 'https://null2311.app.n8n.cloud/webhook',
-  endpoints: {
-    registro:   'aoa-registro',          // Flujo 1 — Google Sheets
-    correo:     'aoa-correo',            // Flujo 2 — Gmail
-    ia:         'aoa-ia-descripcion',    // Flujo 3 — OpenAI descripciones
-  },
-  url(key){ return this.base + '/' + this.endpoints[key]; }
+  endpoints: { registro:'aoa-registro', correo:'aoa-correo', ia:'aoa-ia-descripcion' },
+  url(k){ return this.base+'/'+this.endpoints[k]; }
 };
 
-// ── Enviar AOA a n8n registro (Flujo 1) ──────────────────────────
 async function n8nRegistrarAOA(d){
   if(!N8N.enabled) return;
   try{
-    const r = await fetch(N8N.url('registro'), {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
+    const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || '';
+    await fetch(N8N.url('registro'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        bp: d.bp,
-        razon: d.razon,
-        razon_sub: d.razon_sub || document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || '',
-        fecha_a: d.fecha_a,
-        fcump: d.fcump,
-        mod: d.mod,
-        enombre: d.enombre,
-        eemail: d.eemail,
-        rnombre: d.rnombre,
-        rcargo: d.rcargo,
-        remail: d.remail,
-        obj: d.obj,
-        acts_count: acts.length,
+        bp:d.bp, razon:d.razon, razon_sub:centro,
+        fecha_a:d.fecha_a, fcump:d.fcump, mod:d.mod,
+        enombre:d.enombre, eemail:d.eemail,
+        rnombre:d.rnombre, rcargo:d.rcargo, remail:d.remail,
+        obj:d.obj, acts_count:acts.length,
         acts_summary: acts.map((a,i)=>{
-          const amEl = document.getElementById('am'+a.id);
-          const motivo = (amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-          const acuer = document.getElementById('aa'+a.id)?.value||'';
-          return motivo ? (i+1)+'. '+motivo+(acuer?'\n   → '+acuer:'') : '';
+          const m=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+          const ac=document.getElementById('aa'+a.id)?.value||'';
+          return m?(i+1)+'. '+m+(ac?'\n   → '+ac:''):'';
         }).filter(Boolean).join('\n')
       })
     });
-    if(r.ok) toast('☁ Registrado en Google Sheets','ok',2000);
-  } catch(e){ console.warn('n8n registro error:',e); }
+  }catch(e){ console.warn('n8n registro:',e); }
 }
 
-// ── Enviar correo real vía n8n Gmail (Flujo 2) ───────────────────
-async function n8nEnviarCorreo(to, cc, subject, body){
+async function n8nEnviarCorreo(to,cc,subject,body){
   if(!N8N.enabled) throw new Error('n8n desactivado');
-  const r = await fetch(N8N.url('correo'), {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ remail: to, cc, asunto: subject, cuerpo: body, ...gd() })
+  const r = await fetch(N8N.url('correo'),{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({remail:to, cc, asunto:subject, cuerpo:body, ...gd()})
   });
   if(!r.ok) throw new Error('Error n8n: '+r.status);
-  return await r.json();
+  return r.json();
 }
 
-// ── Mejorar descripción con IA vía n8n OpenAI (Flujo 3) ─────────
 async function n8nMejorarDescripcion(motivo, area, descActual){
   if(!N8N.enabled) return null;
   const d = gd();
   try{
-    const r = await fetch(N8N.url('ia'), {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
+    const r = await fetch(N8N.url('ia'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        motivo,
-        area: area || 'área no especificada',
-        centro: document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '',
+        motivo, area: area||'área no especificada',
+        centro: document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'',
         desc_actual: descActual,
-        experto: d.enombre || 'Branco Sandoval Palma'
+        experto: d.enombre||'Branco Sandoval Palma'
       })
     });
-    if(r.ok){
-      const data = await r.json();
-      return data.descripcion_mejorada || null;
-    }
-  } catch(e){ console.warn('n8n IA error:',e); }
+    if(r.ok){ const data=await r.json(); return data.descripcion_mejorada||null; }
+  }catch(e){ console.warn('n8n IA:',e); }
   return null;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// LIVE PREVIEW (punto 4)
+// DARK MODE
+// ══════════════════════════════════════════════════════════════════
+function toggleDark(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('aoa_dark', isDark?'1':'0');
+  const btn = document.getElementById('dark-btn');
+  if(btn) btn.textContent = isDark?'☀':'🌙';
+  applyDarkOutlook();
+}
+if(localStorage.getItem('aoa_dark')==='1'){
+  document.body.classList.add('dark');
+  const btn = document.getElementById('dark-btn');
+  if(btn) btn.textContent='☀';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+function toast(msg, type='ok', duration=3000){
+  const c = document.getElementById('toast-container');
+  if(!c) return;
+  const t = document.createElement('div');
+  t.className = 'toast'+(type==='err'?' err':type==='warn'?' warn':'');
+  t.textContent = msg;
+  c.appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),350); }, duration);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AUTOSAVE / BORRADOR
+// ══════════════════════════════════════════════════════════════════
+let autosaveTimer = null;
+let isDirty = false;
+
+function markDirty(){
+  isDirty = true;
+  const b = document.getElementById('draft-badge');
+  if(b) b.classList.add('show');
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(()=>saveDraft(true), 30000);
+}
+
+function getActsSnapshot(){
+  return acts.map(a=>({
+    id:a.id, dept:cardDept[a.id]||'',
+    tipo:document.getElementById('am'+a.id)?.getAttribute('data-tipo')||'',
+    motivo:document.getElementById('am'+a.id)?.getAttribute('data-mot')||'',
+    sub:v('as'+a.id), ida:v('aid'+a.id), fecha:v('af'+a.id),
+    fcump_act:v('afc'+a.id),
+    desc:document.getElementById('ad'+a.id)?.value||'',
+    acuer:document.getElementById('aa'+a.id)?.value||''
+  }));
+}
+
+function saveDraft(silent=false){
+  const d = gd();
+  const snap = {
+    timestamp: new Date().toISOString(), formData:d,
+    actsState: getActsSnapshot(), acnt,
+    cardDept:{...cardDept}, participantes:[...participantes]
+  };
+  try{
+    localStorage.setItem('aoa_draft', JSON.stringify(snap));
+    isDirty = false;
+    const b = document.getElementById('draft-badge');
+    if(b) b.classList.remove('show');
+    if(!silent) toast('✓ Borrador guardado','ok');
+  }catch(e){ toast('Error al guardar','err'); }
+}
+
+function restoreActsFromSnapshot(actsState){
+  acts = [];
+  document.getElementById('acts-wrap').innerHTML = '';
+  document.getElementById('cnt').textContent = '0';
+  for(const a of (actsState||[])){
+    acnt = a.id-1;
+    const newId = addAct();
+    if(a.dept) setDept(newId, a.dept);
+    setTimeout(()=>{
+      const ms = document.getElementById('am'+newId);
+      if(ms && a.tipo && a.motivo){
+        const cv = a.tipo+'||'+a.motivo;
+        ms.value = cv;
+        if(ms.value===cv) onMotivoChange(newId);
+      }
+      setTimeout(()=>{
+        const ss = document.getElementById('as'+newId);
+        if(ss && a.sub) ss.value = a.sub;
+        const descEl = document.getElementById('ad'+newId);
+        if(descEl){ descEl.value=a.desc||''; ar(descEl); }
+        const acuerEl = document.getElementById('aa'+newId);
+        if(acuerEl){ acuerEl.value=a.acuer||''; ar(acuerEl); }
+        document.getElementById('aid'+newId).value = a.ida||'';
+        document.getElementById('af'+newId).value = a.fecha||tod();
+        const afc = document.getElementById('afc'+newId);
+        if(afc) afc.value = a.fcump_act||'';
+      }, 60);
+    }, 25);
+  }
+  document.getElementById('empty-msg').style.display = (actsState||[]).length?'none':'block';
+  document.getElementById('cnt').textContent = (actsState||[]).length;
+}
+
+function loadDraft(){
+  const raw = localStorage.getItem('aoa_draft');
+  if(!raw) return;
+  try{
+    const snap = JSON.parse(raw);
+    const dt = new Date(snap.timestamp).toLocaleString('es-CL');
+    if(!confirm('Hay un borrador del '+dt+'. ¿Deseas restaurarlo?')) return;
+    const d = snap.formData;
+    document.getElementById('razon').value = d.razon||'';
+    document.getElementById('bp').value = d.bp||'';
+    document.getElementById('fecha_a').value = d.fecha_a||tod();
+    document.getElementById('fcump').value = d.fcump||'';
+    const objEl = document.getElementById('obj'); objEl.value=d.obj||''; ar(objEl);
+    if(d.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+    else document.querySelector('input[name="mod"][value="PRESENCIAL"]').checked=true;
+    ['enombre','erut','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value=d[id]||'';
+    });
+    if(d.razon_sub){
+      const sub=document.getElementById('razon-sub');
+      if(sub){sub.textContent='▶ '+d.razon_sub;sub.style.display='block';}
+      document.getElementById('bp-selected-txt').textContent=d.razon_sub+' — '+d.bp;
+      document.getElementById('bp-selected').classList.add('show');
+    }
+    participantes=[...(snap.participantes||[])]; renderChips();
+    acnt=snap.acnt||0;
+    restoreActsFromSnapshot(snap.actsState);
+    toast('✓ Borrador restaurado del '+dt,'ok',4000);
+  }catch(e){ toast('Error al restaurar: '+e.message,'err'); }
+}
+
+document.addEventListener('input', e=>{ if(e.target.closest('#main-app')) markDirty(); });
+document.addEventListener('change', e=>{ if(e.target.closest('#main-app')) markDirty(); });
+window.addEventListener('beforeunload', e=>{ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setTimeout(()=>{ if(localStorage.getItem('aoa_draft')) loadDraft(); }, 600);
+
+// ══════════════════════════════════════════════════════════════════
+// PLANTILLAS
+// ══════════════════════════════════════════════════════════════════
+let templates = [];
+try{ templates = JSON.parse(localStorage.getItem('aoa_templates')||'[]'); }catch(e){}
+function saveTemplates(){ localStorage.setItem('aoa_templates', JSON.stringify(templates)); }
+
+function openTplModal(){ renderTplList(); document.getElementById('tpl-modal').classList.add('open'); }
+function closeTplModal(){ document.getElementById('tpl-modal').classList.remove('open'); }
+
+function renderTplList(){
+  const list = document.getElementById('tpl-list');
+  if(!templates.length){
+    list.innerHTML='<div class="tpl-empty">Sin plantillas. Rellena un AOA y usa "💾 Guardar plantilla".</div>';
+    return;
+  }
+  list.innerHTML = templates.map((t,i)=>`
+    <div class="tpl-card">
+      <div>
+        <div class="tpl-card-name">📋 ${t.name}</div>
+        <div class="tpl-card-meta">${t.bp||''} · ${(t.actsState||[]).length} actividades · ${new Date(t.saved).toLocaleDateString('es-CL')}</div>
+      </div>
+      <div class="tpl-card-actions">
+        <button class="tpl-btn-use" onclick="loadTemplate(${i});closeTplModal()">Usar</button>
+        <button class="tpl-btn-del" onclick="deleteTemplate(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function saveAsTemplate(){
+  const d = gd();
+  const name = prompt('Nombre para esta plantilla:', document.getElementById('bp-selected-txt')?.textContent||'Mi plantilla');
+  if(!name) return;
+  templates.unshift({ name, saved:new Date().toISOString(), bp:d.bp, razon:d.razon,
+    razon_sub:d.razon_sub, obj:d.obj, mod:d.mod,
+    participantes:[...participantes], actsState:getActsSnapshot() });
+  saveTemplates();
+  toast('✓ Plantilla "'+name+'" guardada','ok');
+}
+
+function loadTemplate(idx){
+  const t = templates[idx];
+  if(!t||!confirm('Esto reemplazará el formulario. ¿Continuar?')) return;
+  resetF(true);
+  document.getElementById('razon').value=t.razon||'';
+  document.getElementById('bp').value=t.bp||'';
+  const objEl=document.getElementById('obj'); objEl.value=t.obj||''; ar(objEl);
+  document.getElementById('fecha_a').value=tod();
+  if(t.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+  if(t.razon_sub){
+    const sub=document.getElementById('razon-sub');
+    if(sub){sub.textContent='▶ '+t.razon_sub;sub.style.display='block';}
+    document.getElementById('bp-selected-txt').textContent=t.razon_sub+' — '+t.bp;
+    document.getElementById('bp-selected').classList.add('show');
+  }
+  participantes=[...(t.participantes||[])]; renderChips();
+  acnt=0;
+  restoreActsFromSnapshot((t.actsState||[]).map((a,i)=>({...a,id:i+1,ida:'',fecha:tod(),fcump_act:''})));
+  toast('✓ Plantilla "'+t.name+'" cargada. Ajusta fechas e IDs.','ok',4500);
+}
+
+function deleteTemplate(idx){
+  if(!confirm('¿Eliminar esta plantilla?')) return;
+  templates.splice(idx,1); saveTemplates(); renderTplList();
+  toast('Plantilla eliminada','warn');
+}
+
+document.getElementById('tpl-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('tpl-modal')) closeTplModal();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// LIVE PREVIEW
 // ══════════════════════════════════════════════════════════════════
 let previewOpen = false;
 let previewTimer = null;
@@ -6759,8 +6775,8 @@ function togglePreview(){
   previewOpen = !previewOpen;
   const panel = document.getElementById('preview-panel');
   const btn   = document.getElementById('preview-btn');
-  panel.classList.toggle('open', previewOpen);
-  if(btn) btn.textContent = previewOpen ? '✕ Preview' : '👁 Preview';
+  if(panel) panel.classList.toggle('open', previewOpen);
+  if(btn) btn.textContent = previewOpen?'✕ Preview':'👁 Preview';
   if(previewOpen) renderLivePreview();
 }
 
@@ -6773,385 +6789,97 @@ function schedulePreview(){
 function renderLivePreview(){
   const el = document.getElementById('live-preview-content');
   if(!el) return;
-
   const d = gd();
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||'';
   let html = '';
 
-  // ── Header info ─────────────────────────────────────────────────
-  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || '';
   html += `<div class="preview-section">
     <div class="preview-label">Centro / BP</div>
     <div class="preview-value"><strong>${d.razon||'<em style="color:var(--g4)">Sin seleccionar</em>'}</strong>${centro?'<br><span style="font-size:10px;color:var(--gd);">▶ '+centro+'</span>':''}</div>
   </div>`;
 
-  // ── Fecha + Modalidad ────────────────────────────────────────────
-  if(d.fecha_a || d.mod){
+  if(d.fecha_a||d.mod){
     html += `<div class="preview-section">
       <div class="preview-label">Fecha · Modalidad</div>
       <div class="preview-value">${d.fecha_a?fd(d.fecha_a):'<em style="color:var(--g4)">Sin fecha</em>'} · ${d.mod}</div>
     </div>`;
   }
 
-  // ── Participantes ────────────────────────────────────────────────
   if(participantes.length){
     const parts = participantes.map(p=>`<div style="padding:2px 0;border-bottom:1px solid var(--g2);">👤 <strong>${p.nombre}</strong>${p.cargo?' <span style="color:var(--g4);font-size:10px;">· '+p.cargo+'</span>':''}</div>`).join('');
-    const experto = `<div style="padding:2px 0;">🔬 <strong>${d.enombre}</strong> <span style="color:var(--g4);font-size:10px;">· Experto ACHS</span></div>`;
     html += `<div class="preview-section">
       <div class="preview-label">Participantes (${participantes.length+1})</div>
-      <div class="preview-value">${parts}${experto}</div>
+      <div class="preview-value">${parts}<div style="padding:2px 0;">🔬 <strong>${d.enombre||''}</strong> <span style="color:var(--g4);font-size:10px;">· Experto ACHS</span></div></div>
     </div>`;
   }
 
-  // ── Objetivo ─────────────────────────────────────────────────────
-  if(d.obj && d.obj.trim()){
-    const objPreview = d.obj.length > 120 ? d.obj.substring(0,120)+'…' : d.obj;
+  if(d.obj&&d.obj.trim()){
     html += `<div class="preview-section">
       <div class="preview-label">Objetivo</div>
-      <div class="preview-value" style="font-size:10px;color:var(--g4);">${objPreview}</div>
+      <div class="preview-value" style="font-size:10px;color:var(--g4);">${d.obj.length>120?d.obj.substring(0,120)+'…':d.obj}</div>
     </div>`;
   }
 
-  // ── Actividades ──────────────────────────────────────────────────
   if(acts.length){
-    html += `<div class="preview-section">
-      <div class="preview-label">Actividades (${acts.length})</div>`;
-
+    html += `<div class="preview-section"><div class="preview-label">Actividades (${acts.length})</div>`;
     acts.forEach((a,i)=>{
-      const dept    = cardDept[a.id]||'';
-      const amEl    = document.getElementById('am'+a.id);
-      const motivo  = amEl?.getAttribute('data-mot')||'';
-      const ida     = v('aid'+a.id);
-      const fecha   = v('af'+a.id);
-      const desc    = document.getElementById('ad'+a.id)?.value||'';
-      const acuer   = document.getElementById('aa'+a.id)?.value||'';
-      const fcAct   = v('afc'+a.id);
-
-      // Clean motivo for display (remove code)
-      const motivoClean = motivo.replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-
-      const deptClass = dept==='GIGE'?'gige':dept==='RED'?'red':dept==='HYE'?'hye':'';
-      const deptLabel = dept||'Sin dept';
-      const statusColor = (!dept||!motivo||!ida) ? '#f5a000' : 'var(--g)';
-      const statusIcon  = (!dept||!motivo||!ida) ? '⚠' : '✓';
-
+      const dept=cardDept[a.id]||'';
+      const mot=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+      const ida=v('aid'+a.id);
+      const deptClass=dept==='GIGE'?'gige':dept==='RED'?'red':dept==='HYE'?'hye':'';
+      const ok=dept&&mot&&ida;
       html += `<div class="preview-act">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
           <div style="flex:1;min-width:0;">
-            ${dept?`<span class="preview-act-dept ${deptClass}">${deptLabel}</span>`:'<span class="preview-act-dept" style="background:#fff0e0;color:#f5a000;">Sin dpto</span>'}
-            <div class="preview-act-title">${motivoClean||'<em style="color:var(--g4);font-weight:400;">Sin motivo</em>'}</div>
-            ${ida?`<div style="font-size:9px;color:var(--g4);">ID: ${ida} · ${fecha?fd(fecha):''}</div>`:'<div style="font-size:9px;color:#f5a000;">⚠ Sin ID</div>'}
+            ${dept?`<span class="preview-act-dept ${deptClass}">${dept}</span>`:'<span class="preview-act-dept" style="background:#fff0e0;color:#f5a000;">Sin dpto</span>'}
+            <div class="preview-act-title">${mot||'<em style="color:var(--g4);font-weight:400;">Sin motivo</em>'}</div>
+            ${ida?`<div style="font-size:9px;color:var(--g4);">ID: ${ida}</div>`:'<div style="font-size:9px;color:#f5a000;">⚠ Sin ID</div>'}
           </div>
-          <span style="font-size:14px;color:${statusColor};flex-shrink:0;">${statusIcon}</span>
+          <span style="font-size:14px;color:${ok?'var(--g)':'#f5a000'};flex-shrink:0;">${ok?'✓':'⚠'}</span>
         </div>
-        ${desc?`<div class="preview-act-desc">${desc.length>80?desc.substring(0,80)+'…':desc}</div>`:''}
-        ${fcAct?`<div style="font-size:9px;color:var(--gd);margin-top:3px;">📅 Cumpl: ${fd(fcAct)}</div>`:''}
       </div>`;
     });
-
     html += '</div>';
   } else {
     html += `<div class="preview-empty">Sin actividades registradas.</div>`;
   }
 
-  // ── Firmas ───────────────────────────────────────────────────────
-  if(d.rnombre || d.fcump){
-    html += `<div class="preview-section">
-      <div class="preview-label">Receptor · Fecha cumplimiento global</div>
-      <div class="preview-value">${d.rnombre||'—'} ${d.fcump?'· '+fd(d.fcump):''}</div>
-    </div>`;
-  }
-
-  // ── Status summary ───────────────────────────────────────────────
-  const errors = validateAOA ? validateAOA() : [];
+  const errors = validateAOA();
   if(errors.length){
     html += `<div style="background:#fff0e0;border:1px solid #f5a000;border-radius:6px;padding:8px 10px;margin-top:4px;">
       <div style="font-size:9px;font-weight:800;color:#b37000;text-transform:uppercase;margin-bottom:4px;">⚠ Pendientes (${errors.length})</div>
       ${errors.slice(0,3).map(e=>`<div style="font-size:10px;color:#8a5000;padding:1px 0;">· ${e}</div>`).join('')}
       ${errors.length>3?`<div style="font-size:10px;color:#8a5000;">…y ${errors.length-3} más</div>`:''}
     </div>`;
-  } else if(acts.length) {
+  } else if(acts.length){
     html += `<div style="background:var(--gl);border:1px solid var(--g);border-radius:6px;padding:8px 10px;margin-top:4px;font-size:11px;font-weight:700;color:var(--gd);">✓ Listo para generar PDF</div>`;
   }
 
   el.innerHTML = html;
 }
 
-// Hook: re-render preview on any input/change
 document.addEventListener('input', ()=>schedulePreview());
 document.addEventListener('change', ()=>schedulePreview());
 
-// Also hook into acts add/remove by wrapping schedulePreview into key functions
-const _origAddAct = addAct;
-const _origRmAct  = rmAct;
-window.addAct = function(afterId){
-  const id = _origAddAct(afterId);
-  schedulePreview();
-  return id;
-};
-window.rmAct = function(id){
-  _origRmAct(id);
-  schedulePreview();
-};
-
-// ── MOBILE:
-// ── MOBILE: Fix iOS input zoom by keeping font-size ≥ 16px on focus ──────
-// (handled via CSS font-size:14px on inputs — iOS only zooms if < 16px)
-// ── MOBILE: Collapsible sections default open on mobile ───────────────────
-function isMobile(){ return window.innerWidth <= 640; }
-
-// On mobile, collapse the Experto ACHS section in datos tab by default
-// to save vertical space — user can expand
-if(isMobile()){
-  // Auto-scroll to top of acts-wrap when adding a new act
-  const _addActMobile = window.addAct;
-  window.addAct = function(afterId){
-    const id = _addActMobile(afterId);
-    if(!afterId){
-      setTimeout(()=>{
-        const card = document.getElementById('ac'+id);
-        if(card) card.scrollIntoView({behavior:'smooth', block:'start'});
-      }, 100);
-    }
-    return id;
-  };
-}
-
-// ── MOBILE: Swipe tabs support ────────────────────────────────────────────
-(function(){
-  const tabs = document.querySelector('.tabs');
-  if(!tabs) return;
-  let startX = 0;
-  tabs.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
-  tabs.addEventListener('touchend', e=>{
-    const dx = e.changedTouches[0].clientX - startX;
-    if(Math.abs(dx) < 40) return; // not a real swipe
-    const allTabs = [...document.querySelectorAll('.tab')];
-    const active  = allTabs.findIndex(t=>t.classList.contains('active'));
-    const next = dx < 0 ? Math.min(active+1, allTabs.length-1) : Math.max(active-1, 0);
-    if(next !== active) allTabs[next].click();
-  }, {passive:true});
-})();
-
-
 // ══════════════════════════════════════════════════════════════════
-// OUTLOOK / CORREO ELECTRÓNICO
+// HISTORIAL
 // ══════════════════════════════════════════════════════════════════
-
-function buildOutlookBody(){
-  const d = gd();
-  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '[CENTRO]';
-  const fechaAseq = d.fecha_a ? fd(d.fecha_a) : '[FECHA]';
-  const modalidad = d.mod || 'Presencial';
-  const receptor = d.rnombre || '[NOMBRE RECEPTOR]';
-  const experto = d.enombre || 'Branco Sandoval Palma';
-  const expertoCargo = 'Experto en Prevención';
-  const expertoEmail = d.eemail || 'bmsandovalp@achs.cl';
-  const fcump = d.fcump ? fd(d.fcump) : '[FECHA CUMPLIMIENTO]';
-
-  // Build activities summary — resumen básico como evidencia
-  let actsSummary = '';
-  if(acts.length){
-    acts.forEach((a, i) => {
-      const amEl = document.getElementById('am'+a.id);
-      const motivo = (amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-      const acuer = document.getElementById('aa'+a.id)?.value || 'Se entrega AOA para gestión interna.';
-      if(motivo){
-        actsSummary += `   ${i+1}. ${motivo}\n`;
-        actsSummary += `      → ${acuer}\n`;
-      }
-    });
-  } else {
-    actsSummary = '   (Sin actividades registradas)\n';
-  }
-
-  // Build participants list
-  let partsList = '';
-  participantes.forEach(p => {
-    partsList += `   · ${p.nombre}${p.cargo?' — '+p.cargo:''}\n`;
-  });
-  partsList += `   · ${experto} — ${expertoCargo} ACHS\n`;
-
-  const body = `Estimado/a ${receptor},
-
-Junto con saludar, por medio del presente correo le informo que el día ${fechaAseq} se realizó la Asesoría de Organismo Administrador (AOA) en modalidad ${modalidad} en ${centro}, en el marco del servicio preventivo que la Asociación Chilena de Seguridad (ACHS) entrega a su institución.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DETALLE DE LA ASESORÍA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-• Centro de trabajo: ${centro}
-• Fecha de asesoría: ${fechaAseq}
-• Modalidad: ${modalidad}
-• Fecha de cumplimiento compromisos: ${fcump}
-
-PARTICIPANTES:
-${partsList}
-ACTIVIDADES REALIZADAS:
-${actsSummary}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Adjunto encontrará el Registro de Asesoría (AOA) para su revisión y firma. Le solicito atentamente devolver el documento firmado a la brevedad, o confirmar su recepción mediante respuesta a este correo.
-
-Para cualquier consulta o coordinación, no dude en contactarse:
-
-${experto}
-${expertoCargo} — ACHS
-📧 ${expertoEmail}
-
-Quedo a su disposición.
-
-Saludos cordiales,
-
-${experto}
-${expertoCargo}
-Asociación Chilena de Seguridad (ACHS)
-${expertoEmail}`;
-
-  return body;
-}
-
-function buildOutlookSubject(){
-  const d = gd();
-  const bp = d.bp || 'BP';
-  const fechaAseq = d.fecha_a ? fd(d.fecha_a) : '';
-  return `AOA | BP ${bp}${fechaAseq?' | '+fechaAseq:''}`;
-}
-
-function openOutlookModal(){
-  const d = gd();
-
-  // Pre-fill fields from form data
-  document.getElementById('outlook-to').value = d.remail || '';
-  document.getElementById('outlook-cc').value = d.eemail || '';
-  document.getElementById('outlook-subject').value = buildOutlookSubject();
-  document.getElementById('outlook-body').value = buildOutlookBody();
-
-  document.getElementById('outlook-modal').style.display = 'flex';
-}
-
-function closeOutlookModal(){
-  document.getElementById('outlook-modal').style.display = 'none';
-}
-
-function regenerateOutlookBody(){
-  document.getElementById('outlook-subject').value = buildOutlookSubject();
-  document.getElementById('outlook-body').value = buildOutlookBody();
-  toast('✓ Mensaje regenerado desde el formulario', 'ok');
-}
-
-function copyOutlookBody(){
-  const body = document.getElementById('outlook-body').value;
-  const subject = document.getElementById('outlook-subject').value;
-  const fullText = 'Asunto: ' + subject + '\n\n' + body;
-  navigator.clipboard.writeText(fullText).then(()=>{
-    toast('✓ Mensaje copiado al portapapeles', 'ok');
-  }).catch(()=>{
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = fullText;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    toast('✓ Mensaje copiado al portapapeles', 'ok');
-  });
-}
-
-function sendOutlook(){
-  const to      = document.getElementById('outlook-to').value.trim();
-  const cc      = document.getElementById('outlook-cc').value.trim();
-  const subject = document.getElementById('outlook-subject').value;
-  const body    = document.getElementById('outlook-body').value;
-
-  if(!to){
-    document.getElementById('outlook-to').focus();
-    document.getElementById('outlook-to').style.borderColor = '#C8102E';
-    toast('Ingresa el correo del destinatario', 'err');
-    return;
-  }
-
-  // Encode for mailto
-  const params = [
-    cc ? 'cc='+encodeURIComponent(cc) : '',
-    'subject='+encodeURIComponent(subject),
-    'body='+encodeURIComponent(body)
-  ].filter(Boolean).join('&');
-
-  const mailto = 'mailto:'+encodeURIComponent(to)+'?'+params;
-
-  // Open — works with Outlook, Apple Mail, Gmail app, etc.
-  window.location.href = mailto;
-
-  toast('📧 Abriendo cliente de correo...', 'ok', 3000);
-  setTimeout(closeOutlookModal, 1500);
-}
-
-// Close on backdrop click
-document.getElementById('outlook-modal').addEventListener('click', e=>{
-  if(e.target === document.getElementById('outlook-modal')) closeOutlookModal();
-});
-
-// Dark mode support for outlook modal inputs
-function applyDarkOutlook(){
-  const isDark = document.body.classList.contains('dark');
-  const inputs = document.querySelectorAll('#outlook-modal input, #outlook-modal textarea');
-  inputs.forEach(el=>{
-    el.style.background = isDark ? '#1e1e1e' : '';
-    el.style.color = isDark ? '#e8e8e8' : '';
-    el.style.borderColor = isDark ? '#444' : '';
-  });
-  const modal = document.querySelector('#outlook-modal > div');
-  if(modal) modal.style.background = isDark ? '#1e1e1e' : '';
-}
-
-const _origToggleDark = toggleDark;
-window.toggleDark = function(){
-  _origToggleDark();
-  applyDarkOutlook();
-};
-
-// ══════════════════════════════════════════════════════════════════
-// PUNTO 2 — HISTORIAL DE AOAs
-// ══════════════════════════════════════════════════════════════════
-const HIST_KEY = 'aoa_history';
-const HIST_MAX = 15;
 let aoaHistory = [];
-try { aoaHistory = JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); } catch(e){}
+try{ aoaHistory = JSON.parse(localStorage.getItem('aoa_history')||'[]'); }catch(e){}
 
 function saveToHistory(d){
-  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '';
-  const entry = {
-    id: Date.now(),
-    ts: new Date().toISOString(),
-    bp: d.bp,
-    centro,
-    razon: d.razon,
-    razon_sub: d.razon_sub || centro,
-    mod: d.mod,
-    fecha_a: d.fecha_a,
-    obj: d.obj,
-    fcump: d.fcump,
-    enombre: d.enombre, erut: d.erut, eemail: d.eemail,
-    rnombre: d.rnombre, rrut: d.rrut, rcargo: d.rcargo, remail: d.remail,
-    participantes: [...participantes],
-    actsCount: acts.length,
-    actsState: acts.map(a=>({
-      dept: cardDept[a.id]||'',
-      tipo: document.getElementById('am'+a.id)?.getAttribute('data-tipo')||'',
-      motivo: document.getElementById('am'+a.id)?.getAttribute('data-mot')||'',
-      sub: v('as'+a.id),
-      ida: v('aid'+a.id),
-      fecha: v('af'+a.id),
-      fcump_act: v('afc'+a.id),
-      desc: document.getElementById('ad'+a.id)?.value||'',
-      acuer: document.getElementById('aa'+a.id)?.value||''
-    }))
-  };
-  aoaHistory.unshift(entry);
-  if(aoaHistory.length > HIST_MAX) aoaHistory = aoaHistory.slice(0, HIST_MAX);
-  localStorage.setItem(HIST_KEY, JSON.stringify(aoaHistory));
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
+  aoaHistory.unshift({
+    id:Date.now(), ts:new Date().toISOString(),
+    bp:d.bp, centro, razon:d.razon, razon_sub:centro,
+    mod:d.mod, fecha_a:d.fecha_a, obj:d.obj, fcump:d.fcump,
+    enombre:d.enombre, eemail:d.eemail,
+    rnombre:d.rnombre, rrut:d.rrut, rcargo:d.rcargo, remail:d.remail,
+    participantes:[...participantes], actsCount:acts.length,
+    actsState:getActsSnapshot()
+  });
+  if(aoaHistory.length>15) aoaHistory=aoaHistory.slice(0,15);
+  localStorage.setItem('aoa_history', JSON.stringify(aoaHistory));
   updateHistBadge();
 }
 
@@ -7163,20 +6891,19 @@ function updateHistBadge(){
 function renderHistory(){
   const list = document.getElementById('hist-list');
   if(!aoaHistory.length){
-    list.innerHTML='<div class="empty">Sin historial aún. Genera tu primer PDF para que aparezca aquí.</div>';
+    list.innerHTML='<div class="empty">Sin historial. Genera tu primer PDF para que aparezca aquí.</div>';
     return;
   }
   list.innerHTML = aoaHistory.map((h,i)=>{
     const dt = new Date(h.ts).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const centro = h.razon_sub || h.centro || h.razon || '—';
     return `<div class="hist-card">
       <div class="hist-info">
         <div class="hist-bp">BP ${h.bp||'—'} <span class="hist-acts">${h.actsCount||0} actividades</span></div>
-        <div class="hist-meta">${centro} · ${dt} · ${h.mod||'Presencial'}</div>
+        <div class="hist-meta">${h.razon_sub||h.centro||'—'} · ${dt}</div>
       </div>
       <div class="hist-actions">
-        <button class="btn-hist" onclick="loadFromHistory(${i})" title="Cargar este AOA">📂 Cargar</button>
-        <button class="btn-hist danger" onclick="deleteHistory(${i})" title="Eliminar">🗑</button>
+        <button class="btn-hist" onclick="loadFromHistory(${i})">📂 Cargar</button>
+        <button class="btn-hist danger" onclick="deleteHistory(${i})">🗑</button>
       </div>
     </div>`;
   }).join('');
@@ -7184,17 +6911,16 @@ function renderHistory(){
 
 function loadFromHistory(idx){
   const h = aoaHistory[idx];
-  if(!h || !confirm('Esto reemplazará el formulario actual. ¿Continuar?')) return;
+  if(!h||!confirm('Esto reemplazará el formulario. ¿Continuar?')) return;
   resetF(true);
-  document.getElementById('razon').value = h.razon||'';
-  document.getElementById('bp').value = h.bp||'';
-  document.getElementById('fecha_a').value = h.fecha_a||tod();
-  document.getElementById('fcump').value = h.fcump||'';
-  const objEl = document.getElementById('obj'); objEl.value=h.obj||''; ar(objEl);
+  document.getElementById('razon').value=h.razon||'';
+  document.getElementById('bp').value=h.bp||'';
+  document.getElementById('fecha_a').value=h.fecha_a||tod();
+  document.getElementById('fcump').value=h.fcump||'';
+  const objEl=document.getElementById('obj'); objEl.value=h.obj||''; ar(objEl);
   if(h.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
-  else document.querySelector('input[name="mod"][value="PRESENCIAL"]').checked=true;
-  ['enombre','erut','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.value = h[id]||'';
+  ['enombre','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value=h[id]||'';
   });
   if(h.razon_sub){
     const sub=document.getElementById('razon-sub');
@@ -7203,453 +6929,400 @@ function loadFromHistory(idx){
     document.getElementById('bp-selected').classList.add('show');
   }
   participantes=[...(h.participantes||[])]; renderChips();
-  acnt=0;
-  restoreActsFromSnapshot((h.actsState||[]).map((a,i)=>({...a,id:i+1})));
+  acnt=0; restoreActsFromSnapshot(h.actsState);
   showTab('datos', document.querySelector('.tab'));
   toast('✓ AOA del '+new Date(h.ts).toLocaleDateString('es-CL')+' cargado','ok',4000);
 }
 
 function deleteHistory(idx){
-  if(!confirm('¿Eliminar este registro del historial?')) return;
+  if(!confirm('¿Eliminar este registro?')) return;
   aoaHistory.splice(idx,1);
-  localStorage.setItem(HIST_KEY, JSON.stringify(aoaHistory));
-  updateHistBadge();
-  renderHistory();
+  localStorage.setItem('aoa_history',JSON.stringify(aoaHistory));
+  updateHistBadge(); renderHistory();
   toast('Registro eliminado','warn');
 }
 
 function clearHistory(){
-  if(!confirm('¿Borrar TODO el historial? Esta acción no se puede deshacer.')) return;
-  aoaHistory=[];
-  localStorage.setItem(HIST_KEY, JSON.stringify(aoaHistory));
-  updateHistBadge();
-  renderHistory();
+  if(!confirm('¿Borrar TODO el historial?')) return;
+  aoaHistory=[]; localStorage.setItem('aoa_history','[]');
+  updateHistBadge(); renderHistory();
   toast('Historial borrado','warn');
 }
 
 // ══════════════════════════════════════════════════════════════════
-// PUNTO 4 — CONTADOR POR BP EN SELECTOR
-// ══════════════════════════════════════════════════════════════════
-function getBPCounts(){
-  const counts = {};
-  aoaHistory.forEach(h=>{ if(h.bp) counts[h.bp]=(counts[h.bp]||0)+1; });
-  return counts;
-}
-
-// Override bpFilter to show counts in dropdown
-const _origBpFilter = bpFilter;
-window.bpFilter = function(){
-  const q = document.getElementById('bp-search').value.trim().toLowerCase();
-  const dd = document.getElementById('bp-dd');
-  if(!q){dd.classList.remove('open');return;}
-  const counts = getBPCounts();
-  const matches = BPS.filter(b=>b.centro.toLowerCase().includes(q)||b.bp.includes(q));
-  if(!matches.length){
-    dd.innerHTML='<div class="bp-opt" style="color:var(--g4);">Sin resultados</div>';
-    dd.classList.add('open');return;
-  }
-  dd.innerHTML = matches.map(b=>{
-    const c = counts[b.bp]||0;
-    const badge = c>0?` <span style="background:var(--gl);color:var(--gd);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;">${c} AOA${c>1?'s':''}</span>`:'';
-    return `<div class="bp-opt" onclick="bpSelect('${b.bp}')">
-      ${b.centro}${badge}<span class="bp-num">${b.bp}</span>
-    </div>`;
-  }).join('');
-  dd.classList.add('open');
-};
-
-// ══════════════════════════════════════════════════════════════════
-// PUNTO 10 — ESTADÍSTICAS DEL EXPERTO
+// ESTADÍSTICAS
 // ══════════════════════════════════════════════════════════════════
 function renderStats(){
   const el = document.getElementById('stats-content');
   if(!aoaHistory.length){
-    el.innerHTML='<div class="empty">Sin datos suficientes. Genera al menos una AOA para ver estadísticas.</div>';
-    return;
+    el.innerHTML='<div class="empty">Sin datos. Genera al menos una AOA.</div>'; return;
   }
+  const total=aoaHistory.length;
+  const bpSet=new Set(aoaHistory.map(h=>h.bp).filter(Boolean));
+  const now=Date.now(); const week=7*24*3600*1000;
+  const thisWeek=aoaHistory.filter(h=>now-new Date(h.ts).getTime()<week).length;
+  const lastWeek=aoaHistory.filter(h=>{const a=now-new Date(h.ts).getTime();return a>=week&&a<2*week;}).length;
+  const trend=thisWeek>lastWeek?'↑':thisWeek<lastWeek?'↓':'→';
+  const trendColor=thisWeek>lastWeek?'var(--g)':thisWeek<lastWeek?'#C8102E':'var(--g4)';
+  const bpCounts={};
+  aoaHistory.forEach(h=>{if(h.bp) bpCounts[h.bp]=(bpCounts[h.bp]||0)+1;});
+  const topBPs=Object.entries(bpCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxBP=topBPs[0]?.[1]||1;
+  const actCounts={};
+  aoaHistory.forEach(h=>(h.actsState||[]).forEach(a=>{
+    const m=(a.motivo||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    if(m) actCounts[m]=(actCounts[m]||0)+1;
+  }));
+  const topActs=Object.entries(actCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
 
-  const total = aoaHistory.length;
-  const totalActs = aoaHistory.reduce((s,h)=>s+(h.actsCount||0),0);
-  const bpSet = new Set(aoaHistory.map(h=>h.bp).filter(Boolean));
-
-  // BPs más visitados
-  const bpCounts = {};
-  aoaHistory.forEach(h=>{if(h.bp){bpCounts[h.bp]=(bpCounts[h.bp]||0)+1;}});
-  const topBPs = Object.entries(bpCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const maxBP = topBPs[0]?.[1]||1;
-
-  // Actividades más frecuentes
-  const actCounts = {};
-  aoaHistory.forEach(h=>{
-    (h.actsState||[]).forEach(a=>{
-      const m=(a.motivo||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-      if(m) actCounts[m]=(actCounts[m]||0)+1;
-    });
-  });
-  const topActs = Object.entries(actCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
-
-  // Week activity (last 4 weeks)
-  const now = Date.now();
-  const week = 7*24*3600*1000;
-  const thisWeek = aoaHistory.filter(h=>now-new Date(h.ts).getTime()<week).length;
-  const lastWeek = aoaHistory.filter(h=>{const a=now-new Date(h.ts).getTime();return a>=week&&a<2*week;}).length;
-  const trend = thisWeek > lastWeek ? '↑' : thisWeek < lastWeek ? '↓' : '→';
-  const trendColor = thisWeek > lastWeek ? 'var(--g)' : thisWeek < lastWeek ? '#C8102E' : 'var(--g4)';
-
-  let html = `
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-num">${total}</div>
-      <div class="stat-label">AOAs generadas</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">${bpSet.size}</div>
-      <div class="stat-label">Centros atendidos</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:${trendColor};">${thisWeek}<span style="font-size:14px;">${trend}</span></div>
-      <div class="stat-label">Esta semana</div>
-    </div>
+  let html=`<div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">AOAs generadas</div></div>
+    <div class="stat-card"><div class="stat-num">${bpSet.size}</div><div class="stat-label">Centros atendidos</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:${trendColor};">${thisWeek}<span style="font-size:14px;">${trend}</span></div><div class="stat-label">Esta semana</div></div>
   </div>`;
 
   if(topBPs.length){
-    html += `<div class="stitle" style="margin-bottom:8px;">Centros más visitados</div>`;
+    html+=`<div class="stitle" style="margin-bottom:8px;">Centros más visitados</div>`;
     topBPs.forEach(([bp,count])=>{
-      const entry = BPS.find(b=>b.bp===bp);
-      const name = entry?.centro || bp;
-      html += `<div class="bp-rank">
-        <div style="font-size:11px;font-weight:700;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+      const entry=BPS.find(b=>b.bp===bp);
+      html+=`<div class="bp-rank">
+        <div style="font-size:11px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${entry?.centro||bp}</div>
         <div class="bp-rank-bar-wrap"><div class="bp-rank-bar" style="width:${Math.round(100*count/maxBP)}%"></div></div>
         <div style="font-size:11px;font-weight:700;color:var(--g);flex-shrink:0;">${count}</div>
       </div>`;
     });
   }
-
   if(topActs.length){
-    html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Actividades más frecuentes</div>`;
+    html+=`<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Actividades más frecuentes</div>`;
     topActs.forEach(([name,count])=>{
-      html += `<div class="act-rank"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span><span class="act-rank-count">${count}×</span></div>`;
+      html+=`<div class="act-rank"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span><span class="act-rank-count">${count}×</span></div>`;
     });
   }
-
-  // Last 5 dates summary
-  html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Últimas generadas</div>`;
-  aoaHistory.slice(0,5).forEach(h=>{
-    const dt = new Date(h.ts).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
-    const centro = h.razon_sub||h.centro||h.bp||'—';
-    html += `<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--g2);display:flex;justify-content:space-between;"><span>${centro}</span><span style="color:var(--g4);">${dt}</span></div>`;
-  });
-
-  el.innerHTML = html;
+  el.innerHTML=html;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// PUNTO 9 — FIRMA DIGITAL
+// FIRMA DIGITAL
 // ══════════════════════════════════════════════════════════════════
-let firmaCanvas, firmaCtx, firmaDrawing = false, firmaSigned = false;
-let firmaData = null; // base64 data URL
+let firmaCanvas, firmaCtx, firmaDrawing=false, firmaSigned=false, firmaData=null;
 
 function openFirmaModal(){
-  const d = gd();
-  document.getElementById('firma-firmante').textContent =
-    (d.rnombre||'Receptor') + (d.rcargo?' — '+d.rcargo:'');
+  const d=gd();
+  document.getElementById('firma-firmante').textContent=(d.rnombre||'Receptor')+(d.rcargo?' — '+d.rcargo:'');
   document.getElementById('firma-modal').style.display='flex';
-
-  firmaCanvas = document.getElementById('firma-canvas');
-  const rect = firmaCanvas.getBoundingClientRect();
-  // Set actual canvas resolution
-  firmaCanvas.width  = Math.floor(rect.width * window.devicePixelRatio) || 460;
-  firmaCanvas.height = 160;
-  firmaCtx = firmaCanvas.getContext('2d');
-  firmaCtx.strokeStyle = '#111';
-  firmaCtx.lineWidth = 2.5;
-  firmaCtx.lineCap = 'round';
-  firmaCtx.lineJoin = 'round';
-
-  // If existing signature, show it
+  firmaCanvas=document.getElementById('firma-canvas');
+  firmaCanvas.width=firmaCanvas.offsetWidth||460;
+  firmaCanvas.height=160;
+  firmaCtx=firmaCanvas.getContext('2d');
+  firmaCtx.strokeStyle='#111'; firmaCtx.lineWidth=2.5; firmaCtx.lineCap='round'; firmaCtx.lineJoin='round';
   if(firmaData){
-    const img = new Image();
-    img.onload = ()=>firmaCtx.drawImage(img, 0, 0);
-    img.src = firmaData;
-    document.getElementById('firma-status').textContent='✓ Firma cargada — puedes redibujarla';
-    document.getElementById('firma-status').className='firma-status ok';
+    const img=new Image(); img.onload=()=>firmaCtx.drawImage(img,0,0); img.src=firmaData;
   }
-
   setupFirmaEvents();
 }
 
 function setupFirmaEvents(){
-  const c = firmaCanvas;
-  function getPos(e){
-    const r = c.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return { x: src.clientX-r.left, y: src.clientY-r.top };
-  }
-  function start(e){
-    e.preventDefault();
-    firmaDrawing=true;
-    const p=getPos(e);
-    firmaCtx.beginPath();
-    firmaCtx.moveTo(p.x,p.y);
-    firmaSigned=true;
-    document.getElementById('firma-status').textContent='Firmando...';
-    document.getElementById('firma-status').className='firma-status';
-  }
-  function move(e){
-    e.preventDefault();
-    if(!firmaDrawing) return;
-    const p=getPos(e);
-    firmaCtx.lineTo(p.x,p.y);
-    firmaCtx.stroke();
-  }
-  function stop(e){
-    e.preventDefault();
-    firmaDrawing=false;
-    if(firmaSigned){
-      document.getElementById('firma-status').textContent='✓ Firma lista';
-      document.getElementById('firma-status').className='firma-status ok';
-    }
-  }
-  c.addEventListener('mousedown',start);
-  c.addEventListener('mousemove',move);
-  c.addEventListener('mouseup',stop);
-  c.addEventListener('touchstart',start,{passive:false});
-  c.addEventListener('touchmove',move,{passive:false});
-  c.addEventListener('touchend',stop,{passive:false});
+  const c=firmaCanvas;
+  function getPos(e){ const r=c.getBoundingClientRect(); const src=e.touches?e.touches[0]:e; return{x:src.clientX-r.left,y:src.clientY-r.top}; }
+  function start(e){ e.preventDefault(); firmaDrawing=true; const p=getPos(e); firmaCtx.beginPath(); firmaCtx.moveTo(p.x,p.y); firmaSigned=true; }
+  function move(e){ e.preventDefault(); if(!firmaDrawing) return; const p=getPos(e); firmaCtx.lineTo(p.x,p.y); firmaCtx.stroke(); }
+  function stop(e){ e.preventDefault(); firmaDrawing=false; }
+  c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); c.addEventListener('mouseup',stop);
+  c.addEventListener('touchstart',start,{passive:false}); c.addEventListener('touchmove',move,{passive:false}); c.addEventListener('touchend',stop,{passive:false});
 }
 
 function clearFirma(){
   if(!firmaCtx) return;
-  firmaCtx.clearRect(0,0,firmaCanvas.width,firmaCanvas.height);
-  firmaSigned=false;
-  document.getElementById('firma-status').textContent='Dibuja la firma aquí arriba';
-  document.getElementById('firma-status').className='firma-status';
+  firmaCtx.clearRect(0,0,firmaCanvas.width,firmaCanvas.height); firmaSigned=false;
   document.getElementById('firma-saved-preview').style.display='none';
 }
 
 function saveFirma(){
-  if(!firmaSigned){toast('Dibuja la firma primero','warn');return;}
-  firmaData = firmaCanvas.toDataURL('image/png');
-  // Show preview in firmas tab
-  const thumb = document.getElementById('firma-thumb');
-  const display = document.getElementById('firma-display');
-  if(thumb){thumb.src=firmaData;thumb.style.display='block';}
-  if(display){display.textContent='✓ Firma capturada';display.style.color='var(--gd)';display.style.fontStyle='normal';display.style.fontWeight='700';}
+  if(!firmaSigned){ toast('Dibuja la firma primero','warn'); return; }
+  firmaData=firmaCanvas.toDataURL('image/png');
+  const thumb=document.getElementById('firma-thumb');
+  const display=document.getElementById('firma-display');
+  if(thumb){ thumb.src=firmaData; thumb.style.display='block'; }
+  if(display){ display.textContent='✓ Firma capturada'; display.style.color='var(--gd)'; display.style.fontStyle='normal'; display.style.fontWeight='700'; }
   document.getElementById('firma-clear-btn').style.display='inline-block';
-  // Preview inside modal
-  const preview = document.getElementById('firma-saved-preview');
-  const pimg = document.getElementById('firma-preview-img');
-  if(preview){preview.style.display='block';}
-  if(pimg){pimg.src=firmaData;}
-  toast('✓ Firma guardada correctamente','ok');
+  const preview=document.getElementById('firma-saved-preview');
+  const pimg=document.getElementById('firma-preview-img');
+  if(preview) preview.style.display='block';
+  if(pimg) pimg.src=firmaData;
+  toast('✓ Firma guardada','ok');
   setTimeout(closeFirmaModal,800);
 }
 
 function clearFirmaData(){
-  if(!confirm('¿Quitar la firma capturada?')) return;
+  if(!confirm('¿Quitar la firma?')) return;
   firmaData=null;
   const thumb=document.getElementById('firma-thumb');
   const display=document.getElementById('firma-display');
-  if(thumb){thumb.style.display='none';thumb.src='';}
-  if(display){display.textContent='Sin firma capturada';display.style.color='';display.style.fontStyle='italic';display.style.fontWeight='';}
+  if(thumb){ thumb.style.display='none'; thumb.src=''; }
+  if(display){ display.textContent='Sin firma capturada'; display.style.color=''; display.style.fontStyle='italic'; display.style.fontWeight=''; }
   document.getElementById('firma-clear-btn').style.display='none';
 }
 
-function closeFirmaModal(){
-  document.getElementById('firma-modal').style.display='none';
-}
-document.getElementById('firma-modal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('firma-modal')) closeFirmaModal();
-});
+function closeFirmaModal(){ document.getElementById('firma-modal').style.display='none'; }
+document.getElementById('firma-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('firma-modal')) closeFirmaModal(); });
 
-// Inject firma into PDF if available
-// Hook into buildDoc to add firma image row
+// Inyectar firma en PDF
 const _origBuildDoc = buildDoc;
 window.buildDoc = function(d){
   let html = _origBuildDoc(d);
   if(firmaData){
-    // Replace signature placeholder line with actual signature image
-    html = html.replace(
-      'Firma Empresa: ________________________',
-      `Firma Empresa:<br><img src="${firmaData}" style="height:60px;max-width:220px;display:block;margin-top:4px;border:1px solid #ccc;border-radius:4px;padding:2px;background:#fff;">`
-    );
+    html = html.replace('Firma Empresa: ________________________',
+      `Firma Empresa:<br><img src="${firmaData}" style="height:60px;max-width:220px;display:block;margin-top:4px;border:1px solid #ccc;border-radius:4px;padding:2px;background:#fff;">`);
   }
   return html;
 };
 
 // ══════════════════════════════════════════════════════════════════
-// MAIL CLIENT SELECTOR (Outlook, Gmail, Apple, Copy)
+// SELECTOR CLIENTE DE CORREO
 // ══════════════════════════════════════════════════════════════════
 let selectedMailClient = 'outlook';
 
 function selectMailClient(client){
   selectedMailClient = client;
-  ['outlook','gmail','apple','copy'].forEach(c=>{
-    const btn = document.getElementById('mc-'+c);
+  ['outlook','gmail','apple','copy','n8n'].forEach(c=>{
+    const btn=document.getElementById('mc-'+c);
     if(!btn) return;
-    btn.className = 'mail-client-btn' + (c===client?' selected '+c:'');
+    btn.className='mail-client-btn'+(c===client?' selected '+c:'');
   });
-  const labels = {
-    outlook:'📤 Abrir en Outlook',
-    gmail:'📤 Abrir en Gmail',
-    apple:'📤 Abrir en Apple Mail',
-    copy:'📋 Copiar mensaje',
-    n8n:'⚡ Enviar ahora (n8n)'
-  };
-  const lbl = document.getElementById('send-btn-label');
-  if(lbl) lbl.textContent = labels[client];
+  const labels={outlook:'📤 Abrir en Outlook',gmail:'📤 Abrir en Gmail',apple:'📤 Abrir en Apple Mail',copy:'📋 Copiar mensaje',n8n:'⚡ Enviar ahora (n8n)'};
+  const lbl=document.getElementById('send-btn-label');
+  if(lbl) lbl.textContent=labels[client]||'Enviar';
 }
 
-// Override sendOutlook to use selected client
-const _origSendOutlook = sendOutlook;
-window.sendOutlook = function(){
-  const to      = document.getElementById('outlook-to').value.trim();
-  const cc      = document.getElementById('outlook-cc').value.trim();
-  const subject = document.getElementById('outlook-subject').value;
-  const body    = document.getElementById('outlook-body').value;
+// ══════════════════════════════════════════════════════════════════
+// OUTLOOK / CORREO
+// ══════════════════════════════════════════════════════════════════
+function buildOutlookSubject(){
+  const d=gd();
+  return 'AOA | BP '+(d.bp||'')+' | '+(d.fecha_a?fd(d.fecha_a):'');
+}
 
-  if(selectedMailClient==='copy'){
-    copyOutlookBody();
-    return;
-  }
+function buildOutlookBody(){
+  const d=gd();
+  const centro=document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'[CENTRO]';
+  const fechaAseq=d.fecha_a?fd(d.fecha_a):'[FECHA]';
+  let actsSummary='';
+  acts.forEach((a,i)=>{
+    const mot=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    const acuer=document.getElementById('aa'+a.id)?.value||'Se entrega AOA para gestión interna.';
+    if(mot){ actsSummary+=`   ${i+1}. ${mot}\n      → ${acuer}\n`; }
+  });
+  let partsList='';
+  participantes.forEach(p=>{ partsList+=`   · ${p.nombre}${p.cargo?' — '+p.cargo:''}\n`; });
+  partsList+=`   · ${d.enombre||''} — Experto en Prevención ACHS\n`;
 
-  if(!to){
-    document.getElementById('outlook-to').style.borderColor='#C8102E';
-    toast('Ingresa el correo del destinatario','err');
-    return;
-  }
+  return `Estimado/a ${d.rnombre||'[RECEPTOR]'},
 
-  const params = [
-    cc?'cc='+encodeURIComponent(cc):'',
-    'subject='+encodeURIComponent(subject),
-    'body='+encodeURIComponent(body)
-  ].filter(Boolean).join('&');
+Junto con saludar, le informo que el día ${fechaAseq} se realizó la Asesoría de Organismo Administrador (AOA) en modalidad ${d.mod||'Presencial'} en ${centro}.
 
-  // ── Opción n8n: envío directo sin abrir cliente ────────────────
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DETALLE DE LA ASESORÍA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Centro: ${centro}
+• Fecha: ${fechaAseq}
+• Modalidad: ${d.mod||'Presencial'}
+• Fecha cumplimiento compromisos: ${d.fcump?fd(d.fcump):'[FECHA]'}
+
+PARTICIPANTES:
+${partsList}
+ACTIVIDADES REALIZADAS:
+${actsSummary||'   (Sin actividades)'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Adjunto el Registro de Asesoría (AOA) para su revisión y firma.
+
+Saludos cordiales,
+${d.enombre||''}
+Experto en Prevención — ACHS
+${d.eemail||''}`;
+}
+
+function openOutlookModal(){
+  const d=gd();
+  document.getElementById('outlook-to').value=d.remail||'';
+  document.getElementById('outlook-cc').value=d.eemail||'';
+  document.getElementById('outlook-subject').value=buildOutlookSubject();
+  document.getElementById('outlook-body').value=buildOutlookBody();
+  document.getElementById('outlook-modal').style.display='flex';
+}
+
+function closeOutlookModal(){ document.getElementById('outlook-modal').style.display='none'; }
+
+function regenerateOutlookBody(){
+  document.getElementById('outlook-subject').value=buildOutlookSubject();
+  document.getElementById('outlook-body').value=buildOutlookBody();
+  toast('✓ Mensaje regenerado','ok');
+}
+
+function copyOutlookBody(){
+  const body=document.getElementById('outlook-body').value;
+  const subject=document.getElementById('outlook-subject').value;
+  const text='Asunto: '+subject+'\n\n'+body;
+  navigator.clipboard.writeText(text).then(()=>toast('✓ Copiado al portapapeles','ok')).catch(()=>{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    toast('✓ Copiado al portapapeles','ok');
+  });
+}
+
+function sendOutlook(){
+  const to=document.getElementById('outlook-to').value.trim();
+  const cc=document.getElementById('outlook-cc').value.trim();
+  const subject=document.getElementById('outlook-subject').value;
+  const body=document.getElementById('outlook-body').value;
+
+  if(selectedMailClient==='copy'){ copyOutlookBody(); return; }
+
   if(selectedMailClient==='n8n'){
-    const btnSend = document.querySelector('#outlook-modal .btn-p');
-    if(btnSend){ btnSend.textContent='Enviando...'; btnSend.disabled=true; }
-    n8nEnviarCorreo(to, cc, subject, body)
-      .then(()=>{
-        toast('✉ Correo enviado directamente desde Gmail','ok',4000);
-        closeOutlookModal();
-      })
-      .catch(e=>{
-        toast('Error al enviar: '+e.message,'err',5000);
-        if(btnSend){ btnSend.textContent='📤 Enviar'; btnSend.disabled=false; }
-      });
+    const btn=document.querySelector('#outlook-modal button[onclick="sendOutlook()"]');
+    if(btn){ btn.disabled=true; }
+    n8nEnviarCorreo(to,cc,subject,body)
+      .then(()=>{ toast('✉ Correo enviado via Gmail (n8n)','ok',4000); closeOutlookModal(); })
+      .catch(e=>{ toast('Error: '+e.message,'err',5000); if(btn) btn.disabled=false; });
     return;
   }
 
-  let uri;
-  if(selectedMailClient==='gmail'){
-    uri = 'https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)
-      +(cc?'&cc='+encodeURIComponent(cc):'')
-      +'&su='+encodeURIComponent(subject)
-      +'&body='+encodeURIComponent(body);
-    window.open(uri,'_blank');
-  } else {
-    uri = 'mailto:'+encodeURIComponent(to)+'?'+params;
-    window.location.href = uri;
-  }
+  if(!to){ document.getElementById('outlook-to').style.borderColor='#C8102E'; toast('Ingresa el correo del destinatario','err'); return; }
 
-  const clientNames = {outlook:'Outlook',gmail:'Gmail',apple:'Apple Mail'};
-  toast('📧 Abriendo '+clientNames[selectedMailClient]+'...','ok',3000);
+  const params=['cc='+encodeURIComponent(cc),'subject='+encodeURIComponent(subject),'body='+encodeURIComponent(body)].filter(Boolean).join('&');
+
+  if(selectedMailClient==='gmail'){
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)+'&cc='+encodeURIComponent(cc)+'&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body),'_blank');
+  } else {
+    window.location.href='mailto:'+encodeURIComponent(to)+'?'+params;
+  }
+  toast('📧 Abriendo cliente de correo...','ok',3000);
   setTimeout(closeOutlookModal,1500);
+}
+
+function applyDarkOutlook(){
+  const isDark=document.body.classList.contains('dark');
+  document.querySelectorAll('#outlook-modal input, #outlook-modal textarea').forEach(el=>{
+    el.style.background=isDark?'#1e1e1e':''; el.style.color=isDark?'#e8e8e8':''; el.style.borderColor=isDark?'#444':'';
+  });
+  const modal=document.querySelector('#outlook-modal > div');
+  if(modal) modal.style.background=isDark?'#1e1e1e':'';
+}
+
+document.getElementById('outlook-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('outlook-modal')) closeOutlookModal();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// BP CONTADOR (counts per BP from history)
+// ══════════════════════════════════════════════════════════════════
+function getBPCounts(){
+  const counts={};
+  aoaHistory.forEach(h=>{ if(h.bp) counts[h.bp]=(counts[h.bp]||0)+1; });
+  return counts;
+}
+
+const _origBpFilter = bpFilter;
+window.bpFilter = function(){
+  const q=document.getElementById('bp-search').value.trim().toLowerCase();
+  const dd=document.getElementById('bp-dd');
+  if(!q){ dd.classList.remove('open'); return; }
+  const counts=getBPCounts();
+  const matches=BPS.filter(b=>b.centro.toLowerCase().includes(q)||b.bp.includes(q));
+  if(!matches.length){ dd.innerHTML='<div class="bp-opt" style="color:var(--g4);">Sin resultados</div>'; dd.classList.add('open'); return; }
+  dd.innerHTML=matches.map(b=>{
+    const c=counts[b.bp]||0;
+    const badge=c>0?` <span style="background:var(--gl);color:var(--gd);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;">${c} AOA${c>1?'s':''}</span>`:'';
+    return `<div class="bp-opt" onclick="bpSelect('${b.bp}')">${b.centro}${badge}<span class="bp-num">${b.bp}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
 };
 
 // ══════════════════════════════════════════════════════════════════
-// PUNTO 11 — AGENDAR EN CALENDARIO (Outlook)
+// CALENDARIO (.ics)
 // ══════════════════════════════════════════════════════════════════
 function agendarOutlook(){
-  const d = gd();
-  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '';
-  const experto = d.enombre || 'Branco Sandoval Palma';
-
-  // Build activity summary for calendar body
-  let actsText = '';
+  const d=gd();
+  const centro=document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
+  let actsText='';
   acts.forEach((a,i)=>{
-    const amEl = document.getElementById('am'+a.id);
-    const motivo = (amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-    if(motivo) actsText += `${i+1}. ${motivo}\n`;
+    const mot=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    if(mot) actsText+=`${i+1}. ${mot}\n`;
   });
-
-  const subject = `AOA | BP ${d.bp||''} | ${centro}`;
-  const body = `Asesoría de Organismo Administrador\n\nCentro: ${centro}\nBP: ${d.bp||''}\nModalidad: ${d.mod||'Presencial'}\nExperto ACHS: ${experto}\n\nActividades:\n${actsText||'(Sin actividades)'}\n\nGenerado por AOA Generator ACHS v4.0`;
-
-  // Outlook calendar invite via mailto with special parameters
-  // Uses .ics approach via data URI — works in all desktop clients
-  const now = new Date();
-  let startDate = d.fecha_a ? new Date(d.fecha_a+'T09:00:00') : now;
-  let endDate   = new Date(startDate.getTime() + 60*60*1000); // +1 hora
-
-  function fmtICS(date){
-    return date.toISOString().replace(/[-:]/g,'').replace('.000','');
-  }
-
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//AOA Generator ACHS//ES',
-    'CALSCALE:GREGORIAN',
-    'BEGIN:VEVENT',
-    `UID:aoa-${d.bp}-${Date.now()}@achs`,
-    `DTSTAMP:${fmtICS(now)}`,
-    `DTSTART:${fmtICS(startDate)}`,
-    `DTEND:${fmtICS(endDate)}`,
-    `SUMMARY:${subject}`,
-    `DESCRIPTION:${body.replace(/\n/g,'\\n')}`,
-    `LOCATION:${centro}`,
-    `ORGANIZER;CN="${experto}":mailto:${d.eemail||''}`,
-    'END:VEVENT',
-    'END:VCALENDAR'
-  ].join('\r\n');
-
-  // Download .ics file — double-click opens in Outlook/Apple Cal/Google Cal
-  const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `AOA_BP${d.bp||'XXX'}_${(d.fecha_a||tod()).replace(/-/g,'')}.ics`;
-  a.click();
-  URL.revokeObjectURL(url);
-
-  toast('📅 Archivo .ics descargado — ábrelo para agregar al calendario','ok',5000);
+  const subject='AOA | BP '+(d.bp||'')+' | '+centro;
+  const body=`Asesoria de Organismo Administrador\nCentro: ${centro}\nBP: ${d.bp||''}\nModalidad: ${d.mod||'Presencial'}\nExperto: ${d.enombre||''}\n\nActividades:\n${actsText||'Sin actividades'}`;
+  const startDate=d.fecha_a?new Date(d.fecha_a+'T09:00:00'):new Date();
+  const endDate=new Date(startDate.getTime()+60*60*1000);
+  function fmtICS(dt){ return dt.toISOString().replace(/[-:]/g,'').replace('.000',''); }
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AOA Generator ACHS//ES','BEGIN:VEVENT',
+    `UID:aoa-${d.bp}-${Date.now()}@achs`,`DTSTAMP:${fmtICS(new Date())}`,
+    `DTSTART:${fmtICS(startDate)}`,`DTEND:${fmtICS(endDate)}`,
+    `SUMMARY:${subject}`,`DESCRIPTION:${body.replace(/\n/g,'\\n')}`,`LOCATION:${centro}`,
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`AOA_BP${d.bp||'XXX'}_${(d.fecha_a||tod()).replace(/-/g,'')}.ics`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('📅 Archivo .ics descargado','ok',4000);
 }
 
-// Add agendar button to abar dynamically
+// ══════════════════════════════════════════════════════════════════
+// MOBILE: swipe tabs + scroll to new act
+// ══════════════════════════════════════════════════════════════════
+function isMobile(){ return window.innerWidth<=640; }
+if(isMobile()){
+  const _addActOrig = addAct;
+  window.addAct = function(afterId){
+    const id = _addActOrig(afterId);
+    if(!afterId){ setTimeout(()=>{ const c=document.getElementById('ac'+id); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}); },100); }
+    schedulePreview();
+    return id;
+  };
+  const _rmActOrig = rmAct;
+  window.rmAct = function(id){ _rmActOrig(id); schedulePreview(); };
+}
+
+(function(){
+  const tabs=document.querySelector('.tabs'); if(!tabs) return;
+  let startX=0;
+  tabs.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+  tabs.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    if(Math.abs(dx)<40) return;
+    const allTabs=[...document.querySelectorAll('.tab')];
+    const active=allTabs.findIndex(t=>t.classList.contains('active'));
+    const next=dx<0?Math.min(active+1,allTabs.length-1):Math.max(active-1,0);
+    if(next!==active) allTabs[next].click();
+  },{passive:true});
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// BOTÓN "GUARDAR PLANTILLA" en acts tab
+// ══════════════════════════════════════════════════════════════════
 setTimeout(()=>{
-  const abar = document.querySelector('.abar');
-  if(abar && !document.getElementById('cal-btn')){
-    const btn = document.createElement('button');
-    btn.id='cal-btn';
-    btn.className='btn-s';
-    btn.title='Agendar en Outlook Calendar';
+  // Agendar button in abar
+  const abar=document.querySelector('.abar');
+  if(abar&&!document.getElementById('cal-btn')){
+    const btn=document.createElement('button');
+    btn.id='cal-btn'; btn.className='btn-s'; btn.title='Agendar en Calendario';
     btn.style.cssText='font-size:11px;white-space:nowrap;';
-    btn.textContent='📅 Agendar';
-    btn.onclick = agendarOutlook;
-    // Insert before the green PDF button
-    const greenBtn = abar.querySelector('.btn-p.green');
-    abar.insertBefore(btn, greenBtn);
+    btn.textContent='📅 Agendar'; btn.onclick=agendarOutlook;
+    const greenBtn=abar.querySelector('.btn-p.green');
+    if(greenBtn) abar.insertBefore(btn,greenBtn);
   }
-},500);
-
-// ══════════════════════════════════════════════════════════════════
-// HOOK: Save to history when PDF is generated
-// ══════════════════════════════════════════════════════════════════
-const _origRunGenPDF = _runGenPDF;
-window._runGenPDF = function(){
-  _origRunGenPDF();
-  // Save to history after short delay to let gd() capture current state
-  setTimeout(()=>{
-    const d = gd();
-    if(d.bp || d.razon) saveToHistory(d);
-    updateHistBadge();
-  }, 300);
-};
-
-// Init
-updateHistBadge();
+  // Guardar plantilla button in acts tab top bar
+  const topBar=document.querySelector('.act-top-bar');
+  if(topBar&&!document.getElementById('tpl-save-btn')){
+    const btn=document.createElement('button');
+    btn.id='tpl-save-btn'; btn.className='btn-s';
+    btn.style.cssText='font-size:11px;white-space:nowrap;';
+    btn.textContent='💾 Guardar plantilla'; btn.onclick=saveAsTemplate;
+    topBar.insertBefore(btn,topBar.querySelector('.btn-add'));
+  }
+  updateHistBadge();
+},300);
 
 </script>
 </body>
