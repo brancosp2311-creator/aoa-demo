@@ -432,49 +432,7 @@ body.dark .mail-client-btn.selected.gmail{background:#2e0d0d;}
 </style>
 </head>
 <body>
-<!-- LOGIN SCREEN -->
-<div id="login-screen" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f0f0ee;">
-  <div style="background:#fff;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,.12);padding:40px 36px;width:340px;max-width:95vw;">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center;">
-      <div style="background:#13C063;border-radius:9px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <span style="color:#fff;font-size:16px;font-weight:900;letter-spacing:-0.5px;">achs</span>
-      </div>
-      <div>
-        <div style="font-size:15px;font-weight:800;color:#111;">Generador AOA</div>
-        <div style="font-size:11px;color:#888;">Acceso restringido · ACHS</div>
-      </div>
-    </div>
-    <div id="login-err" style="display:none;background:#fff0f0;color:#7a1010;border:1.5px solid #f5a9a9;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:600;margin-bottom:14px;">
-      Usuario o contraseña incorrectos.
-    </div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:4px;">Usuario</label>
-        <input id="login-user" type="text" placeholder="Usuario" autocomplete="username"
-          style="width:100%;border:1.5px solid #d0d0cd;border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;transition:border .15s;"
-          onfocus="this.style.borderColor='#13C063'" onblur="this.style.borderColor='#d0d0cd'"
-          onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()"/>
-      </div>
-      <div>
-        <label style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:4px;">Contraseña</label>
-        <input id="login-pass" type="password" placeholder="Contraseña" autocomplete="current-password"
-          style="width:100%;border:1.5px solid #d0d0cd;border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;transition:border .15s;"
-          onfocus="this.style.borderColor='#13C063'" onblur="this.style.borderColor='#d0d0cd'"
-          onkeydown="if(event.key==='Enter')doLogin()"/>
-      </div>
-      <button onclick="doLogin()"
-        style="background:#13C063;color:#fff;border:none;border-radius:7px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;transition:background .15s;"
-        onmouseover="this.style.background='#0a8a45'" onmouseout="this.style.background='#13C063'">
-        Ingresar
-      </button>
-    </div>
-    <div style="text-align:center;font-size:10px;color:#aaa;margin-top:20px;">
-      © 2026 Branco Sandoval Palma · ACHS · Uso interno exclusivo
-    </div>
-  </div>
-</div>
-
-<div class="wrap" id="main-app" style="display:none;">
+<div class="wrap" id="main-app">
 <div class="app-layout">
 <div class="app-main">
 <div class="main-wrap">
@@ -6452,9 +6410,6 @@ function restoreActsFromSnapshot(actsState){
 }
 
 function loadDraft(){
-  // Safety: only run when main-app is visible
-  const app=document.getElementById('main-app');
-  if(!app||app.style.display==='none') return;
   const raw=localStorage.getItem('aoa_draft');
   if(!raw) return;
   try{
@@ -6487,16 +6442,11 @@ function loadDraft(){
   }catch(e){ toast('Error al restaurar borrador: '+e.message,'err'); }
 }
 
-document.addEventListener('input',e=>{
-  const app=document.getElementById('main-app');
-  if(app&&app.style.display!=='none'&&e.target.closest('#main-app')) markDirty();
-});
-document.addEventListener('change',e=>{
-  const app=document.getElementById('main-app');
-  if(app&&app.style.display!=='none'&&e.target.closest('#main-app')) markDirty();
-});
+document.addEventListener('input',e=>{ if(e.target.closest('#main-app')) markDirty(); });
+document.addEventListener('change',e=>{ if(e.target.closest('#main-app')) markDirty(); });
 window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue='';}});
-// Draft se carga después del login
+// Restaurar borrador al cargar
+setTimeout(()=>{ if(localStorage.getItem('aoa_draft')) loadDraft(); }, 600);
 
 // ══════════════════════════════════════════════════════════════════
 // PLANTILLAS
@@ -6871,40 +6821,7 @@ window.rmAct = function(id){
   schedulePreview();
 };
 
-// ── LOGIN ──────────────────────────────────────────
-const USERS = {
-  'admin': 'admin',
-  'branco': 'achs2026',
-};
-
-function doLogin(){
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  const err = document.getElementById('login-err');
-  if(USERS[u] && USERS[u] === p){
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('main-app').style.display='block';
-    err.style.display='none';
-    document.body.style.background='';
-    // Restaurar borrador guardado (ahora que el DOM está visible)
-    setTimeout(()=>{
-      if(localStorage.getItem('aoa_draft')) loadDraft();
-    }, 300);
-  } else {
-    err.style.display='block';
-    document.getElementById('login-pass').value='';
-    document.getElementById('login-pass').focus();
-  }
-}
-
-// Allow Enter on user field to move to pass, already handled inline
-// Focus user field on load
-window.addEventListener('load', ()=>{
-  const u = document.getElementById('login-user');
-  if(u) u.focus();
-});
-
-
+// ── MOBILE:
 // ── MOBILE: Fix iOS input zoom by keeping font-size ≥ 16px on focus ──────
 // (handled via CSS font-size:14px on inputs — iOS only zooms if < 16px)
 // ── MOBILE: Collapsible sections default open on mobile ───────────────────
