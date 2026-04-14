@@ -6294,6 +6294,78 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&e.target.id==='pnew-cargo'){e.preventDefault();addParticipante();}
 });
 
+// ══════════════════════════════════════════════════════════════════
+// FAVORITOS
+// ══════════════════════════════════════════════════════════════════
+let favorites = [];
+try{ favorites = JSON.parse(localStorage.getItem('aoa_favs')||'[]'); }catch(e){}
+
+function saveFavs(){ localStorage.setItem('aoa_favs', JSON.stringify(favorites)); }
+
+function renderFavs(){
+  const wrap = document.getElementById('fav-wrap');
+  if(!wrap) return;
+  if(!favorites.length){
+    wrap.innerHTML = '<span style="font-size:11px;color:var(--g4);font-style:italic;">Sin favoritos aún. Haz clic en ☆ de cualquier actividad para guardarla aquí.</span>';
+    return;
+  }
+  wrap.innerHTML = favorites.map((f,i) =>
+    `<button class="fav-chip" onclick="loadFav(${i})" title="${f.mot||''}">${(f.mot||'Favorito').replace(/\s*\([A-Z0-9]+\)\s*$/,'').substring(0,30)}</button>`
+  ).join('');
+}
+
+function toggleFav(id){
+  const amEl = document.getElementById('am'+id);
+  const mot = amEl?.getAttribute('data-mot') || '';
+  const tipo = amEl?.getAttribute('data-tipo') || '';
+  const sub = v('as'+id);
+  const dept = cardDept[id] || '';
+  const key = tipo+'||'+mot+'||'+sub;
+  const star = document.getElementById('fstar'+id);
+  const idx = favorites.findIndex(f => f.key === key);
+  if(idx >= 0){
+    favorites.splice(idx, 1);
+    if(star) star.textContent = '☆';
+    toast('Favorito eliminado','warn',1500);
+  } else {
+    if(favorites.length >= 10){ toast('Máximo 10 favoritos','warn'); return; }
+    favorites.push({ key, mot, tipo, sub, dept,
+      desc: document.getElementById('ad'+id)?.value||'',
+      acuer: document.getElementById('aa'+id)?.value||''
+    });
+    if(star) star.textContent = '★';
+    toast('✓ Guardado como favorito','ok',1500);
+  }
+  saveFavs();
+  renderFavs();
+}
+
+function loadFav(idx){
+  const f = favorites[idx];
+  if(!f) return;
+  const id = addAct();
+  if(f.dept) setDept(id, f.dept);
+  setTimeout(()=>{
+    const ms = document.getElementById('am'+id);
+    if(ms && f.tipo && f.mot){
+      const cv = f.tipo+'||'+f.mot;
+      ms.value = cv;
+      if(ms.value === cv) onMotivoChange(id);
+    }
+    setTimeout(()=>{
+      const ss = document.getElementById('as'+id);
+      if(ss && f.sub){ ss.value = f.sub; onSubChange(id); }
+      const descEl = document.getElementById('ad'+id);
+      if(descEl && f.desc){ descEl.value = f.desc; ar(descEl); }
+      const acuerEl = document.getElementById('aa'+id);
+      if(acuerEl && f.acuer){ acuerEl.value = f.acuer; ar(acuerEl); }
+      const star = document.getElementById('fstar'+id);
+      if(star) star.textContent = '★';
+    }, 60);
+  }, 25);
+  showTab('acts', document.querySelector('.tab:nth-child(2)') || document.querySelector('.tab'));
+}
+
 // ── INIT ──────────────────────────────────────────
 document.getElementById('fecha_a').value=tod();
 document.getElementById('fcump').value='2026-04-30';
