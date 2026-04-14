@@ -633,6 +633,138 @@ body.dark .mail-client-btn.selected.gmail{background:#2e0d0d;}
 </div><!-- end app-layout -->
 </div><!-- end wrap/main-app -->
 
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- MODALES Y OVERLAYS                                  -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- VALIDACIÓN -->
+<div id="val-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8889;display:none;align-items:center;justify-content:center;">
+  <div class="val-box">
+    <div class="val-title">⛔ Revisar antes de generar</div>
+    <ul class="val-list" id="val-list"></ul>
+    <div class="val-actions">
+      <button class="btn-s" onclick="closeValModal()">Corregir</button>
+      <button class="btn-p green" onclick="closeValModal();genPDFForce()">Generar igual</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLANTILLAS -->
+<div id="tpl-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8888;display:none;align-items:center;justify-content:center;">
+  <div class="tpl-box">
+    <div class="tpl-head">
+      <h3>📋 Plantillas guardadas</h3>
+      <button onclick="closeTplModal()" style="background:none;border:1.5px solid var(--g3);color:var(--g4);width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>
+    </div>
+    <div class="tpl-body" id="tpl-list"></div>
+  </div>
+</div>
+
+<!-- OUTLOOK / CORREO -->
+<div id="outlook-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--wh);border-radius:10px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+    <div style="background:#0078d4;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">📧</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;">Enviar por Correo</div>
+          <div style="font-size:10px;opacity:.8;">Se abrirá tu cliente de correo con el mensaje pre-completado</div>
+        </div>
+      </div>
+      <button onclick="closeOutlookModal()" style="background:none;border:1.5px solid rgba(255,255,255,.4);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:14px;">✕</button>
+    </div>
+    <div style="padding:18px;">
+      <!-- Cliente de correo -->
+      <div style="margin-bottom:16px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:8px;">Enviar con</label>
+        <div class="mail-client-row">
+          <button class="mail-client-btn selected outlook" id="mc-outlook" onclick="selectMailClient('outlook')">
+            <span class="mail-client-icon">📘</span><span class="mail-client-label">Outlook</span>
+          </button>
+          <button class="mail-client-btn" id="mc-gmail" onclick="selectMailClient('gmail')">
+            <span class="mail-client-icon">📩</span><span class="mail-client-label">Gmail</span>
+          </button>
+          <button class="mail-client-btn" id="mc-apple" onclick="selectMailClient('apple')">
+            <span class="mail-client-icon">🍎</span><span class="mail-client-label">Apple Mail</span>
+          </button>
+          <button class="mail-client-btn" id="mc-copy" onclick="selectMailClient('copy')">
+            <span class="mail-client-icon">📋</span><span class="mail-client-label">Solo copiar</span>
+          </button>
+        </div>
+      </div>
+      <!-- Para -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Para</label>
+        <input id="outlook-to" type="email" placeholder="correo@institución.cl" style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);"/>
+      </div>
+      <!-- CC -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">CC (opcional)</label>
+        <input id="outlook-cc" type="email" placeholder="copia@institución.cl" style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);"/>
+      </div>
+      <!-- Asunto -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Asunto</label>
+        <input id="outlook-subject" type="text" style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);"/>
+      </div>
+      <!-- Cuerpo -->
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;">Mensaje</label>
+          <button onclick="regenerateOutlookBody()" style="background:none;border:1.5px solid var(--g3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;color:var(--g4);font-family:inherit;">↺ Regenerar</button>
+        </div>
+        <textarea id="outlook-body" rows="12" style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:10px;font-size:11.5px;font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:var(--tx);background:var(--wh);box-sizing:border-box;resize:vertical;"></textarea>
+      </div>
+      <!-- Acciones -->
+      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+        <button onclick="closeOutlookModal()" class="btn-s" style="font-size:12px;">Cancelar</button>
+        <button onclick="copyOutlookBody()" class="btn-s" style="font-size:12px;border-color:#0078d4;color:#0078d4;">📋 Copiar</button>
+        <button onclick="sendOutlook()" style="background:#0078d4;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+          <span id="send-btn-label">📤 Abrir en Outlook</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIRMA DIGITAL -->
+<div id="firma-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--wh);border-radius:12px;width:500px;max-width:96vw;box-shadow:0 8px 32px rgba(0,0,0,.25);overflow:hidden;">
+    <div style="background:#111;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">✍️</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;">Firma Digital del Receptor</div>
+          <div style="font-size:10px;opacity:.7;">Firma con el dedo o mouse</div>
+        </div>
+      </div>
+      <button onclick="closeFirmaModal()" style="background:none;border:1.5px solid rgba(255,255,255,.3);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>
+    </div>
+    <div style="padding:18px;">
+      <div style="margin-bottom:10px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firmante</label>
+        <div style="font-size:13px;font-weight:600;color:var(--tx);" id="firma-firmante">—</div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firma aquí</label>
+        <canvas id="firma-canvas" width="460" height="160" style="border:1.5px solid var(--g3);border-radius:8px;cursor:crosshair;touch-action:none;background:#fff;display:block;width:100%;"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button onclick="clearFirma()" class="btn-s" style="font-size:12px;">🗑 Borrar</button>
+        <button onclick="saveFirma()" class="btn-p green" style="flex:1;font-size:12px;">✓ Guardar Firma</button>
+      </div>
+      <div id="firma-saved-preview" style="display:none;margin-top:12px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:var(--gd);margin-bottom:6px;">✓ Firma guardada</div>
+        <img id="firma-preview-img" style="border:1px solid var(--g3);border-radius:6px;max-width:100%;height:80px;object-fit:contain;background:#fff;"/>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 
 // ══════════════════════════════════════════
