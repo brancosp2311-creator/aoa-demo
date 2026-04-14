@@ -363,6 +363,72 @@ body.dark .preview-act-dept.red{background:#2e0d0d;color:#f57a7a}
   .logo-box { width: 34px; height: 34px; }
 }
 
+
+/* ── HISTORIAL ───────────────────────────────────────────────────── */
+.hist-card{background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;transition:border-color .15s;}
+.hist-card:hover{border-color:var(--g);}
+.hist-info{flex:1;min-width:0;}
+.hist-bp{font-size:12px;font-weight:800;color:var(--tx);}
+.hist-meta{font-size:10px;color:var(--g4);margin-top:2px;}
+.hist-acts{display:inline-block;background:var(--gl);color:var(--gd);font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;}
+.hist-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-hist{background:none;border:1.5px solid var(--g3);border-radius:5px;padding:5px 9px;font-size:11px;font-weight:600;cursor:pointer;color:var(--g4);font-family:inherit;transition:all .15s;}
+.btn-hist:hover{border-color:var(--g);color:var(--gd);}
+.btn-hist.danger:hover{border-color:#C8102E;color:#C8102E;}
+body.dark .hist-card{background:#1e1e1e;border-color:#333;}
+body.dark .hist-card:hover{border-color:var(--g);}
+
+/* ── ESTADÍSTICAS ─────────────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:14px;text-align:center;}
+.stat-num{font-size:26px;font-weight:900;color:var(--g);line-height:1;}
+.stat-label{font-size:10px;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-top:4px;}
+.bp-rank{background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.bp-rank-bar-wrap{flex:1;height:6px;background:var(--g2);border-radius:3px;margin:0 12px;}
+.bp-rank-bar{height:100%;background:var(--g);border-radius:3px;transition:width .4s;}
+.act-rank{background:var(--wh);border:1.5px solid var(--g3);border-radius:6px;padding:8px 12px;margin-bottom:6px;font-size:11px;display:flex;justify-content:space-between;align-items:center;}
+.act-rank-count{background:var(--gl);color:var(--gd);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;}
+body.dark .stat-card,.dark .bp-rank,.dark .act-rank{background:#1e1e1e;border-color:#333;}
+
+/* ── FIRMA DIGITAL ────────────────────────────────────────────────── */
+#firma-canvas{border:1.5px solid var(--g3);border-radius:8px;cursor:crosshair;touch-action:none;background:#fff;display:block;width:100%;}
+#firma-canvas.signed{border-color:var(--g);}
+.firma-actions{display:flex;gap:8px;margin-top:8px;}
+.firma-status{font-size:11px;color:var(--g4);margin-top:6px;font-style:italic;}
+.firma-status.ok{color:var(--gd);font-style:normal;font-weight:700;}
+
+/* ── CLIENTE CORREO SELECTOR ─────────────────────────────────────── */
+.mail-client-row{display:flex;gap:8px;margin-bottom:14px;}
+.mail-client-btn{flex:1;border:1.5px solid var(--g3);border-radius:7px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;background:var(--wh);font-family:inherit;}
+.mail-client-btn:hover{border-color:var(--bk);}
+.mail-client-btn.selected{border-width:2px;}
+.mail-client-btn.selected.outlook{border-color:#0078d4;background:#f0f6ff;}
+.mail-client-btn.selected.gmail{border-color:#EA4335;background:#fff5f5;}
+.mail-client-btn.selected.apple{border-color:#555;background:#f5f5f5;}
+.mail-client-btn.selected.copy{border-color:var(--g);background:var(--gl);}
+.mail-client-icon{font-size:20px;display:block;margin-bottom:3px;}
+.mail-client-label{font-size:10px;font-weight:700;color:var(--tx);}
+body.dark .mail-client-btn{background:#1e1e1e;border-color:#444;}
+body.dark .mail-client-btn.selected.outlook{background:#0d1a2e;}
+body.dark .mail-client-btn.selected.gmail{background:#2e0d0d;}
+
+/* ── TABS con ícono contadores ───────────────────────────────────── */
+.tab-new{background:#C8102E;color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:8px;margin-left:3px;vertical-align:middle;}
+
+@media(max-width:640px){
+  .stats-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .mail-client-row{flex-wrap:wrap;}
+  .mail-client-btn{flex:1 1 calc(50% - 4px);}
+  .hist-actions{flex-direction:column;}
+}
+
+
+@media(max-width:640px){
+  #cal-btn{display:none;} /* En móvil el .ics funciona igual pero ocultamos para ahorrar espacio */
+  .mail-client-row{flex-wrap:wrap;}
+  .mail-client-btn{flex:1 1 calc(50% - 4px);min-width:0;}
+}
+
 </style>
 </head>
 <body>
@@ -437,6 +503,8 @@ body.dark .preview-act-dept.red{background:#2e0d0d;color:#f57a7a}
   <div class="tab" onclick="showTab('acts',this)">Actividades <span class="cnt" id="cnt">0</span></div>
   <div class="tab" onclick="showTab('firmas',this)">Firmas</div>
   <div class="tab" onclick="showTab('gen',this)">Generar</div>
+  <div class="tab" onclick="showTab('historial',this)" id="tab-btn-historial">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
+  <div class="tab" onclick="showTab('stats',this)">📊 Estadísticas</div>
 </div>
 
 <!-- TAB DATOS -->
@@ -539,6 +607,21 @@ body.dark .preview-act-dept.red{background:#2e0d0d;color:#f57a7a}
   <div class="g2">
     <div class="f"><label>Fecha Cumplimiento Global</label><input type="date" id="fcump"/></div>
   </div>
+
+  <!-- FIRMA DIGITAL -->
+  <div style="margin-top:8px;">
+    <div class="stitle">Firma Digital del Receptor <span style="font-size:10px;color:var(--g4);text-transform:none;letter-spacing:0;font-weight:400;">(opcional)</span></div>
+    <div style="background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="flex:1;">
+        <div id="firma-display" style="font-size:12px;color:var(--g4);font-style:italic;">Sin firma capturada</div>
+        <img id="firma-thumb" style="display:none;height:50px;border:1px solid var(--g3);border-radius:5px;margin-top:6px;background:#fff;" />
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="openFirmaModal()" class="btn-s" style="font-size:12px;">✍️ Capturar</button>
+        <button onclick="clearFirmaData()" id="firma-clear-btn" class="btn-s" style="font-size:12px;display:none;color:#C8102E;border-color:#C8102E;">Quitar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- TAB GENERAR -->
@@ -548,6 +631,21 @@ body.dark .preview-act-dept.red{background:#2e0d0d;color:#f57a7a}
   <div class="stitle">Vista Previa</div>
   <div class="prev" id="prev">Haz clic en "Actualizar Vista Previa"</div>
   <div style="margin-top:8px;text-align:right;"><button class="btn-s" onclick="updPrev()">Actualizar Vista Previa</button></div>
+</div>
+
+<!-- TAB HISTORIAL -->
+<div class="panel" id="tab-historial">
+  <div class="icard"><strong>Últimas 15 AOAs generadas</strong> — guarda un registro automático cada vez que generas un PDF. Haz clic en "Cargar" para restaurar cualquier AOA anterior.</div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+    <button class="btn-s" onclick="clearHistory()" style="font-size:11px;color:#C8102E;border-color:#C8102E;">🗑 Borrar historial</button>
+  </div>
+  <div id="hist-list"><div class="empty">Sin historial aún. Genera tu primer PDF para que aparezca aquí.</div></div>
+</div>
+
+<!-- TAB ESTADÍSTICAS -->
+<div class="panel" id="tab-stats">
+  <div class="icard"><strong>Tu actividad como experto</strong> — calculada desde el historial de AOAs generadas en este dispositivo.</div>
+  <div id="stats-content"><div class="empty">Sin datos suficientes. Genera al menos una AOA para ver estadísticas.</div></div>
 </div>
 
 <div class="abar">
@@ -5582,7 +5680,6 @@ function onSubChange(id){
   const sub=v('as'+id);
   if(!sub) return;
 
-  // Extract code from submotivo e.g. "Generar estadísticas (AAD01)" → "AAD01"
   const codeMatch=sub.match(/\(([A-Z0-9]+)\)\s*$/);
   const code=codeMatch?codeMatch[1]:null;
 
@@ -5590,10 +5687,10 @@ function onSubChange(id){
   const acuerEl=document.getElementById('aa'+id);
 
   if(code && TEXTOS[code]){
-    // Use standard text if field is empty or was auto-set
     if(!descEl.value.trim()||descEl.getAttribute('data-a')){
       descEl.value=TEXTOS[code].desc;
       descEl.setAttribute('data-a','1');
+      descEl.removeAttribute('data-ia-applied');
       ar(descEl);
     }
     if(!acuerEl.value.trim()||acuerEl.value==='Se entrega AOA para gestión interna.'||acuerEl.getAttribute('data-a-acuer')){
@@ -5601,8 +5698,25 @@ function onSubChange(id){
       acuerEl.setAttribute('data-a-acuer','1');
       ar(acuerEl);
     }
+    // ── IA mejora descripción vía n8n si tiene corchetes ──────────
+    if(N8N && N8N.enabled && TEXTOS[code].desc.includes('[')){
+      const amEl=document.getElementById('am'+id);
+      const motivo=(amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+      setTimeout(async ()=>{
+        const el=document.getElementById('ad'+id);
+        if(!el||el.getAttribute('data-ia-applied')==='1') return;
+        const orig=el.value;
+        el.style.borderColor='#ff6b35';
+        const mejorada=await n8nMejorarDescripcion(motivo,'',orig);
+        el.style.borderColor='';
+        if(mejorada){
+          el.value=mejorada; ar(el);
+          el.setAttribute('data-ia-applied','1');
+          toast('✨ Descripción mejorada con IA','ok',2000);
+        }
+      },700);
+    }
   } else {
-    // No standard text: use clean submotivo name as base
     const subClean=sub.replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
     if(!descEl.value.trim()||descEl.getAttribute('data-a')){
       descEl.value=subClean;
@@ -5724,6 +5838,8 @@ function showTab(n,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
+  if(n==='historial') renderHistory();
+  if(n==='stats') renderStats();
 }
 function tog(n){document.getElementById('sec-'+n).classList.toggle('collapsed')}
 function showS(msg,type){
@@ -5914,6 +6030,33 @@ th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;bor
     <!-- Modal Body -->
     <div style="padding:18px;">
 
+      <!-- Cliente de correo -->
+      <div style="margin-bottom:16px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:8px;">Enviar con</label>
+        <div class="mail-client-row">
+          <button class="mail-client-btn selected outlook" id="mc-outlook" onclick="selectMailClient('outlook')">
+            <span class="mail-client-icon">📘</span>
+            <span class="mail-client-label">Outlook</span>
+          </button>
+          <button class="mail-client-btn" id="mc-gmail" onclick="selectMailClient('gmail')">
+            <span class="mail-client-icon">📩</span>
+            <span class="mail-client-label">Gmail</span>
+          </button>
+          <button class="mail-client-btn" id="mc-apple" onclick="selectMailClient('apple')">
+            <span class="mail-client-icon">🍎</span>
+            <span class="mail-client-label">Apple Mail</span>
+          </button>
+          <button class="mail-client-btn" id="mc-copy" onclick="selectMailClient('copy')">
+            <span class="mail-client-icon">📋</span>
+            <span class="mail-client-label">Solo copiar</span>
+          </button>
+          <button class="mail-client-btn" id="mc-n8n" onclick="selectMailClient('n8n')" title="Envía directamente desde tu Gmail via n8n sin abrir ningún cliente">
+            <span class="mail-client-icon">⚡</span>
+            <span class="mail-client-label">Envío directo</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Para -->
       <div style="margin-bottom:14px;">
         <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Para (correo receptor)</label>
@@ -5962,8 +6105,44 @@ th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;bor
         <button onclick="copyOutlookBody()" class="btn-s" style="font-size:12px;border-color:#0078d4;color:#0078d4;">📋 Copiar mensaje</button>
         <button onclick="sendOutlook()" style="background:#0078d4;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;"
           onmouseover="this.style.background='#005fa3'" onmouseout="this.style.background='#0078d4'">
-          📤 Abrir en Outlook
+          <span id="send-btn-label">📤 Abrir en Outlook</span>
         </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FIRMA DIGITAL MODAL -->
+<div id="firma-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--wh);border-radius:12px;width:500px;max-width:96vw;box-shadow:0 8px 32px rgba(0,0,0,.25);overflow:hidden;">
+    <div style="background:#111;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">✍️</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;">Firma Digital del Receptor</div>
+          <div style="font-size:10px;opacity:.7;">Firma con el dedo o mouse en el área de abajo</div>
+        </div>
+      </div>
+      <button onclick="closeFirmaModal()" style="background:none;border:1.5px solid rgba(255,255,255,.3);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>
+    </div>
+    <div style="padding:18px;">
+      <div style="margin-bottom:10px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firmante</label>
+        <div style="font-size:13px;font-weight:600;color:var(--tx);" id="firma-firmante">—</div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firma</label>
+        <canvas id="firma-canvas" width="460" height="160"></canvas>
+        <div class="firma-status" id="firma-status">Dibuja la firma aquí arriba</div>
+      </div>
+      <div class="firma-actions">
+        <button onclick="clearFirma()" class="btn-s" style="font-size:12px;">🗑 Borrar</button>
+        <button onclick="saveFirma()" class="btn-p green" style="flex:1;font-size:12px;">✓ Guardar Firma</button>
+      </div>
+      <div id="firma-saved-preview" style="display:none;margin-top:12px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:var(--gd);margin-bottom:6px;">✓ Firma guardada</div>
+        <img id="firma-preview-img" style="border:1px solid var(--g3);border-radius:6px;max-width:100%;height:80px;object-fit:contain;background:#fff;"/>
       </div>
     </div>
   </div>
@@ -6432,6 +6611,8 @@ function _runGenPDF(){
       showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo.','ok');
       toast('✓ PDF generado correctamente','ok');
       isDirty=false;
+      // ── Registrar en Google Sheets via n8n (silencioso) ──
+      n8nRegistrarAOA(d);
     }catch(e){showS('Error: '+e.message,'err');}
   },200);
 }
@@ -6453,6 +6634,89 @@ setTimeout(()=>{
     topBar.insertBefore(btn,topBar.querySelector('.btn-add'));
   }
 },300);
+
+// ══════════════════════════════════════════════════════════════════
+// n8n INTEGRATION CONFIG
+// ══════════════════════════════════════════════════════════════════
+const N8N = {
+  enabled: true, // cambiar a false para desactivar todas las integraciones
+  base: 'https://null2311.app.n8n.cloud/webhook',
+  endpoints: {
+    registro:   'aoa-registro',          // Flujo 1 — Google Sheets
+    correo:     'aoa-correo',            // Flujo 2 — Gmail
+    ia:         'aoa-ia-descripcion',    // Flujo 3 — OpenAI descripciones
+  },
+  url(key){ return this.base + '/' + this.endpoints[key]; }
+};
+
+// ── Enviar AOA a n8n registro (Flujo 1) ──────────────────────────
+async function n8nRegistrarAOA(d){
+  if(!N8N.enabled) return;
+  try{
+    const r = await fetch(N8N.url('registro'), {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        bp: d.bp,
+        razon: d.razon,
+        razon_sub: d.razon_sub || document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || '',
+        fecha_a: d.fecha_a,
+        fcump: d.fcump,
+        mod: d.mod,
+        enombre: d.enombre,
+        eemail: d.eemail,
+        rnombre: d.rnombre,
+        rcargo: d.rcargo,
+        remail: d.remail,
+        obj: d.obj,
+        acts_count: acts.length,
+        acts_summary: acts.map((a,i)=>{
+          const amEl = document.getElementById('am'+a.id);
+          const motivo = (amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+          const acuer = document.getElementById('aa'+a.id)?.value||'';
+          return motivo ? (i+1)+'. '+motivo+(acuer?'\n   → '+acuer:'') : '';
+        }).filter(Boolean).join('\n')
+      })
+    });
+    if(r.ok) toast('☁ Registrado en Google Sheets','ok',2000);
+  } catch(e){ console.warn('n8n registro error:',e); }
+}
+
+// ── Enviar correo real vía n8n Gmail (Flujo 2) ───────────────────
+async function n8nEnviarCorreo(to, cc, subject, body){
+  if(!N8N.enabled) throw new Error('n8n desactivado');
+  const r = await fetch(N8N.url('correo'), {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ remail: to, cc, asunto: subject, cuerpo: body, ...gd() })
+  });
+  if(!r.ok) throw new Error('Error n8n: '+r.status);
+  return await r.json();
+}
+
+// ── Mejorar descripción con IA vía n8n OpenAI (Flujo 3) ─────────
+async function n8nMejorarDescripcion(motivo, area, descActual){
+  if(!N8N.enabled) return null;
+  const d = gd();
+  try{
+    const r = await fetch(N8N.url('ia'), {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        motivo,
+        area: area || 'área no especificada',
+        centro: document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '',
+        desc_actual: descActual,
+        experto: d.enombre || 'Branco Sandoval Palma'
+      })
+    });
+    if(r.ok){
+      const data = await r.json();
+      return data.descripcion_mejorada || null;
+    }
+  } catch(e){ console.warn('n8n IA error:',e); }
+  return null;
+}
 
 // ══════════════════════════════════════════════════════════════════
 // LIVE PREVIEW (punto 4)
@@ -6846,6 +7110,545 @@ window.toggleDark = function(){
   _origToggleDark();
   applyDarkOutlook();
 };
+
+// ══════════════════════════════════════════════════════════════════
+// PUNTO 2 — HISTORIAL DE AOAs
+// ══════════════════════════════════════════════════════════════════
+const HIST_KEY = 'aoa_history';
+const HIST_MAX = 15;
+let aoaHistory = [];
+try { aoaHistory = JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); } catch(e){}
+
+function saveToHistory(d){
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '';
+  const entry = {
+    id: Date.now(),
+    ts: new Date().toISOString(),
+    bp: d.bp,
+    centro,
+    razon: d.razon,
+    razon_sub: d.razon_sub || centro,
+    mod: d.mod,
+    fecha_a: d.fecha_a,
+    obj: d.obj,
+    fcump: d.fcump,
+    enombre: d.enombre, erut: d.erut, eemail: d.eemail,
+    rnombre: d.rnombre, rrut: d.rrut, rcargo: d.rcargo, remail: d.remail,
+    participantes: [...participantes],
+    actsCount: acts.length,
+    actsState: acts.map(a=>({
+      dept: cardDept[a.id]||'',
+      tipo: document.getElementById('am'+a.id)?.getAttribute('data-tipo')||'',
+      motivo: document.getElementById('am'+a.id)?.getAttribute('data-mot')||'',
+      sub: v('as'+a.id),
+      ida: v('aid'+a.id),
+      fecha: v('af'+a.id),
+      fcump_act: v('afc'+a.id),
+      desc: document.getElementById('ad'+a.id)?.value||'',
+      acuer: document.getElementById('aa'+a.id)?.value||''
+    }))
+  };
+  aoaHistory.unshift(entry);
+  if(aoaHistory.length > HIST_MAX) aoaHistory = aoaHistory.slice(0, HIST_MAX);
+  localStorage.setItem(HIST_KEY, JSON.stringify(aoaHistory));
+  updateHistBadge();
+}
+
+function updateHistBadge(){
+  const el = document.getElementById('hist-cnt');
+  if(el) el.textContent = aoaHistory.length;
+}
+
+function renderHistory(){
+  const list = document.getElementById('hist-list');
+  if(!aoaHistory.length){
+    list.innerHTML='<div class="empty">Sin historial aún. Genera tu primer PDF para que aparezca aquí.</div>';
+    return;
+  }
+  list.innerHTML = aoaHistory.map((h,i)=>{
+    const dt = new Date(h.ts).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const centro = h.razon_sub || h.centro || h.razon || '—';
+    return `<div class="hist-card">
+      <div class="hist-info">
+        <div class="hist-bp">BP ${h.bp||'—'} <span class="hist-acts">${h.actsCount||0} actividades</span></div>
+        <div class="hist-meta">${centro} · ${dt} · ${h.mod||'Presencial'}</div>
+      </div>
+      <div class="hist-actions">
+        <button class="btn-hist" onclick="loadFromHistory(${i})" title="Cargar este AOA">📂 Cargar</button>
+        <button class="btn-hist danger" onclick="deleteHistory(${i})" title="Eliminar">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadFromHistory(idx){
+  const h = aoaHistory[idx];
+  if(!h || !confirm('Esto reemplazará el formulario actual. ¿Continuar?')) return;
+  resetF(true);
+  document.getElementById('razon').value = h.razon||'';
+  document.getElementById('bp').value = h.bp||'';
+  document.getElementById('fecha_a').value = h.fecha_a||tod();
+  document.getElementById('fcump').value = h.fcump||'';
+  const objEl = document.getElementById('obj'); objEl.value=h.obj||''; ar(objEl);
+  if(h.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+  else document.querySelector('input[name="mod"][value="PRESENCIAL"]').checked=true;
+  ['enombre','erut','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value = h[id]||'';
+  });
+  if(h.razon_sub){
+    const sub=document.getElementById('razon-sub');
+    if(sub){sub.textContent='▶ '+h.razon_sub;sub.style.display='block';}
+    document.getElementById('bp-selected-txt').textContent=h.razon_sub+' — '+h.bp;
+    document.getElementById('bp-selected').classList.add('show');
+  }
+  participantes=[...(h.participantes||[])]; renderChips();
+  acnt=0;
+  restoreActsFromSnapshot((h.actsState||[]).map((a,i)=>({...a,id:i+1})));
+  showTab('datos', document.querySelector('.tab'));
+  toast('✓ AOA del '+new Date(h.ts).toLocaleDateString('es-CL')+' cargado','ok',4000);
+}
+
+function deleteHistory(idx){
+  if(!confirm('¿Eliminar este registro del historial?')) return;
+  aoaHistory.splice(idx,1);
+  localStorage.setItem(HIST_KEY, JSON.stringify(aoaHistory));
+  updateHistBadge();
+  renderHistory();
+  toast('Registro eliminado','warn');
+}
+
+function clearHistory(){
+  if(!confirm('¿Borrar TODO el historial? Esta acción no se puede deshacer.')) return;
+  aoaHistory=[];
+  localStorage.setItem(HIST_KEY, JSON.stringify(aoaHistory));
+  updateHistBadge();
+  renderHistory();
+  toast('Historial borrado','warn');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PUNTO 4 — CONTADOR POR BP EN SELECTOR
+// ══════════════════════════════════════════════════════════════════
+function getBPCounts(){
+  const counts = {};
+  aoaHistory.forEach(h=>{ if(h.bp) counts[h.bp]=(counts[h.bp]||0)+1; });
+  return counts;
+}
+
+// Override bpFilter to show counts in dropdown
+const _origBpFilter = bpFilter;
+window.bpFilter = function(){
+  const q = document.getElementById('bp-search').value.trim().toLowerCase();
+  const dd = document.getElementById('bp-dd');
+  if(!q){dd.classList.remove('open');return;}
+  const counts = getBPCounts();
+  const matches = BPS.filter(b=>b.centro.toLowerCase().includes(q)||b.bp.includes(q));
+  if(!matches.length){
+    dd.innerHTML='<div class="bp-opt" style="color:var(--g4);">Sin resultados</div>';
+    dd.classList.add('open');return;
+  }
+  dd.innerHTML = matches.map(b=>{
+    const c = counts[b.bp]||0;
+    const badge = c>0?` <span style="background:var(--gl);color:var(--gd);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;">${c} AOA${c>1?'s':''}</span>`:'';
+    return `<div class="bp-opt" onclick="bpSelect('${b.bp}')">
+      ${b.centro}${badge}<span class="bp-num">${b.bp}</span>
+    </div>`;
+  }).join('');
+  dd.classList.add('open');
+};
+
+// ══════════════════════════════════════════════════════════════════
+// PUNTO 10 — ESTADÍSTICAS DEL EXPERTO
+// ══════════════════════════════════════════════════════════════════
+function renderStats(){
+  const el = document.getElementById('stats-content');
+  if(!aoaHistory.length){
+    el.innerHTML='<div class="empty">Sin datos suficientes. Genera al menos una AOA para ver estadísticas.</div>';
+    return;
+  }
+
+  const total = aoaHistory.length;
+  const totalActs = aoaHistory.reduce((s,h)=>s+(h.actsCount||0),0);
+  const bpSet = new Set(aoaHistory.map(h=>h.bp).filter(Boolean));
+
+  // BPs más visitados
+  const bpCounts = {};
+  aoaHistory.forEach(h=>{if(h.bp){bpCounts[h.bp]=(bpCounts[h.bp]||0)+1;}});
+  const topBPs = Object.entries(bpCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxBP = topBPs[0]?.[1]||1;
+
+  // Actividades más frecuentes
+  const actCounts = {};
+  aoaHistory.forEach(h=>{
+    (h.actsState||[]).forEach(a=>{
+      const m=(a.motivo||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+      if(m) actCounts[m]=(actCounts[m]||0)+1;
+    });
+  });
+  const topActs = Object.entries(actCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  // Week activity (last 4 weeks)
+  const now = Date.now();
+  const week = 7*24*3600*1000;
+  const thisWeek = aoaHistory.filter(h=>now-new Date(h.ts).getTime()<week).length;
+  const lastWeek = aoaHistory.filter(h=>{const a=now-new Date(h.ts).getTime();return a>=week&&a<2*week;}).length;
+  const trend = thisWeek > lastWeek ? '↑' : thisWeek < lastWeek ? '↓' : '→';
+  const trendColor = thisWeek > lastWeek ? 'var(--g)' : thisWeek < lastWeek ? '#C8102E' : 'var(--g4)';
+
+  let html = `
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num">${total}</div>
+      <div class="stat-label">AOAs generadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">${bpSet.size}</div>
+      <div class="stat-label">Centros atendidos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:${trendColor};">${thisWeek}<span style="font-size:14px;">${trend}</span></div>
+      <div class="stat-label">Esta semana</div>
+    </div>
+  </div>`;
+
+  if(topBPs.length){
+    html += `<div class="stitle" style="margin-bottom:8px;">Centros más visitados</div>`;
+    topBPs.forEach(([bp,count])=>{
+      const entry = BPS.find(b=>b.bp===bp);
+      const name = entry?.centro || bp;
+      html += `<div class="bp-rank">
+        <div style="font-size:11px;font-weight:700;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</div>
+        <div class="bp-rank-bar-wrap"><div class="bp-rank-bar" style="width:${Math.round(100*count/maxBP)}%"></div></div>
+        <div style="font-size:11px;font-weight:700;color:var(--g);flex-shrink:0;">${count}</div>
+      </div>`;
+    });
+  }
+
+  if(topActs.length){
+    html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Actividades más frecuentes</div>`;
+    topActs.forEach(([name,count])=>{
+      html += `<div class="act-rank"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span><span class="act-rank-count">${count}×</span></div>`;
+    });
+  }
+
+  // Last 5 dates summary
+  html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Últimas generadas</div>`;
+  aoaHistory.slice(0,5).forEach(h=>{
+    const dt = new Date(h.ts).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
+    const centro = h.razon_sub||h.centro||h.bp||'—';
+    html += `<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--g2);display:flex;justify-content:space-between;"><span>${centro}</span><span style="color:var(--g4);">${dt}</span></div>`;
+  });
+
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PUNTO 9 — FIRMA DIGITAL
+// ══════════════════════════════════════════════════════════════════
+let firmaCanvas, firmaCtx, firmaDrawing = false, firmaSigned = false;
+let firmaData = null; // base64 data URL
+
+function openFirmaModal(){
+  const d = gd();
+  document.getElementById('firma-firmante').textContent =
+    (d.rnombre||'Receptor') + (d.rcargo?' — '+d.rcargo:'');
+  document.getElementById('firma-modal').style.display='flex';
+
+  firmaCanvas = document.getElementById('firma-canvas');
+  const rect = firmaCanvas.getBoundingClientRect();
+  // Set actual canvas resolution
+  firmaCanvas.width  = Math.floor(rect.width * window.devicePixelRatio) || 460;
+  firmaCanvas.height = 160;
+  firmaCtx = firmaCanvas.getContext('2d');
+  firmaCtx.strokeStyle = '#111';
+  firmaCtx.lineWidth = 2.5;
+  firmaCtx.lineCap = 'round';
+  firmaCtx.lineJoin = 'round';
+
+  // If existing signature, show it
+  if(firmaData){
+    const img = new Image();
+    img.onload = ()=>firmaCtx.drawImage(img, 0, 0);
+    img.src = firmaData;
+    document.getElementById('firma-status').textContent='✓ Firma cargada — puedes redibujarla';
+    document.getElementById('firma-status').className='firma-status ok';
+  }
+
+  setupFirmaEvents();
+}
+
+function setupFirmaEvents(){
+  const c = firmaCanvas;
+  function getPos(e){
+    const r = c.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX-r.left, y: src.clientY-r.top };
+  }
+  function start(e){
+    e.preventDefault();
+    firmaDrawing=true;
+    const p=getPos(e);
+    firmaCtx.beginPath();
+    firmaCtx.moveTo(p.x,p.y);
+    firmaSigned=true;
+    document.getElementById('firma-status').textContent='Firmando...';
+    document.getElementById('firma-status').className='firma-status';
+  }
+  function move(e){
+    e.preventDefault();
+    if(!firmaDrawing) return;
+    const p=getPos(e);
+    firmaCtx.lineTo(p.x,p.y);
+    firmaCtx.stroke();
+  }
+  function stop(e){
+    e.preventDefault();
+    firmaDrawing=false;
+    if(firmaSigned){
+      document.getElementById('firma-status').textContent='✓ Firma lista';
+      document.getElementById('firma-status').className='firma-status ok';
+    }
+  }
+  c.addEventListener('mousedown',start);
+  c.addEventListener('mousemove',move);
+  c.addEventListener('mouseup',stop);
+  c.addEventListener('touchstart',start,{passive:false});
+  c.addEventListener('touchmove',move,{passive:false});
+  c.addEventListener('touchend',stop,{passive:false});
+}
+
+function clearFirma(){
+  if(!firmaCtx) return;
+  firmaCtx.clearRect(0,0,firmaCanvas.width,firmaCanvas.height);
+  firmaSigned=false;
+  document.getElementById('firma-status').textContent='Dibuja la firma aquí arriba';
+  document.getElementById('firma-status').className='firma-status';
+  document.getElementById('firma-saved-preview').style.display='none';
+}
+
+function saveFirma(){
+  if(!firmaSigned){toast('Dibuja la firma primero','warn');return;}
+  firmaData = firmaCanvas.toDataURL('image/png');
+  // Show preview in firmas tab
+  const thumb = document.getElementById('firma-thumb');
+  const display = document.getElementById('firma-display');
+  if(thumb){thumb.src=firmaData;thumb.style.display='block';}
+  if(display){display.textContent='✓ Firma capturada';display.style.color='var(--gd)';display.style.fontStyle='normal';display.style.fontWeight='700';}
+  document.getElementById('firma-clear-btn').style.display='inline-block';
+  // Preview inside modal
+  const preview = document.getElementById('firma-saved-preview');
+  const pimg = document.getElementById('firma-preview-img');
+  if(preview){preview.style.display='block';}
+  if(pimg){pimg.src=firmaData;}
+  toast('✓ Firma guardada correctamente','ok');
+  setTimeout(closeFirmaModal,800);
+}
+
+function clearFirmaData(){
+  if(!confirm('¿Quitar la firma capturada?')) return;
+  firmaData=null;
+  const thumb=document.getElementById('firma-thumb');
+  const display=document.getElementById('firma-display');
+  if(thumb){thumb.style.display='none';thumb.src='';}
+  if(display){display.textContent='Sin firma capturada';display.style.color='';display.style.fontStyle='italic';display.style.fontWeight='';}
+  document.getElementById('firma-clear-btn').style.display='none';
+}
+
+function closeFirmaModal(){
+  document.getElementById('firma-modal').style.display='none';
+}
+document.getElementById('firma-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('firma-modal')) closeFirmaModal();
+});
+
+// Inject firma into PDF if available
+// Hook into buildDoc to add firma image row
+const _origBuildDoc = buildDoc;
+window.buildDoc = function(d){
+  let html = _origBuildDoc(d);
+  if(firmaData){
+    // Replace signature placeholder line with actual signature image
+    html = html.replace(
+      'Firma Empresa: ________________________',
+      `Firma Empresa:<br><img src="${firmaData}" style="height:60px;max-width:220px;display:block;margin-top:4px;border:1px solid #ccc;border-radius:4px;padding:2px;background:#fff;">`
+    );
+  }
+  return html;
+};
+
+// ══════════════════════════════════════════════════════════════════
+// MAIL CLIENT SELECTOR (Outlook, Gmail, Apple, Copy)
+// ══════════════════════════════════════════════════════════════════
+let selectedMailClient = 'outlook';
+
+function selectMailClient(client){
+  selectedMailClient = client;
+  ['outlook','gmail','apple','copy'].forEach(c=>{
+    const btn = document.getElementById('mc-'+c);
+    if(!btn) return;
+    btn.className = 'mail-client-btn' + (c===client?' selected '+c:'');
+  });
+  const labels = {
+    outlook:'📤 Abrir en Outlook',
+    gmail:'📤 Abrir en Gmail',
+    apple:'📤 Abrir en Apple Mail',
+    copy:'📋 Copiar mensaje',
+    n8n:'⚡ Enviar ahora (n8n)'
+  };
+  const lbl = document.getElementById('send-btn-label');
+  if(lbl) lbl.textContent = labels[client];
+}
+
+// Override sendOutlook to use selected client
+const _origSendOutlook = sendOutlook;
+window.sendOutlook = function(){
+  const to      = document.getElementById('outlook-to').value.trim();
+  const cc      = document.getElementById('outlook-cc').value.trim();
+  const subject = document.getElementById('outlook-subject').value;
+  const body    = document.getElementById('outlook-body').value;
+
+  if(selectedMailClient==='copy'){
+    copyOutlookBody();
+    return;
+  }
+
+  if(!to){
+    document.getElementById('outlook-to').style.borderColor='#C8102E';
+    toast('Ingresa el correo del destinatario','err');
+    return;
+  }
+
+  const params = [
+    cc?'cc='+encodeURIComponent(cc):'',
+    'subject='+encodeURIComponent(subject),
+    'body='+encodeURIComponent(body)
+  ].filter(Boolean).join('&');
+
+  // ── Opción n8n: envío directo sin abrir cliente ────────────────
+  if(selectedMailClient==='n8n'){
+    const btnSend = document.querySelector('#outlook-modal .btn-p');
+    if(btnSend){ btnSend.textContent='Enviando...'; btnSend.disabled=true; }
+    n8nEnviarCorreo(to, cc, subject, body)
+      .then(()=>{
+        toast('✉ Correo enviado directamente desde Gmail','ok',4000);
+        closeOutlookModal();
+      })
+      .catch(e=>{
+        toast('Error al enviar: '+e.message,'err',5000);
+        if(btnSend){ btnSend.textContent='📤 Enviar'; btnSend.disabled=false; }
+      });
+    return;
+  }
+
+  let uri;
+  if(selectedMailClient==='gmail'){
+    uri = 'https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)
+      +(cc?'&cc='+encodeURIComponent(cc):'')
+      +'&su='+encodeURIComponent(subject)
+      +'&body='+encodeURIComponent(body);
+    window.open(uri,'_blank');
+  } else {
+    uri = 'mailto:'+encodeURIComponent(to)+'?'+params;
+    window.location.href = uri;
+  }
+
+  const clientNames = {outlook:'Outlook',gmail:'Gmail',apple:'Apple Mail'};
+  toast('📧 Abriendo '+clientNames[selectedMailClient]+'...','ok',3000);
+  setTimeout(closeOutlookModal,1500);
+};
+
+// ══════════════════════════════════════════════════════════════════
+// PUNTO 11 — AGENDAR EN CALENDARIO (Outlook)
+// ══════════════════════════════════════════════════════════════════
+function agendarOutlook(){
+  const d = gd();
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || d.razon || '';
+  const experto = d.enombre || 'Branco Sandoval Palma';
+
+  // Build activity summary for calendar body
+  let actsText = '';
+  acts.forEach((a,i)=>{
+    const amEl = document.getElementById('am'+a.id);
+    const motivo = (amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    if(motivo) actsText += `${i+1}. ${motivo}\n`;
+  });
+
+  const subject = `AOA | BP ${d.bp||''} | ${centro}`;
+  const body = `Asesoría de Organismo Administrador\n\nCentro: ${centro}\nBP: ${d.bp||''}\nModalidad: ${d.mod||'Presencial'}\nExperto ACHS: ${experto}\n\nActividades:\n${actsText||'(Sin actividades)'}\n\nGenerado por AOA Generator ACHS v4.0`;
+
+  // Outlook calendar invite via mailto with special parameters
+  // Uses .ics approach via data URI — works in all desktop clients
+  const now = new Date();
+  let startDate = d.fecha_a ? new Date(d.fecha_a+'T09:00:00') : now;
+  let endDate   = new Date(startDate.getTime() + 60*60*1000); // +1 hora
+
+  function fmtICS(date){
+    return date.toISOString().replace(/[-:]/g,'').replace('.000','');
+  }
+
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//AOA Generator ACHS//ES',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:aoa-${d.bp}-${Date.now()}@achs`,
+    `DTSTAMP:${fmtICS(now)}`,
+    `DTSTART:${fmtICS(startDate)}`,
+    `DTEND:${fmtICS(endDate)}`,
+    `SUMMARY:${subject}`,
+    `DESCRIPTION:${body.replace(/\n/g,'\\n')}`,
+    `LOCATION:${centro}`,
+    `ORGANIZER;CN="${experto}":mailto:${d.eemail||''}`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  // Download .ics file — double-click opens in Outlook/Apple Cal/Google Cal
+  const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `AOA_BP${d.bp||'XXX'}_${(d.fecha_a||tod()).replace(/-/g,'')}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  toast('📅 Archivo .ics descargado — ábrelo para agregar al calendario','ok',5000);
+}
+
+// Add agendar button to abar dynamically
+setTimeout(()=>{
+  const abar = document.querySelector('.abar');
+  if(abar && !document.getElementById('cal-btn')){
+    const btn = document.createElement('button');
+    btn.id='cal-btn';
+    btn.className='btn-s';
+    btn.title='Agendar en Outlook Calendar';
+    btn.style.cssText='font-size:11px;white-space:nowrap;';
+    btn.textContent='📅 Agendar';
+    btn.onclick = agendarOutlook;
+    // Insert before the green PDF button
+    const greenBtn = abar.querySelector('.btn-p.green');
+    abar.insertBefore(btn, greenBtn);
+  }
+},500);
+
+// ══════════════════════════════════════════════════════════════════
+// HOOK: Save to history when PDF is generated
+// ══════════════════════════════════════════════════════════════════
+const _origRunGenPDF = _runGenPDF;
+window._runGenPDF = function(){
+  _origRunGenPDF();
+  // Save to history after short delay to let gd() capture current state
+  setTimeout(()=>{
+    const d = gd();
+    if(d.bp || d.razon) saveToHistory(d);
+    updateHistBadge();
+  }, 300);
+};
+
+// Init
+updateHistBadge();
 
 </script>
 </body>
