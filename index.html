@@ -429,15 +429,6 @@ body.dark .mail-client-btn.selected.gmail{background:#2e0d0d;}
   .mail-client-btn{flex:1 1 calc(50% - 4px);min-width:0;}
 }
 
-
-/* ── WIZARD STEPS ─────────────────────────────────────────────── */
-.step-header{display:flex;align-items:center;gap:14px;background:var(--gl);border:1.5px solid var(--g);border-radius:10px;padding:12px 16px;margin-bottom:18px;}
-.step-icon{font-size:26px;flex-shrink:0;}
-.step-title{font-size:13px;font-weight:800;color:var(--gd);}
-.step-sub{font-size:11px;color:var(--g4);margin-top:2px;}
-.tab.locked{opacity:.45;cursor:not-allowed;}
-body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
-
 </style>
 </head>
 <body>
@@ -466,143 +457,85 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="step-tab-1" onclick="goStep(1)">1 · Centro</div>
-  <div class="tab" id="step-tab-2" onclick="goStep(2)">2 · Contraparte</div>
-  <div class="tab" id="step-tab-3" onclick="goStep(3)">3 · Actividades <span class="cnt" id="cnt">0</span></div>
-  <div class="tab" id="step-tab-4" onclick="goStep(4)">4 · Generar</div>
-  <div class="tab" id="step-tab-hist" onclick="showTab('historial',this)">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
-  <div class="tab" id="step-tab-stats" onclick="showTab('stats',this)">📊 KPI</div>
+  <div class="tab active" onclick="showTab('datos',this)">Datos Generales</div>
+  <div class="tab" onclick="showTab('acts',this)">Actividades <span class="cnt" id="cnt">0</span></div>
+  <div class="tab" onclick="showTab('firmas',this)">Firmas</div>
+  <div class="tab" onclick="showTab('gen',this)">Generar</div>
+  <div class="tab" onclick="showTab('historial',this)" id="tab-btn-historial">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
+  <div class="tab" onclick="showTab('stats',this)">📊 Estadísticas</div>
 </div>
 
 <!-- TAB DATOS -->
 <div class="panel active" id="tab-datos">
+  <div class="csec" id="sec-emp">
+    <div class="ctitle" onclick="tog('emp')">Empresa <span class="arr">▼</span></div>
+    <div class="cbody">
 
-  <!-- STEP INDICATOR -->
-  <div class="step-header">
-    <div class="step-icon">🏥</div>
-    <div>
-      <div class="step-title">Paso 1 de 4 — Seleccionar Centro</div>
-      <div class="step-sub">Busca y selecciona el BP para continuar</div>
-    </div>
-  </div>
+      <!-- BP SELECTOR -->
+      <div class="f" style="margin-bottom:10px;">
+        <label>Buscar Centro / BP</label>
+        <div class="bp-search-wrap">
+          <input class="bp-input" id="bp-search" placeholder="Escribe nombre o número BP..." autocomplete="off"
+            oninput="bpFilter()" onkeydown="bpKey(event)" onfocus="bpOpen()" />
+          <div class="bp-dropdown" id="bp-dd"></div>
+        </div>
+        <div class="bp-selected" id="bp-selected">
+          <span id="bp-selected-txt"></span>
+          <button class="bp-clear" onclick="bpClear()" title="Cambiar centro">✕</button>
+        </div>
+      </div>
 
-  <!-- BP SELECTOR -->
-  <div class="f" style="margin-bottom:10px;">
-    <label>Buscar Centro / BP <span style="color:#C8102E;font-size:10px;">* obligatorio</span></label>
-    <div class="bp-search-wrap">
-      <input class="bp-input" id="bp-search" placeholder="Escribe nombre o número BP..." autocomplete="off"
-        oninput="bpFilter()" onkeydown="bpKey(event)" onfocus="bpOpen()" />
-      <div class="bp-dropdown" id="bp-dd"></div>
-    </div>
-    <div class="bp-selected" id="bp-selected">
-      <span id="bp-selected-txt"></span>
-      <button class="bp-clear" onclick="bpClear()" title="Cambiar centro">✕</button>
-    </div>
-  </div>
-
-  <!-- Hidden fields populated by bpSelect -->
-  <input type="hidden" id="razon" value=""/>
-  <input type="hidden" id="bp" value=""/>
-
-  <!-- FECHA + MODALIDAD -->
-  <div class="g2" style="margin-top:14px;">
-    <div class="f"><label>Fecha de Asesoría <span style="color:#C8102E;font-size:10px;">*</span></label>
-      <input type="date" id="fecha_a"/></div>
-    <div class="f"><label>Modalidad</label>
-      <div style="display:flex;gap:12px;margin-top:6px;">
-        <label style="font-size:13px;cursor:pointer;"><input type="radio" name="mod" value="PRESENCIAL" checked style="margin-right:4px;"/>Presencial</label>
-        <label style="font-size:13px;cursor:pointer;"><input type="radio" name="mod" value="REMOTO" style="margin-right:4px;"/>Remoto</label>
+      <div class="g2">
+        <div class="f full">
+          <label>Razón Social</label>
+          <input id="razon" value="" placeholder="Se rellena al seleccionar un BP..."/>
+          <span id="razon-sub" style="display:none;font-size:11px;font-weight:700;color:var(--gd);margin-top:3px;padding:3px 8px;background:var(--gl);border-radius:4px;border:1px solid #b8e8d0;">▶ Centro: </span>
+        </div>
+        <div class="f"><label>BP Empresa</label><input id="bp" value="" readonly style="background:#f5f5f3;color:#555;"/></div>
+        <div class="f"><label>Fecha Asesoría</label><input type="date" id="fecha_a"/></div>
+        <div class="f full"><label>Modalidad</label>
+          <div class="rgroup">
+            <label><input type="radio" name="mod" value="REMOTO"/> Remoto</label>
+            <label><input type="radio" name="mod" value="PRESENCIAL" checked/> Presencial</label>
+          </div>
+        </div>
+        <div class="f full"><label>Objetivo de la Asesoría</label>
+          <textarea id="obj" oninput="ar(this)" style="overflow:hidden;min-height:60px;">Fortalecer el seguimiento preventivo y técnico del Hospital del Salvador, abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.</textarea>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- OBJETIVO -->
-  <div class="f" style="margin-top:10px;">
-    <label>Objetivo de la Asesoría</label>
-    <textarea id="obj" rows="3" placeholder="Fortalecer el seguimiento preventivo y técnico..." oninput="ar(this)"></textarea>
-  </div>
+  <div class="csec" id="sec-part">
+    <div class="ctitle" onclick="tog('part')">Participantes <span class="arr">▼</span></div>
+    <div class="cbody">
 
-  <!-- EXPERTO (pre-fijo pero editable) -->
-  <div class="stitle" style="margin-top:12px;">Experto ACHS</div>
-  <div class="g2">
-    <div class="f"><label>Nombre</label><input id="enombre" placeholder="Nombre del experto..."/></div>
-    <div class="f"><label>RUT</label><input id="erut" placeholder="12.345.678-9"/></div>
-    <div class="f"><label>Email</label><input id="eemail" placeholder="email@achs.cl"/></div>
-  </div>
+      <!-- CHIPS PARTICIPANTES -->
+      <div class="part-wrap">
+        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Participantes de la empresa</div>
+        <div class="part-chips" id="part-chips-empresa"></div>
+        <div class="part-add-row">
+          <input id="pnew-nombre" placeholder="Nombre del participante"/>
+          <input id="pnew-cargo" placeholder="Cargo"/>
+          <button class="btn-part-add" onclick="addParticipante()">+ Agregar</button>
+        </div>
+      </div>
 
-  <!-- NEXT BUTTON -->
-  <div style="display:flex;justify-content:flex-end;margin-top:18px;">
-    <button class="btn-p green" onclick="stepNext(1)" style="padding:10px 28px;font-size:13px;">
-      Siguiente → Contraparte
-    </button>
+      <!-- EXPERTO ACHS (fijo) -->
+      <div style="background:var(--gl);border:1.5px solid var(--g);border-radius:6px;padding:10px 12px;margin-top:6px;">
+        <div style="font-size:10px;font-weight:800;color:var(--gd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Experto en Prevención ACHS</div>
+        <div class="g2">
+          <div class="f"><label>Nombre</label><input id="enombre" value="Branco Sandoval Palma"/></div>
+          <div class="f"><label>RUT</label><input id="erut" value="18151247-4"/></div>
+          <div class="f full"><label>Email</label><input id="eemail" value="bmsandovalp@achs.cl"/></div>
+        </div>
+      </div>
+    </div>
   </div>
-
 </div>
-<div class="panel" id="tab-firmas">
 
-  <!-- STEP INDICATOR -->
-  <div class="step-header">
-    <div class="step-icon">🤝</div>
-    <div>
-      <div class="step-title">Paso 2 de 4 — Contraparte</div>
-      <div class="step-sub">Datos del receptor y participantes del centro</div>
-    </div>
-  </div>
-
-  <div class="stitle">Receptor — Empresa / CT</div>
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="f"><label>Nombre Receptor</label><input id="rnombre" placeholder="Nombre y apellido..."/></div>
-    <div class="f"><label>RUT Receptor</label><input id="rrut" placeholder="12.345.678-9"/></div>
-    <div class="f"><label>Cargo Receptor</label><input id="rcargo" placeholder="Jefatura / Referente..."/></div>
-    <div class="f"><label>Email Receptor</label><input id="remail" placeholder="correo@institución.cl"/></div>
-  </div>
-
-  <div class="stitle">Fecha de Cumplimiento de Compromisos</div>
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="f"><label>Fecha Cumplimiento Global</label><input type="date" id="fcump"/></div>
-  </div>
-
-  <div class="stitle">Participantes del Centro</div>
-  <div class="icard" style="margin-bottom:10px;">Agrega a todas las personas del centro que participaron en la asesoría.</div>
-  <div class="part-add-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:10px;">
-    <input id="pnew-nombre" placeholder="Nombre y apellido" style="padding:8px 10px;border:1.5px solid var(--g3);border-radius:7px;font-family:inherit;font-size:13px;color:var(--tx);background:var(--wh);"/>
-    <input id="pnew-cargo"  placeholder="Cargo"            style="padding:8px 10px;border:1.5px solid var(--g3);border-radius:7px;font-family:inherit;font-size:13px;color:var(--tx);background:var(--wh);"/>
-    <button class="btn-part-add" onclick="addParticipante()">+ Agregar</button>
-  </div>
-  <div class="part-chips" id="part-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:8px;background:var(--g1);border:1.5px solid var(--g3);border-radius:7px;"></div>
-
-  <!-- Firma digital -->
-  <div style="margin-top:14px;">
-    <div class="stitle">Firma Digital del Receptor <span style="font-size:10px;color:var(--g4);font-weight:400;">(opcional)</span></div>
-    <div style="background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-      <div style="flex:1;">
-        <div id="firma-display" style="font-size:12px;color:var(--g4);font-style:italic;">Sin firma capturada</div>
-        <img id="firma-thumb" style="display:none;height:50px;border:1px solid var(--g3);border-radius:5px;margin-top:6px;background:#fff;" />
-      </div>
-      <div style="display:flex;gap:8px;flex-shrink:0;">
-        <button onclick="openFirmaModal()" class="btn-s" style="font-size:12px;">✍️ Capturar</button>
-        <button onclick="clearFirmaData()" id="firma-clear-btn" class="btn-s" style="font-size:12px;display:none;color:#C8102E;border-color:#C8102E;">Quitar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- NAV BUTTONS -->
-  <div style="display:flex;justify-content:space-between;margin-top:18px;">
-    <button class="btn-s" onclick="goStep(1)">← Centro</button>
-    <button class="btn-p green" onclick="stepNext(2)" style="padding:10px 28px;font-size:13px;">
-      Siguiente → Actividades
-    </button>
-  </div>
-
-</div>
+<!-- TAB ACTIVIDADES -->
 <div class="panel" id="tab-acts">
-  <div class="step-header">
-    <div class="step-icon">📋</div>
-    <div>
-      <div class="step-title">Paso 3 de 4 — Actividades</div>
-      <div class="step-sub">Registra las actividades realizadas en la asesoría</div>
-    </div>
-  </div>
   <!-- ACCESO RÁPIDO -->
   <div class="fav-wrap">
     <div class="fav-head">⭐ Acceso Rápido — Favoritos</div>
@@ -623,10 +556,10 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 <div class="panel" id="tab-firmas">
   <div class="stitle">Receptor — Empresa / CT</div>
   <div class="g2" style="margin-bottom:14px;">
-    <div class="f"><label>Nombre Receptor</label><input id="rnombre" value="" placeholder="Se rellena al seleccionar BP..."/></div>
-    <div class="f"><label>RUT Receptor</label><input id="rrut" value="" placeholder="RUT..."/></div>
-    <div class="f"><label>Cargo Receptor</label><input id="rcargo" value="" placeholder="Cargo..."/></div>
-    <div class="f"><label>Email Receptor</label><input id="remail" value="" placeholder="correo@institución.cl"/></div>
+    <div class="f"><label>Nombre Receptor</label><input id="rnombre" value="Aida Espinosa"/></div>
+    <div class="f"><label>RUT Receptor</label><input id="rrut" value="11836520-8"/></div>
+    <div class="f"><label>Cargo Receptor</label><input id="rcargo" value="Jefatura Institucional HDS"/></div>
+    <div class="f"><label>Email Receptor</label><input id="remail" value="aespinosa@achs.cl"/></div>
   </div>
   <div class="stitle">Fecha de Cumplimiento</div>
   <div class="g2">
@@ -651,13 +584,6 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 
 <!-- TAB GENERAR -->
 <div class="panel" id="tab-gen">
-  <div class="step-header">
-    <div class="step-icon">📄</div>
-    <div>
-      <div class="step-title">Paso 4 de 4 — Generar AOA</div>
-      <div class="step-sub">Revisa el resumen y genera el PDF. Luego podrás enviar por correo.</div>
-    </div>
-  </div>
   <div class="smsg" id="smsg"></div>
   <div class="icard"><strong>Genera el documento AOA en PDF.</strong> El cliente solo verá el Motivo como título — sin códigos internos (AAD, SOP, etc.). El Submotivo e ID son solo para uso interno.</div>
   <div class="stitle">Vista Previa</div>
@@ -683,6 +609,7 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 <div class="abar">
   <button class="btn-s" onclick="resetF()">Limpiar</button>
   <button class="btn-s" onclick="saveDraft()" title="Guardar borrador">💾 Guardar</button>
+  <button class="btn-s" onclick="openTplModal()" title="Plantillas">📋 Plantillas</button>
   <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" title="Enviar por correo (Outlook)" style="color:#0078d4;border-color:#0078d4;">📧 Enviar</button>
   <button class="btn-p green" style="flex:2;" onclick="genPDF()">⬇ Generar PDF</button>
 </div>
@@ -839,8 +766,6 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 </div>
 
 <script>
-
-
 
 // ══════════════════════════════════════════
 // DB — Tipos de Asesoría con Motivos y Submotivos
@@ -5676,4 +5601,1861 @@ const TEXTOS = {
     "acuer": "Estado del proceso de rebaja/apelación D.S. 67 queda registrado en sistema ACHS."
   },
   "REC06": {
-    "desc": "Se realiza reforzamiento del proceso de apelación D.S. 67 con
+    "desc": "Se realiza reforzamiento del proceso de apelación D.S. 67 con el referente del centro de trabajo, recordando plazos críticos, requisitos pendientes y apoyando en la preparación de la documentación necesaria para la apelación.",
+    "acuer": "Estado de reforzamiento proceso apelación D.S. 67 queda registrado en sistema ACHS."
+  },
+  "REC07": {
+    "desc": "Se realiza gestión de alerta de desafiliación de empresa mediana, contactando al referente para identificar las causas del proceso de desafiliación, ofreciendo soluciones y reforzando el valor del servicio preventivo ACHS.",
+    "acuer": "Gestión de alerta de desafiliación queda registrada en sistema ACHS."
+  },
+  "RLB01": {
+    "desc": "Se realiza oferta y gestión de capacitaciones ACHS para el centro de trabajo, presentando el catálogo de cursos disponibles, modalidades de acceso, calendario de actividades y proceso de inscripción para los trabajadores.",
+    "acuer": "Información de capacitaciones ACHS derivada a referente institucional."
+  },
+  "SEL01": {
+    "desc": "Se realiza gestión de acuerdos SEL (Servicios Especiales de Ley) con el centro de trabajo, revisando los servicios contratados, estado de ejecución y coordinando las acciones necesarias para el cumplimiento de los compromisos.",
+    "acuer": "Estado de acuerdos SEL actualizado en sistema ACHS."
+  },
+  "SEL02": {
+    "desc": "Se realiza gestión de ventas SEL (Servicios Especiales de Ley) con el centro de trabajo, presentando la propuesta de servicios adicionales disponibles, condiciones comerciales y proceso de contratación.",
+    "acuer": "Estado de proceso de venta SEL queda registrado en sistema ACHS."
+  },
+  "SGA01": {
+    "desc": "Se realiza difusión del modelo de Sistema de Gestión ACHS 45.001 en el centro de trabajo, presentando el estándar, sus beneficios, etapas de implementación y el proceso de certificación disponible para la organización.",
+    "acuer": "Información del modelo ACHS 45.001 derivada a referente institucional."
+  },
+  "SLM01": {
+    "desc": "Se realiza inicio de la campaña de Salud Mental ACHS en el centro de trabajo, presentando al referente los objetivos de la campaña, recursos disponibles para los trabajadores y las actividades programadas para el período.",
+    "acuer": "Información de inicio de campaña Salud Mental derivada a referente institucional."
+  },
+  "SLM02": {
+    "desc": "Se realiza seguimiento de la campaña de Salud Mental ACHS en el centro de trabajo, revisando el avance de las actividades programadas, evaluando participación de los trabajadores y apoyando al referente en la implementación.",
+    "acuer": "Estado de seguimiento de campaña Salud Mental queda registrado en sistema ACHS."
+  },
+  "SLM03": {
+    "desc": "Se realiza cierre de la campaña de Salud Mental ACHS en el centro de trabajo, presentando al referente los resultados de la campaña, participación lograda, impacto en los trabajadores y compromisos de continuidad.",
+    "acuer": "Informe de cierre de campaña Salud Mental es derivado a referente institucional."
+  },
+  "SUB01": {
+    "desc": "Se realiza gestión de subsidios a prescribir para trabajadores del centro de trabajo, coordinando con el referente la identificación de casos con subsidio pendiente de prescripción y apoyando en el proceso de tramitación ante ACHS.",
+    "acuer": "Gestión de subsidios a prescribir queda registrada en sistema ACHS."
+  },
+  "SUB02": {
+    "desc": "Se realiza gestión de vales vista pendientes de cobro por trabajadores del centro de trabajo, coordinando con el referente la identificación de casos con vales pendientes y apoyando en el proceso de cobro o regularización.",
+    "acuer": "Gestión de vales vista pendientes de cobro queda registrada en sistema ACHS."
+  },
+  "SUB03": {
+    "desc": "Se realiza gestión de vales vista reabonados a cuenta ACHS por trabajadores del centro de trabajo, coordinando con el referente la identificación de los casos afectados y el proceso de restitución o regularización de los fondos.",
+    "acuer": "Gestión de vales vista reabonados queda registrada en sistema ACHS."
+  },
+  "SVE01": {
+    "desc": "Se realiza llamada de bienvenida al nuevo centro de trabajo en el marco del Soporte Virtual Especializado (SVE), presentando el servicio, el equipo de atención asignado, los canales de contacto y el plan de trabajo preventivo inicial.",
+    "acuer": "Registro de llamada de bienvenida SVE queda en sistema ACHS."
+  },
+  "UCA01": {
+    "desc": "Se realiza gestión de omisión de trabajadores del centro de trabajo, coordinando con el referente la regularización de trabajadores no declarados en la nómina ACHS, verificando información e iniciando el proceso de incorporación al seguro.",
+    "acuer": "Gestión de omisión de trabajadores queda registrada en sistema ACHS."
+  },
+  "CCM01": {
+    "desc": "Se realiza coordinación de servicios ESACHS para el centro minero, gestionando la contratación, programación y seguimiento de los servicios especializados de seguridad e higiene requeridos por la faena.",
+    "acuer": "Estado de coordinación de servicios ESACHS queda registrado en sistema ACHS."
+  },
+  "CCM02": {
+    "desc": "Se realiza emisión del certificado de tasas por empresa y/o sucursal para el centro minero, generando el documento oficial que acredita el estado de cotización y tasas aplicables conforme a la normativa vigente.",
+    "acuer": "Certificado de tasas emitido es derivado a referente institucional."
+  },
+  "CCM03": {
+    "desc": "Se realiza gestión de solicitud de cursos e-learning para el personal del centro minero, coordinando el acceso a la plataforma de capacitación en línea ACHS, inscripción de trabajadores y seguimiento de avance.",
+    "acuer": "Solicitud de cursos e-learning gestionada y acceso habilitado en sistema ACHS."
+  },
+  "CCM04": {
+    "desc": "Se realiza seguimiento del pago de facturas SEL del centro minero, verificando el estado de las facturas emitidas por servicios especiales, coordinando con el referente las gestiones necesarias para regularizar los pagos pendientes.",
+    "acuer": "Estado de seguimiento de pago facturas SEL queda registrado en sistema ACHS."
+  },
+  "CCM05": {
+    "desc": "Se realiza seguimiento de deudas por no pago de cotizaciones de ley del centro minero, verificando el estado de las deudas registradas, coordinando con el referente las gestiones para la regularización del pago de cotizaciones.",
+    "acuer": "Estado de seguimiento de deudas por cotizaciones queda registrado en sistema ACHS."
+  },
+  "CCM07": {
+    "desc": "Se realiza gestión de ingreso de casos médicos del centro minero en el sistema ACHS, coordinando el registro de trabajadores lesionados o con enfermedad profesional y asegurando la correcta tramitación de las prestaciones.",
+    "acuer": "Casos médicos ingresados quedan registrados en sistema ACHS."
+  },
+  "CCM08": {
+    "desc": "Se realiza gestión SEL/CIEL para el centro minero, coordinando los servicios especiales de ley y prestaciones médicas complementarias, verificando coberturas, autorizaciones y estado de tramitación de los casos.",
+    "acuer": "Estado de gestión SEL/CIEL queda registrado en sistema ACHS."
+  },
+  "CCM09": {
+    "desc": "Se realiza creación de SOLPED (Solicitud de Pedido) para el centro minero, gestionando la solicitud formal de bienes o servicios requeridos para la implementación de actividades preventivas en la faena.",
+    "acuer": "SOLPED creada queda registrada en sistema de gestión ACHS."
+  },
+  "EPM01": {
+    "desc": "Se realiza diagnóstico inicial de la estrategia de prevención minería en [FAENA/ÁREA], evaluando las condiciones de seguridad actuales, perfil de accidentabilidad, riesgos prioritarios y brechas de gestión preventiva del centro.",
+    "acuer": "Informe de diagnóstico inicial estrategia minería es derivado a referente y jefatura de faena."
+  },
+  "EPM02": {
+    "desc": "Se realiza evaluación de medidas preventivas de la estrategia minería en [FAENA/ÁREA], verificando el estado de implementación de los controles establecidos, efectividad de las medidas y avance respecto al plan definido.",
+    "acuer": "Informe de evaluación de medidas preventivas estrategia minería es derivado a referente."
+  },
+  "EPM03": {
+    "desc": "Se realiza levantamiento de medidas específicas de la estrategia minería en [FAENA/ÁREA], identificando controles adicionales requeridos para riesgos específicos del proceso minero y definiendo el plan de implementación.",
+    "acuer": "Informe de levantamiento de medidas específicas estrategia minería es derivado a referente."
+  },
+  "EPM04": {
+    "desc": "Se realiza diagnóstico de cierre de la estrategia minería en [FAENA/ÁREA], evaluando el estado final de cumplimiento de los compromisos establecidos, logros alcanzados y oportunidades de mejora para el siguiente período.",
+    "acuer": "Informe de diagnóstico de cierre estrategia minería es derivado a referente y jefatura de faena."
+  },
+  "EPV01": {
+    "desc": "Se realiza verificación de medidas de control y acciones correctivas minería en [FAENA/ÁREA], evaluando el estado de implementación de los controles prescritos y el cumplimiento de compromisos en el período evaluado.",
+    "acuer": "Informe de verificación de medidas de control minería es derivado a referente de faena."
+  },
+  "EPV02": {
+    "desc": "Se realiza elaboración del informe de verificación de medidas de control y acciones correctivas minería en [FAENA/ÁREA], documentando el estado de implementación, evidencias disponibles y brechas pendientes de cierre.",
+    "acuer": "Informe formal de verificación de medidas minería es derivado a referente y jefatura de faena."
+  },
+  "GST01": {
+    "desc": "Se realiza actividad preventiva de inicio de turno en [FAENA/ÁREA], apoyando al supervisor en la realización de la charla de inicio de turno, revisando los riesgos del día, condiciones del entorno y compromisos de trabajo seguro.",
+    "acuer": "Registro de actividad preventiva inicio de turno queda en poder del referente de faena."
+  },
+  "DRE01": {
+    "desc": "Se realiza asesoría técnica PYME en formato SVE (Soporte Virtual Especializado), apoyando al referente del centro de trabajo en la resolución de consultas técnicas preventivas, planificación de actividades y gestión de compromisos pendientes.",
+    "acuer": "Se entrega AOA para gestión interna con estado de asesoría técnica PYME SVE."
+  },
+  "FPM01": {
+    "desc": "Se realiza apoyo en el Plan de Prevención (PDP) del centro de trabajo en formato SVE, revisando el estado de avance del plan, apoyando en la actualización de actividades y verificando el cumplimiento de compromisos establecidos.",
+    "acuer": "Estado de avance del Plan de Prevención PDP es registrado en AOA para seguimiento."
+  },
+  "FPM02": {
+    "desc": "Se realiza asesoría de gestión de aspectos legales en formato SVE, evaluando el cumplimiento de obligaciones normativas del centro de trabajo en materia de SST mediante plataforma digital y orientando en las acciones de regularización.",
+    "acuer": "Informe de gestión de aspectos legales SVE es derivado a referente institucional."
+  },
+  "FPM03": {
+    "desc": "Se realiza asesoría de gestión de riesgos de emergencia en formato SVE, apoyando al referente en la actualización del plan de emergencia, revisión de recursos disponibles y planificación de simulacros mediante plataforma digital.",
+    "acuer": "Se entrega AOA con estado de avance de gestión de riesgos de emergencia SVE."
+  },
+  "FPM04": {
+    "desc": "Se realiza asesoría de Comités Paritarios en formato SVE, apoyando al referente y al CPHS en la gestión del comité, revisión del programa de trabajo, investigación de accidentes y cumplimiento de sus obligaciones legales.",
+    "acuer": "Se entrega AOA para gestión interna del CPHS en formato SVE."
+  },
+  "FPM06": {
+    "desc": "Se realiza asesoría inicial de prevención PYME en formato SVE, evaluando las condiciones de seguridad del centro de trabajo mediante plataforma digital, identificando peligros prioritarios y estableciendo el plan de trabajo preventivo inicial.",
+    "acuer": "Plan de trabajo preventivo inicial PYME SVE es derivado a referente para validación."
+  },
+  "FPM08": {
+    "desc": "Se realiza asesoría inicial de prevención PYME presencial en el centro de trabajo, evaluando in situ las condiciones de seguridad, identificando peligros prioritarios y estableciendo el plan de trabajo preventivo inicial conforme a metodología ACHS.",
+    "acuer": "Plan de trabajo preventivo inicial PYME presencial es derivado a referente para validación."
+  },
+  "FPM09": {
+    "desc": "Se realiza asesoría de seguimiento para PYME presencial en el centro de trabajo, revisando el avance de compromisos establecidos, verificando implementación de medidas y actualizando el plan de trabajo preventivo según estado actual.",
+    "acuer": "Estado de avance del seguimiento PYME presencial es registrado en AOA para seguimiento."
+  },
+  "FPM10": {
+    "desc": "Se realiza asesoría de seguimiento para PYME remota en formato SVE, revisando mediante plataforma digital el avance de compromisos establecidos, verificando implementación de medidas y actualizando el plan de trabajo preventivo.",
+    "acuer": "Estado de avance del seguimiento PYME remota SVE es registrado en AOA para seguimiento."
+  },
+  "FPR01": {
+    "desc": "Se realiza intervención táctica ITA en formato SVE, apoyando al referente del centro de trabajo mediante plataforma digital en la revisión de accidentabilidad, análisis de casos y definición de medidas de control para focos críticos.",
+    "acuer": "Informe de intervención táctica ITA SVE es derivado a referente institucional."
+  },
+  "FPR02": {
+    "desc": "Se realiza campaña Tienes un Minutito — visita en el camino en el centro de trabajo, realizando una visita preventiva breve y no programada al referente para revisar el estado de la gestión preventiva y reforzar compromisos.",
+    "acuer": "Registro de visita en el camino queda en poder del referente institucional."
+  },
+  "FPR03": {
+    "desc": "Se realiza difusión de protocolos psicosociales en formato SVE, informando al referente del centro de trabajo sobre el protocolo de evaluación de ambientes laborales CEAL, sus etapas de implementación y obligaciones normativas aplicables.",
+    "acuer": "Información de protocolos psicosociales SVE derivada a referente institucional."
+  }
+};
+
+function onSubChange(id){
+  updBadge(id);
+  const sub=v('as'+id);
+  if(!sub) return;
+
+  const codeMatch=sub.match(/\(([A-Z0-9]+)\)\s*$/);
+  const code=codeMatch?codeMatch[1]:null;
+
+  const descEl=document.getElementById('ad'+id);
+  const acuerEl=document.getElementById('aa'+id);
+
+  if(code && TEXTOS[code]){
+    if(!descEl.value.trim()||descEl.getAttribute('data-a')){
+      descEl.value=TEXTOS[code].desc;
+      descEl.setAttribute('data-a','1');
+      descEl.removeAttribute('data-ia-applied');
+      ar(descEl);
+    }
+    if(!acuerEl.value.trim()||acuerEl.value==='Se entrega AOA para gestión interna.'||acuerEl.getAttribute('data-a-acuer')){
+      acuerEl.value=TEXTOS[code].acuer;
+      acuerEl.setAttribute('data-a-acuer','1');
+      ar(acuerEl);
+    }
+    // ── IA mejora descripción vía n8n si tiene corchetes ──────────
+    if(N8N && N8N.enabled && TEXTOS[code].desc.includes('[')){
+      const amEl=document.getElementById('am'+id);
+      const motivo=(amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+      setTimeout(async ()=>{
+        const el=document.getElementById('ad'+id);
+        if(!el||el.getAttribute('data-ia-applied')==='1') return;
+        const orig=el.value;
+        el.style.borderColor='#ff6b35';
+        const mejorada=await n8nMejorarDescripcion(motivo,'',orig);
+        el.style.borderColor='';
+        if(mejorada){
+          el.value=mejorada; ar(el);
+          el.setAttribute('data-ia-applied','1');
+          toast('✨ Descripción mejorada con IA','ok',2000);
+        }
+      },700);
+    }
+  } else {
+    const subClean=sub.replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
+    if(!descEl.value.trim()||descEl.getAttribute('data-a')){
+      descEl.value=subClean;
+      descEl.setAttribute('data-a','1');
+      ar(descEl);
+    }
+  }
+}
+function updBadge(id){
+  const amEl=document.getElementById('am'+id);
+  const m=amEl?.getAttribute('data-mot')||'';
+  const dept=cardDept[id]||'';
+  const bg=document.getElementById('abg'+id);
+  if(bg){
+    const deptLabel=dept==='GIGE'?'GIGE':dept==='RED'?'RED':dept==='HYE'?'HYE':'';
+    bg.textContent=m||(deptLabel?'['+deptLabel+'] Elige motivo':'Nueva Actividad');
+    // color by dept
+    bg.style.background=dept==='GIGE'?'#E8F0FB':dept==='RED'?'#FDECEA':dept==='HYE'?'#e8faf1':'var(--gl)';
+    bg.style.color=dept==='GIGE'?'#0055AA':dept==='RED'?'#C8102E':dept==='HYE'?'#0a8a45':'var(--gd)';
+  }
+}
+
+// ── ACTIVIDADES ───────────────────────────────────
+let acts=[],acnt=0;
+
+function addAct(afterId){
+  const id=++acnt;
+  acts.push({id});
+  document.getElementById('empty-msg').style.display='none';
+  document.getElementById('cnt').textContent=acts.length;
+
+  const card=document.createElement('div');
+  card.className='act-card'; card.id='ac'+id;
+  card.innerHTML=`
+    <div class="act-card-hdr">
+      <span class="act-badge" id="abg${id}">Nueva Actividad</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button class="btn-star" id="fstar${id}" title="Guardar como favorito" onclick="toggleFav(${id})" data-favkey="">☆</button>
+        <button class="btn-rm" onclick="rmAct(${id})">✕</button>
+      </div>
+    </div>
+    <div class="ag">
+
+      <!-- DEPT TOGGLE: GIGE o RED -->
+      <div class="full">
+        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Departamento</div>
+        <div class="dept-row">
+          <button class="dept-btn" id="btn-gige-${id}" onclick="setDept(${id},'GIGE')">
+            GIGE
+            <span class="dept-label">Programa Propio (PPP)</span>
+          </button>
+          <button class="dept-btn" id="btn-red-${id}" onclick="setDept(${id},'RED')">
+            RED
+            <span class="dept-label">Todas las áreas (sin PPP)</span>
+          </button>
+          <button class="dept-btn" id="btn-hye-${id}" onclick="setDept(${id},'HYE')">
+            HYE
+            <span class="dept-label">Higiene y Ergonomía</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MOTIVO (aparece después de elegir dept) -->
+      <div class="f full" id="motivo-wrap-${id}" style="display:none;">
+        <label>Motivo</label>
+        <select id="am${id}" onchange="onMotivoChange(${id})">
+          <option value="" disabled selected>-- Selecciona Motivo --</option>
+        </select>
+      </div>
+
+      <!-- SUBMOTIVO -->
+      <div class="f full" id="sub-wrap-${id}" style="display:none;">
+        <label>Submotivo <span class="sub-note">(uso interno — no aparece en PDF)</span></label>
+        <select id="as${id}" onchange="onSubChange(${id})" disabled>
+          <option value="" disabled selected>-- Submotivo (opcional) --</option>
+        </select>
+      </div>
+
+      <div class="f"><label>ID Asesoría</label><input id="aid${id}" placeholder="Ej: 11605431"/></div>
+      <div class="f"><label>Fecha</label><input type="date" id="af${id}" value="${tod()}"/></div>
+      <div class="f"><label>Fecha Cumplimiento <span class="sub-note">(opcional — sobreescribe la global)</span></label><input type="date" id="afc${id}"/></div>
+      <div class="f full">
+        <label>Descripción</label>
+        <textarea id="ad${id}" placeholder="Descripción de la actividad realizada..." oninput="ar(this)" style="overflow:hidden;min-height:48px;"></textarea>
+      </div>
+      <div class="f full">
+        <label>Acuerdo / Compromiso</label>
+        <textarea id="aa${id}" oninput="ar(this)" style="overflow:hidden;min-height:36px;">Se entrega AOA para gestión interna.</textarea>
+      </div>
+    </div>
+    <div class="act-footer">
+      <button class="btn-add-here" onclick="addActAfter(${id})">+ Agregar actividad aquí debajo</button>
+    </div>`;
+
+  const wrap=document.getElementById('acts-wrap');
+  if(afterId){
+    const ref=document.getElementById('ac'+afterId);
+    if(ref&&ref.nextSibling) wrap.insertBefore(card,ref.nextSibling);
+    else wrap.appendChild(card);
+  } else { wrap.appendChild(card); }
+  return id;
+}
+
+function addActAfter(aid){addAct(aid)}
+
+function rmAct(id){
+  document.getElementById('ac'+id)?.remove();
+  acts=acts.filter(a=>a.id!==id);
+  document.getElementById('cnt').textContent=acts.length;
+  if(!acts.length) document.getElementById('empty-msg').style.display='block';
+}
+
+// ── UTILS ─────────────────────────────────────────
+function ar(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+function tod(){return new Date().toISOString().split('T')[0]}
+function fd(s){if(!s)return'';const[y,m,d]=s.split('-');return`${d}-${m}-${y}`}
+function v(id){return document.getElementById(id)?.value||''}
+function showTab(n,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
+  if(n==='historial') renderHistory();
+  if(n==='stats') renderStats();
+}
+function tog(n){document.getElementById('sec-'+n).classList.toggle('collapsed')}
+function showS(msg,type){
+  const el=document.getElementById('smsg');
+  el.textContent=msg;el.className='smsg '+type;el.style.display='block';
+  if(type!=='load') setTimeout(()=>{el.style.display='none'},4500);
+}
+
+function gd(){
+  return{
+    razon:v('razon'),bp:v('bp'),
+    razon_sub:(document.getElementById('razon-sub')?.textContent||'').replace('▶ ','').trim(),
+    fecha_a:v('fecha_a')||tod(),
+    mod:document.querySelector('input[name="mod"]:checked')?.value||'PRESENCIAL',
+    obj:v('obj'),
+    participantes: participantes.slice(), // array de {nombre, cargo}
+    enombre:v('enombre'),erut:v('erut'),eemail:v('eemail'),
+    rnombre:v('rnombre'),rrut:v('rrut'),rcargo:v('rcargo'),remail:v('remail'),
+    fcump:v('fcump'),
+    acts:acts.map(a=>{
+      const amEl=document.getElementById('am'+a.id);
+      const tipo=amEl?.getAttribute('data-tipo')||'';
+      const motivo=amEl?.getAttribute('data-mot')||'';
+      const dept=cardDept[a.id]||'';
+      return {
+        dept,
+        tipo,
+        motivo,
+        sub:v('as'+a.id),
+        ida:v('aid'+a.id),
+        fecha:v('af'+a.id),
+        fcump_act:v('afc'+a.id), // fecha cumplimiento por actividad
+        desc:document.getElementById('ad'+a.id)?.value||'',
+        acuer:document.getElementById('aa'+a.id)?.value||''
+      };
+    })
+  };
+}
+
+function updPrev(){
+  const d=gd();
+  let t=`=== AOA — ASESORÍA ORGANISMO ADMINISTRADOR ===\n`;
+  t+=`${d.razon} | BP: ${d.bp} | ${d.mod} | ${fd(d.fecha_a)}\n\n`;
+  const partLines=d.participantes.map(p=>`- ${p.nombre}${p.cargo?' | '+p.cargo:''}`).join('\n');
+  t+=`PARTICIPANTES:\n${partLines}\n- ${d.enombre} | Experto en Prevención ACHS\n\n`;
+  t+=`OBJETIVO:\n${d.obj}\n\nACTIVIDADES (${d.acts.length}):\n`;
+  d.acts.forEach((a,i)=>{
+    t+=`\n[${i+1}] [${a.dept}] ${a.motivo} | ID: ${a.ida} | ${fd(a.fecha)}\n`;
+    t+=`    ${(a.desc||'').substring(0,80)}...\n    → ${a.acuer}\n`;
+  });
+  t+=`\nFIRMAS: ${d.enombre} (${d.erut}) / ${d.rnombre} (${d.rrut})\n`;
+  document.getElementById('prev').textContent=t;
+}
+
+// ── PDF ───────────────────────────────────────────
+function buildDoc(d){
+  const fc=fd(d.fcump)||'30-04-2026';
+  const mr=d.mod==='REMOTO'?'X':'&nbsp;';
+  const mp=d.mod==='PRESENCIAL'?'X':'&nbsp;';
+
+  const logo=`<svg width="58" height="58" viewBox="0 0 58 58" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+    <rect width="58" height="58" rx="11" fill="#13C063"/>
+    <text x="29" y="39" font-family="Arial,sans-serif" font-size="20" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="-1">achs</text>
+  </svg>`;
+
+  let pRows='';
+  (d.participantes||[]).forEach(p=>{
+    if(p.nombre) pRows+=`<tr><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${p.nombre}</td><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${p.cargo||''}</td></tr>`;
+  });
+  pRows+=`<tr><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${d.enombre}</td><td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">Experto en Prevención ACHS</td></tr>`;
+
+  let aRows='';
+  d.acts.forEach(a=>{
+    // PDF muestra SOLO el Motivo como título — sin códigos, sin submotivo
+    const titulo=(a.motivo||a.tipo||'').replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
+    const cleanLine=s=>s.replace(/\s*\([A-Z0-9]+\)\s*$/g,'').trim();
+    const descClean=a.desc?a.desc.split('\n').map(cleanLine).join('\n'):'';
+    const desc=descClean?'<br><span style="font-size:9pt;color:#000;font-weight:400;">'+descClean.replace(/\n/g,'<br>')+'</span>':'';
+    aRows+=`<tr>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${fd(a.fecha)}<br><span style="font-size:8pt;color:#000;">${a.ida}</span></td>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;"><b>${titulo}</b>${desc}</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${a.acuer}</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${d.enombre}<br>Experto ACHS</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;font-size:9pt;vertical-align:top;color:#000;">${a.fcump_act?fd(a.fcump_act):fc}</td>
+    </tr>`;
+  });
+
+  return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
+<style>
+@page{margin:1.8cm;size:A4}
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;font-size:10pt;color:#000;margin:0;background:#fff}
+table{width:100%;border-collapse:collapse;margin-bottom:11px}
+th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;border:1px solid #333;text-align:left}
+.lbl{background:#f0f0f0;font-weight:bold;font-size:9pt;padding:5px 8px;vertical-align:middle;color:#000}
+.ohdr{background:#111;color:#fff;font-size:9pt;font-weight:bold;padding:5px 8px;text-transform:uppercase;letter-spacing:.5px;border:1px solid #333}
+.foot{font-size:7.5pt;color:#000;text-align:center;margin-top:18px;border-top:1px solid #ccc;padding-top:6px}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+
+<div style="display:table;width:100%;margin-bottom:14px;padding-bottom:10px;border-bottom:2.5px solid #111;">
+  <div style="display:table-cell;vertical-align:middle;width:72px;">${logo}</div>
+  <div style="display:table-cell;vertical-align:middle;padding-left:12px;">
+    <span style="font-size:15pt;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:#000;">Asesoría Organismo Administrador</span>
+  </div>
+</div>
+
+<table>
+  <tr>
+    <td class="lbl" style="border:1px solid #ccc;width:160px;">Razón Social</td>
+    <td colspan="3" style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">
+      ${d.razon}${d.razon_sub?'<br><span style="font-size:9pt;font-weight:700;color:#000;">'+d.razon_sub+'</span>':''}
+    </td>
+  </tr>
+  <tr>
+    <td class="lbl" style="border:1px solid #ccc;">BP Empresa</td>
+    <td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">${d.bp}</td>
+    <td class="lbl" style="border:1px solid #ccc;width:160px;">Modalidad Asesoría</td>
+    <td style="border:1px solid #ccc;padding:5px 8px;font-size:10pt;color:#000;">Remoto:&nbsp;<b>${mr}</b>&nbsp;&nbsp;&nbsp;Presencial:&nbsp;<b>${mp}</b></td>
+  </tr>
+</table>
+
+<table>
+  <thead><tr><th>Participantes de la Asesoría</th><th>Cargo</th></tr></thead>
+  <tbody>${pRows}</tbody>
+</table>
+
+<table>
+  <tr><td class="ohdr">Objetivos de la Asesoría</td></tr>
+  <tr><td style="border:1px solid #ccc;padding:7px 8px;font-size:10pt;color:#000;">${d.obj}</td></tr>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:13%;">Fecha – ID Asesoría</th>
+      <th style="width:34%;">Tema Tratado</th>
+      <th style="width:22%;">Acuerdo / Compromiso</th>
+      <th style="width:19%;">Nombre y Cargo Responsable</th>
+      <th style="width:12%;">Fecha Cumplimiento</th>
+    </tr>
+  </thead>
+  <tbody>${aRows||'<tr><td colspan="5" style="border:1px solid #ccc;padding:8px;text-align:center;color:#555;font-size:9pt;">Sin actividades registradas</td></tr>'}</tbody>
+</table>
+
+<table>
+  <thead>
+    <tr><th>Profesional Organismo Administrador</th><th>Receptor CT / Visita — Firma Empresa</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border:1px solid #ccc;padding:10px 8px;vertical-align:top;font-size:9pt;color:#000;">
+        <b>Nombre y Apellido:</b> ${d.enombre}<br>
+        <b>RUT:</b> ${d.erut}<br>
+        <b>Cargo:</b> Experto en Prevención ACHS<br>
+        <b>Email:</b> ${d.eemail}<br><br>
+        Firma ACHS: ___________________________
+      </td>
+      <td style="border:1px solid #ccc;padding:10px 8px;vertical-align:top;font-size:9pt;color:#000;">
+        <b>Nombre y Apellido:</b> ${d.rnombre}<br>
+        <b>RUT:</b> ${d.rrut}<br>
+        <b>Cargo:</b> ${d.rcargo}<br>
+        <b>Email:</b> ${d.remail}<br><br>
+        Firma Empresa: ________________________
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v4.0 · Uso interno exclusivo</div>
+
+<!-- OUTLOOK MODAL -->
+<div id="outlook-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--wh);border-radius:10px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+
+    <!-- Modal Header -->
+    <div style="background:#0078d4;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">📧</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;letter-spacing:.3px;">Enviar por Correo</div>
+          <div style="font-size:10px;opacity:.8;">Se abrirá Outlook con el mensaje pre-completado</div>
+        </div>
+      </div>
+      <button onclick="closeOutlookModal()" style="background:none;border:1.5px solid rgba(255,255,255,.4);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding:18px;">
+
+      <!-- Cliente de correo -->
+      <div style="margin-bottom:16px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:8px;">Enviar con</label>
+        <div class="mail-client-row">
+          <button class="mail-client-btn selected outlook" id="mc-outlook" onclick="selectMailClient('outlook')">
+            <span class="mail-client-icon">📘</span>
+            <span class="mail-client-label">Outlook</span>
+          </button>
+          <button class="mail-client-btn" id="mc-gmail" onclick="selectMailClient('gmail')">
+            <span class="mail-client-icon">📩</span>
+            <span class="mail-client-label">Gmail</span>
+          </button>
+          <button class="mail-client-btn" id="mc-apple" onclick="selectMailClient('apple')">
+            <span class="mail-client-icon">🍎</span>
+            <span class="mail-client-label">Apple Mail</span>
+          </button>
+          <button class="mail-client-btn" id="mc-copy" onclick="selectMailClient('copy')">
+            <span class="mail-client-icon">📋</span>
+            <span class="mail-client-label">Solo copiar</span>
+          </button>
+          <button class="mail-client-btn" id="mc-n8n" onclick="selectMailClient('n8n')" title="Envía directamente desde tu Gmail via n8n sin abrir ningún cliente">
+            <span class="mail-client-icon">⚡</span>
+            <span class="mail-client-label">Envío directo</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Para -->
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Para (correo receptor)</label>
+        <input id="outlook-to" type="email" placeholder="correo@institución.cl"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
+        <div style="font-size:10px;color:var(--g4);margin-top:4px;">Se pre-carga con el correo del receptor configurado en la pestaña Firmas</div>
+      </div>
+
+      <!-- CC -->
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">CC (opcional)</label>
+        <input id="outlook-cc" type="email" placeholder="copia@institución.cl"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
+      </div>
+
+      <!-- Asunto -->
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Asunto</label>
+        <input id="outlook-subject" type="text"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
+      </div>
+
+      <!-- Preview del cuerpo -->
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;">Cuerpo del mensaje</label>
+          <button onclick="regenerateOutlookBody()" style="background:none;border:1.5px solid var(--g3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;color:var(--g4);font-family:inherit;" title="Regenerar desde el formulario">↺ Regenerar</button>
+        </div>
+        <textarea id="outlook-body" rows="14"
+          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:10px;font-size:11.5px;font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:var(--tx);background:var(--wh);box-sizing:border-box;resize:vertical;transition:border .15s;"
+          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"></textarea>
+        <div style="font-size:10px;color:var(--g4);margin-top:4px;">Puedes editar el mensaje antes de enviar. Los cambios no se guardan en el formulario.</div>
+      </div>
+
+      <!-- Info box -->
+      <div style="background:#f0f6ff;border:1.5px solid #c0d8f5;border-radius:7px;padding:10px 12px;font-size:11px;color:#1a4a8a;margin-bottom:16px;line-height:1.6;">
+        <strong>¿Cómo funciona?</strong> Al hacer clic en "Abrir en Outlook", se abrirá tu cliente de correo con el mensaje pre-completado. El documento AOA deberás adjuntarlo manualmente si es necesario.
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+        <button onclick="closeOutlookModal()" class="btn-s" style="font-size:12px;">Cancelar</button>
+        <button onclick="copyOutlookBody()" class="btn-s" style="font-size:12px;border-color:#0078d4;color:#0078d4;">📋 Copiar mensaje</button>
+        <button onclick="sendOutlook()" style="background:#0078d4;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;"
+          onmouseover="this.style.background='#005fa3'" onmouseout="this.style.background='#0078d4'">
+          <span id="send-btn-label">📤 Abrir en Outlook</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FIRMA DIGITAL MODAL -->
+<div id="firma-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;display:none;align-items:center;justify-content:center;">
+  <div style="background:var(--wh);border-radius:12px;width:500px;max-width:96vw;box-shadow:0 8px 32px rgba(0,0,0,.25);overflow:hidden;">
+    <div style="background:#111;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">✍️</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;">Firma Digital del Receptor</div>
+          <div style="font-size:10px;opacity:.7;">Firma con el dedo o mouse en el área de abajo</div>
+        </div>
+      </div>
+      <button onclick="closeFirmaModal()" style="background:none;border:1.5px solid rgba(255,255,255,.3);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>
+    </div>
+    <div style="padding:18px;">
+      <div style="margin-bottom:10px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firmante</label>
+        <div style="font-size:13px;font-weight:600;color:var(--tx);" id="firma-firmante">—</div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firma</label>
+        <canvas id="firma-canvas" width="460" height="160"></canvas>
+        <div class="firma-status" id="firma-status">Dibuja la firma aquí arriba</div>
+      </div>
+      <div class="firma-actions">
+        <button onclick="clearFirma()" class="btn-s" style="font-size:12px;">🗑 Borrar</button>
+        <button onclick="saveFirma()" class="btn-p green" style="flex:1;font-size:12px;">✓ Guardar Firma</button>
+      </div>
+      <div id="firma-saved-preview" style="display:none;margin-top:12px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:var(--gd);margin-bottom:6px;">✓ Firma guardada</div>
+        <img id="firma-preview-img" style="border:1px solid var(--g3);border-radius:6px;max-width:100%;height:80px;object-fit:contain;background:#fff;"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- TEMPLATE MODAL -->
+<div id="tpl-modal">
+  <div class="tpl-box">
+    <div class="tpl-head">
+      <h3>📋 Plantillas guardadas</h3>
+      <button class="btn-rm" onclick="closeTplModal()" title="Cerrar">✕</button>
+    </div>
+    <div class="tpl-body" id="tpl-list"></div>
+  </div>
+</div>
+
+<!-- VALIDATION MODAL -->
+<div id="val-modal">
+  <div class="val-box">
+    <div class="val-title">⛔ Revisar antes de generar</div>
+    <ul class="val-list" id="val-list"></ul>
+    <div class="val-actions">
+      <button class="btn-s" onclick="closeValModal()">Corregir</button>
+      <button class="btn-p green" onclick="closeValModal();genPDFForce()">Generar igual</button>
+    </div>
+  </div>
+</div>
+
+</body></html>`;
+}
+
+function genPDFOriginal_unused(){
+  const d=gd();
+  showS('Generando PDF...','load');
+  setTimeout(()=>{
+    try{
+      const html=buildDoc(d);
+      const win=window.open('','_blank','width=900,height=700');
+      if(!win){showS('Permite ventanas emergentes en el navegador.','err');return}
+      win.document.open(); win.document.write(html); win.document.close();
+      setTimeout(()=>{win.focus();win.print()},800);
+      showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo de impresión.','ok');
+    }catch(e){showS('Error: '+e.message,'err')}
+  },200);
+}
+
+function resetF(silent=false){
+  if(!silent&&!confirm('¿Limpiar todos los datos?'))return;
+  acts=[];acnt=0;
+  Object.keys(cardDept).forEach(k=>delete cardDept[k]);
+  document.getElementById('acts-wrap').innerHTML='';
+  document.getElementById('empty-msg').style.display='block';
+  document.getElementById('cnt').textContent='0';
+  document.getElementById('fecha_a').value=tod();
+  document.getElementById('fcump').value='';
+  document.getElementById('razon').value='';
+  document.getElementById('bp').value='';
+  const sub=document.getElementById('razon-sub');
+  if(sub){sub.textContent='';sub.style.display='none';}
+  document.getElementById('bp-selected').classList.remove('show');
+  document.getElementById('bp-search').value='';
+  participantes=[];
+  renderChips();
+  isDirty=false;
+  const b=document.getElementById('draft-badge');
+  if(b) b.classList.remove('show');
+}
+
+// ── BP DATA ───────────────────────────────────────
+const BPS = [
+  {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']},
+  {bp:'2000574070', centro:'DIRECCION S. S. M. ORIENTE', referentes:['Dayana Delgado']},
+  {bp:'2000294182', centro:'HOSPITAL DEL SALVADOR', referentes:[]},
+  {bp:'2000294188', centro:'HOSPITAL DR. LUIS TISNE BROUSSE', referentes:[]},
+  {bp:'2000294183', centro:'HOSPITAL LUIS CALVO MACKENNA', referentes:['Marjorie Gonzalez']},
+  {bp:'2000294184', centro:'INSTITUTO DE NEUROCIRUGIA', referentes:['Eliu Arevalo']},
+  {bp:'2000294186', centro:'INSTITUTO NACIONAL DE GERIATRIA', referentes:['Paulo Sepulveda']},
+  {bp:'2000294189', centro:'HOSPITAL HANGA ROA', referentes:['Guillermo Lopez']},
+  {bp:'2000906772', centro:'HOSPITAL METROPOLITANO DE SANTIAGO', referentes:['Felipe Gongora','Patricio Galaz']},
+  {bp:'2000294187', centro:'INST. NAC. REHAB. PEDRO AGUIRRE CERDA', referentes:['Marcela Gonzalez']}
+];
+
+let bpFocused=-1;
+
+function bpFilter(){
+  const q=document.getElementById('bp-search').value.trim().toLowerCase();
+  const dd=document.getElementById('bp-dd');
+  if(!q){dd.classList.remove('open');return}
+  const matches=BPS.filter(b=>
+    b.centro.toLowerCase().includes(q)||b.bp.includes(q)
+  );
+  if(!matches.length){dd.innerHTML='<div class="bp-opt" style="color:var(--g4);">Sin resultados</div>';dd.classList.add('open');return}
+  dd.innerHTML=matches.map((b,i)=>
+    `<div class="bp-opt" data-i="${i}" data-bp="${b.bp}" onclick="bpSelect('${b.bp}')">
+      ${b.centro}<span class="bp-num">${b.bp}</span>
+    </div>`
+  ).join('');
+  dd.classList.add('open');
+  bpFocused=-1;
+}
+
+function bpOpen(){
+  const q=document.getElementById('bp-search').value.trim();
+  if(q) bpFilter();
+}
+
+function bpKey(e){
+  const dd=document.getElementById('bp-dd');
+  const opts=dd.querySelectorAll('.bp-opt');
+  if(!opts.length) return;
+  if(e.key==='ArrowDown'){e.preventDefault();bpFocused=Math.min(bpFocused+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('focused',i===bpFocused));}
+  else if(e.key==='ArrowUp'){e.preventDefault();bpFocused=Math.max(bpFocused-1,0);opts.forEach((o,i)=>o.classList.toggle('focused',i===bpFocused));}
+  else if(e.key==='Enter'&&bpFocused>=0){e.preventDefault();const bp=opts[bpFocused].getAttribute('data-bp');bpSelect(bp);}
+  else if(e.key==='Escape'){dd.classList.remove('open');}
+}
+
+function bpSelect(bpNum){
+  const entry=BPS.find(b=>b.bp===bpNum);
+  if(!entry) return;
+  // Razón Social siempre = prefijo SSMO + nombre del centro
+  const PREFIX='SERVICIO DE SALUD METROPOLITANO ORIENTE';
+  document.getElementById('razon').value=PREFIX;
+  document.getElementById('razon-sub').textContent='▶ '+entry.centro;
+  document.getElementById('razon-sub').style.display='block';
+  document.getElementById('bp').value=entry.bp;
+  document.getElementById('bp-search').value='';
+  document.getElementById('bp-dd').classList.remove('open');
+  const sel=document.getElementById('bp-selected');
+  document.getElementById('bp-selected-txt').textContent=entry.centro+' — '+entry.bp;
+  sel.classList.add('show');
+  // Pre-load referentes as participants
+  participantes=[];
+  entry.referentes.forEach(r=>participantes.push({nombre:r,cargo:'Referente'}));
+  renderChips();
+}
+
+function bpClear(){
+  document.getElementById('razon').value='';
+  const sub=document.getElementById('razon-sub');
+  if(sub){sub.textContent='';sub.style.display='none';}
+  document.getElementById('bp').value='';
+  document.getElementById('bp-selected').classList.remove('show');
+  document.getElementById('bp-search').value='';
+  participantes=[];
+  renderChips();
+}
+
+// close dropdown on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.bp-search-wrap'))
+    document.getElementById('bp-dd')?.classList.remove('open');
+});
+
+// ── PARTICIPANTES (chips) ─────────────────────────
+let participantes=[];
+
+function renderChips(){
+  const wrap=document.getElementById('part-chips-empresa');
+  if(!wrap) return;
+  if(!participantes.length){
+    wrap.innerHTML='<span style="font-size:11px;color:var(--g4);font-style:italic;padding:4px;">Sin participantes — agrega usando el formulario de abajo.</span>';
+    return;
+  }
+  wrap.innerHTML=participantes.map((p,i)=>`
+    <div class="part-chip">
+      <span>${p.nombre}</span>${p.cargo?`<span class="ch-cargo">·&nbsp;${p.cargo}</span>`:''}
+      <button class="ch-del" onclick="delPart(${i})" title="Quitar">✕</button>
+    </div>`).join('');
+}
+
+function addParticipante(){
+  const n=document.getElementById('pnew-nombre').value.trim();
+  const c=document.getElementById('pnew-cargo').value.trim();
+  if(!n){document.getElementById('pnew-nombre').focus();return}
+  participantes.push({nombre:n,cargo:c});
+  document.getElementById('pnew-nombre').value='';
+  document.getElementById('pnew-cargo').value='';
+  renderChips();
+}
+
+function delPart(i){
+  participantes.splice(i,1);
+  renderChips();
+}
+
+// allow Enter in nombre field to add
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.id==='pnew-nombre'){e.preventDefault();addParticipante();}
+  if(e.key==='Enter'&&e.target.id==='pnew-cargo'){e.preventDefault();addParticipante();}
+});
+
+// ══════════════════════════════════════════════════════════════════
+// FAVORITOS
+// ══════════════════════════════════════════════════════════════════
+let favorites = [];
+try{ favorites = JSON.parse(localStorage.getItem('aoa_favs')||'[]'); }catch(e){}
+
+function saveFavs(){ localStorage.setItem('aoa_favs', JSON.stringify(favorites)); }
+
+function renderFavs(){
+  const wrap = document.getElementById('fav-wrap');
+  if(!wrap) return;
+  if(!favorites.length){
+    wrap.innerHTML = '<span style="font-size:11px;color:var(--g4);font-style:italic;">Sin favoritos aún. Haz clic en ☆ de cualquier actividad para guardarla aquí.</span>';
+    return;
+  }
+  wrap.innerHTML = favorites.map((f,i) =>
+    `<button class="fav-chip" onclick="loadFav(${i})" title="${f.mot||''}">${(f.mot||'Favorito').replace(/\s*\([A-Z0-9]+\)\s*$/,'').substring(0,30)}</button>`
+  ).join('');
+}
+
+function toggleFav(id){
+  const amEl = document.getElementById('am'+id);
+  const mot = amEl?.getAttribute('data-mot') || '';
+  const tipo = amEl?.getAttribute('data-tipo') || '';
+  const sub = v('as'+id);
+  const dept = cardDept[id] || '';
+  const key = tipo+'||'+mot+'||'+sub;
+  const star = document.getElementById('fstar'+id);
+  const idx = favorites.findIndex(f => f.key === key);
+  if(idx >= 0){
+    favorites.splice(idx, 1);
+    if(star) star.textContent = '☆';
+    toast('Favorito eliminado','warn',1500);
+  } else {
+    if(favorites.length >= 10){ toast('Máximo 10 favoritos','warn'); return; }
+    favorites.push({ key, mot, tipo, sub, dept,
+      desc: document.getElementById('ad'+id)?.value||'',
+      acuer: document.getElementById('aa'+id)?.value||''
+    });
+    if(star) star.textContent = '★';
+    toast('✓ Guardado como favorito','ok',1500);
+  }
+  saveFavs();
+  renderFavs();
+}
+
+function loadFav(idx){
+  const f = favorites[idx];
+  if(!f) return;
+  const id = addAct();
+  if(f.dept) setDept(id, f.dept);
+  setTimeout(()=>{
+    const ms = document.getElementById('am'+id);
+    if(ms && f.tipo && f.mot){
+      const cv = f.tipo+'||'+f.mot;
+      ms.value = cv;
+      if(ms.value === cv) onMotivoChange(id);
+    }
+    setTimeout(()=>{
+      const ss = document.getElementById('as'+id);
+      if(ss && f.sub){ ss.value = f.sub; onSubChange(id); }
+      const descEl = document.getElementById('ad'+id);
+      if(descEl && f.desc){ descEl.value = f.desc; ar(descEl); }
+      const acuerEl = document.getElementById('aa'+id);
+      if(acuerEl && f.acuer){ acuerEl.value = f.acuer; ar(acuerEl); }
+      const star = document.getElementById('fstar'+id);
+      if(star) star.textContent = '★';
+    }, 60);
+  }, 25);
+  showTab('acts', document.querySelector('.tab:nth-child(2)') || document.querySelector('.tab'));
+}
+
+// ── INIT ──────────────────────────────────────────
+document.getElementById('fecha_a').value=tod();
+document.getElementById('fcump').value='2026-04-30';
+renderFavs();
+renderChips();
+
+// ══════════════════════════════════════════════════════════════════
+// DARK MODE
+// ══════════════════════════════════════════════════════════════════
+
+if(localStorage.getItem('aoa_dark')==='1'){
+  document.body.classList.add('dark');
+  const btn=document.getElementById('dark-btn');
+  if(btn) btn.textContent='☀';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+
+
+// ══════════════════════════════════════════════════════════════════
+// AUTOSAVE / BORRADORES
+// ══════════════════════════════════════════════════════════════════
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+// Restaurar borrador al cargar
+
+
+// ══════════════════════════════════════════════════════════════════
+// PLANTILLAS
+// ══════════════════════════════════════════════════════════════════
+try{templates=JSON.parse(localStorage.getItem('aoa_templates')||'[]');}catch(e){}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// VALIDACIÓN ANTES DE GENERAR
+// ══════════════════════════════════════════════════════════════════
+function validateAOA(){
+  const errors=[];
+  const d=gd();
+  if(!d.bp) errors.push('Falta seleccionar un Centro / BP');
+  if(!d.fecha_a) errors.push('Falta la fecha de la asesoría');
+  if(!d.obj.trim()) errors.push('Falta el objetivo de la asesoría');
+  if(!participantes.length) errors.push('No hay participantes del centro registrados');
+  if(!acts.length) errors.push('No hay actividades registradas');
+  acts.forEach((a,i)=>{
+    const motivo=document.getElementById('am'+a.id)?.getAttribute('data-mot')||'';
+    const dept=cardDept[a.id]||'';
+    if(!dept) errors.push('Actividad '+(i+1)+': falta seleccionar GIGE / RED / HYE');
+    else if(!motivo) errors.push('Actividad '+(i+1)+': falta seleccionar el motivo');
+    if(!v('aid'+a.id)) errors.push('Actividad '+(i+1)+': falta el ID de asesoría');
+    if(!v('af'+a.id)) errors.push('Actividad '+(i+1)+': falta la fecha');
+  });
+  return errors;
+}
+
+function closeValModal(){document.getElementById('val-modal').classList.remove('open');}
+
+
+// ══════════════════════════════════════════════════════════════════
+// PDF GENERATION
+// ══════════════════════════════════════════════════════════════════
+function genPDFForce(){ _runGenPDF(); }
+
+window.genPDF = function(){
+  const errors = validateAOA();
+  if(errors.length){
+    const list = document.getElementById('val-list');
+    list.innerHTML = errors.map(e=>`<li>${e}</li>`).join('');
+    document.getElementById('val-modal').classList.add('open');
+  } else {
+    _runGenPDF();
+  }
+};
+
+function _runGenPDF(){
+  const d = gd();
+  showS('Generando PDF...','load');
+  setTimeout(()=>{
+    try{
+      const html = buildDoc(d);
+      const win = window.open('','_blank','width=900,height=700');
+      if(!win){ showS('Permite ventanas emergentes en el navegador.','err'); return; }
+      win.document.open(); win.document.write(html); win.document.close();
+      setTimeout(()=>{ win.focus(); win.print(); }, 800);
+      showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo.','ok');
+      toast('✓ PDF generado','ok');
+      isDirty = false;
+      // Guardar en historial
+      setTimeout(()=>{ if(d.bp||d.razon){ saveToHistory(d); updateHistBadge(); } }, 300);
+      // Registrar en n8n Google Sheets (silencioso)
+      n8nRegistrarAOA(d);
+    } catch(e){ showS('Error: '+e.message,'err'); }
+  }, 200);
+}
+
+document.getElementById('val-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('val-modal')) closeValModal();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// n8n INTEGRATION
+// ══════════════════════════════════════════════════════════════════
+const N8N = {
+  enabled: true,
+  base: 'https://null2311.app.n8n.cloud/webhook',
+  endpoints: { registro:'aoa-registro', correo:'aoa-correo', ia:'aoa-ia-descripcion' },
+  url(k){ return this.base+'/'+this.endpoints[k]; }
+};
+
+async function n8nRegistrarAOA(d){
+  if(!N8N.enabled) return;
+  try{
+    const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','') || '';
+    await fetch(N8N.url('registro'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        bp:d.bp, razon:d.razon, razon_sub:centro,
+        fecha_a:d.fecha_a, fcump:d.fcump, mod:d.mod,
+        enombre:d.enombre, eemail:d.eemail,
+        rnombre:d.rnombre, rcargo:d.rcargo, remail:d.remail,
+        obj:d.obj, acts_count:acts.length,
+        acts_summary: acts.map((a,i)=>{
+          const m=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+          const ac=document.getElementById('aa'+a.id)?.value||'';
+          return m?(i+1)+'. '+m+(ac?'\n   → '+ac:''):'';
+        }).filter(Boolean).join('\n')
+      })
+    });
+  }catch(e){ console.warn('n8n registro:',e); }
+}
+
+async function n8nEnviarCorreo(to,cc,subject,body){
+  if(!N8N.enabled) throw new Error('n8n desactivado');
+  const r = await fetch(N8N.url('correo'),{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({remail:to, cc, asunto:subject, cuerpo:body, ...gd()})
+  });
+  if(!r.ok) throw new Error('Error n8n: '+r.status);
+  return r.json();
+}
+
+async function n8nMejorarDescripcion(motivo, area, descActual){
+  if(!N8N.enabled) return null;
+  const d = gd();
+  try{
+    const r = await fetch(N8N.url('ia'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        motivo, area: area||'área no especificada',
+        centro: document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'',
+        desc_actual: descActual,
+        experto: d.enombre||'Branco Sandoval Palma'
+      })
+    });
+    if(r.ok){ const data=await r.json(); return data.descripcion_mejorada||null; }
+  }catch(e){ console.warn('n8n IA:',e); }
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DARK MODE
+// ══════════════════════════════════════════════════════════════════
+function toggleDark(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('aoa_dark', isDark?'1':'0');
+  const btn = document.getElementById('dark-btn');
+  if(btn) btn.textContent = isDark?'☀':'🌙';
+  applyDarkOutlook();
+}
+if(localStorage.getItem('aoa_dark')==='1'){
+  document.body.classList.add('dark');
+  const btn = document.getElementById('dark-btn');
+  if(btn) btn.textContent='☀';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+function toast(msg, type='ok', duration=3000){
+  const c = document.getElementById('toast-container');
+  if(!c) return;
+  const t = document.createElement('div');
+  t.className = 'toast'+(type==='err'?' err':type==='warn'?' warn':'');
+  t.textContent = msg;
+  c.appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),350); }, duration);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AUTOSAVE / BORRADOR
+// ══════════════════════════════════════════════════════════════════
+let autosaveTimer = null;
+let isDirty = false;
+
+function markDirty(){
+  isDirty = true;
+  const b = document.getElementById('draft-badge');
+  if(b) b.classList.add('show');
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(()=>saveDraft(true), 30000);
+}
+
+function getActsSnapshot(){
+  return acts.map(a=>({
+    id:a.id, dept:cardDept[a.id]||'',
+    tipo:document.getElementById('am'+a.id)?.getAttribute('data-tipo')||'',
+    motivo:document.getElementById('am'+a.id)?.getAttribute('data-mot')||'',
+    sub:v('as'+a.id), ida:v('aid'+a.id), fecha:v('af'+a.id),
+    fcump_act:v('afc'+a.id),
+    desc:document.getElementById('ad'+a.id)?.value||'',
+    acuer:document.getElementById('aa'+a.id)?.value||''
+  }));
+}
+
+function saveDraft(silent=false){
+  const d = gd();
+  const snap = {
+    timestamp: new Date().toISOString(), formData:d,
+    actsState: getActsSnapshot(), acnt,
+    cardDept:{...cardDept}, participantes:[...participantes]
+  };
+  try{
+    localStorage.setItem('aoa_draft', JSON.stringify(snap));
+    isDirty = false;
+    const b = document.getElementById('draft-badge');
+    if(b) b.classList.remove('show');
+    if(!silent) toast('✓ Borrador guardado','ok');
+  }catch(e){ toast('Error al guardar','err'); }
+}
+
+function restoreActsFromSnapshot(actsState){
+  acts = [];
+  document.getElementById('acts-wrap').innerHTML = '';
+  document.getElementById('cnt').textContent = '0';
+  for(const a of (actsState||[])){
+    acnt = a.id-1;
+    const newId = addAct();
+    if(a.dept) setDept(newId, a.dept);
+    setTimeout(()=>{
+      const ms = document.getElementById('am'+newId);
+      if(ms && a.tipo && a.motivo){
+        const cv = a.tipo+'||'+a.motivo;
+        ms.value = cv;
+        if(ms.value===cv) onMotivoChange(newId);
+      }
+      setTimeout(()=>{
+        const ss = document.getElementById('as'+newId);
+        if(ss && a.sub) ss.value = a.sub;
+        const descEl = document.getElementById('ad'+newId);
+        if(descEl){ descEl.value=a.desc||''; ar(descEl); }
+        const acuerEl = document.getElementById('aa'+newId);
+        if(acuerEl){ acuerEl.value=a.acuer||''; ar(acuerEl); }
+        document.getElementById('aid'+newId).value = a.ida||'';
+        document.getElementById('af'+newId).value = a.fecha||tod();
+        const afc = document.getElementById('afc'+newId);
+        if(afc) afc.value = a.fcump_act||'';
+      }, 60);
+    }, 25);
+  }
+  document.getElementById('empty-msg').style.display = (actsState||[]).length?'none':'block';
+  document.getElementById('cnt').textContent = (actsState||[]).length;
+}
+
+function loadDraft(){
+  const raw = localStorage.getItem('aoa_draft');
+  if(!raw) return;
+  try{
+    const snap = JSON.parse(raw);
+    const dt = new Date(snap.timestamp).toLocaleString('es-CL');
+    if(!confirm('Hay un borrador del '+dt+'. ¿Deseas restaurarlo?')) return;
+    const d = snap.formData;
+    document.getElementById('razon').value = d.razon||'';
+    document.getElementById('bp').value = d.bp||'';
+    document.getElementById('fecha_a').value = d.fecha_a||tod();
+    document.getElementById('fcump').value = d.fcump||'';
+    const objEl = document.getElementById('obj'); objEl.value=d.obj||''; ar(objEl);
+    if(d.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+    else document.querySelector('input[name="mod"][value="PRESENCIAL"]').checked=true;
+    ['enombre','erut','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value=d[id]||'';
+    });
+    if(d.razon_sub){
+      const sub=document.getElementById('razon-sub');
+      if(sub){sub.textContent='▶ '+d.razon_sub;sub.style.display='block';}
+      document.getElementById('bp-selected-txt').textContent=d.razon_sub+' — '+d.bp;
+      document.getElementById('bp-selected').classList.add('show');
+    }
+    participantes=[...(snap.participantes||[])]; renderChips();
+    acnt=snap.acnt||0;
+    restoreActsFromSnapshot(snap.actsState);
+    toast('✓ Borrador restaurado del '+dt,'ok',4000);
+  }catch(e){ toast('Error al restaurar: '+e.message,'err'); }
+}
+
+document.addEventListener('input', e=>{ if(e.target.closest('#main-app')) markDirty(); });
+document.addEventListener('change', e=>{ if(e.target.closest('#main-app')) markDirty(); });
+window.addEventListener('beforeunload', e=>{ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
+setTimeout(()=>{ if(localStorage.getItem('aoa_draft')) loadDraft(); }, 600);
+
+// ══════════════════════════════════════════════════════════════════
+// PLANTILLAS
+// ══════════════════════════════════════════════════════════════════
+let templates = [];
+try{ templates = JSON.parse(localStorage.getItem('aoa_templates')||'[]'); }catch(e){}
+function saveTemplates(){ localStorage.setItem('aoa_templates', JSON.stringify(templates)); }
+
+function openTplModal(){ renderTplList(); document.getElementById('tpl-modal').classList.add('open'); }
+function closeTplModal(){ document.getElementById('tpl-modal').classList.remove('open'); }
+
+function renderTplList(){
+  const list = document.getElementById('tpl-list');
+  if(!templates.length){
+    list.innerHTML='<div class="tpl-empty">Sin plantillas. Rellena un AOA y usa "💾 Guardar plantilla".</div>';
+    return;
+  }
+  list.innerHTML = templates.map((t,i)=>`
+    <div class="tpl-card">
+      <div>
+        <div class="tpl-card-name">📋 ${t.name}</div>
+        <div class="tpl-card-meta">${t.bp||''} · ${(t.actsState||[]).length} actividades · ${new Date(t.saved).toLocaleDateString('es-CL')}</div>
+      </div>
+      <div class="tpl-card-actions">
+        <button class="tpl-btn-use" onclick="loadTemplate(${i});closeTplModal()">Usar</button>
+        <button class="tpl-btn-del" onclick="deleteTemplate(${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function saveAsTemplate(){
+  const d = gd();
+  const name = prompt('Nombre para esta plantilla:', document.getElementById('bp-selected-txt')?.textContent||'Mi plantilla');
+  if(!name) return;
+  templates.unshift({ name, saved:new Date().toISOString(), bp:d.bp, razon:d.razon,
+    razon_sub:d.razon_sub, obj:d.obj, mod:d.mod,
+    participantes:[...participantes], actsState:getActsSnapshot() });
+  saveTemplates();
+  toast('✓ Plantilla "'+name+'" guardada','ok');
+}
+
+function loadTemplate(idx){
+  const t = templates[idx];
+  if(!t||!confirm('Esto reemplazará el formulario. ¿Continuar?')) return;
+  resetF(true);
+  document.getElementById('razon').value=t.razon||'';
+  document.getElementById('bp').value=t.bp||'';
+  const objEl=document.getElementById('obj'); objEl.value=t.obj||''; ar(objEl);
+  document.getElementById('fecha_a').value=tod();
+  if(t.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+  if(t.razon_sub){
+    const sub=document.getElementById('razon-sub');
+    if(sub){sub.textContent='▶ '+t.razon_sub;sub.style.display='block';}
+    document.getElementById('bp-selected-txt').textContent=t.razon_sub+' — '+t.bp;
+    document.getElementById('bp-selected').classList.add('show');
+  }
+  participantes=[...(t.participantes||[])]; renderChips();
+  acnt=0;
+  restoreActsFromSnapshot((t.actsState||[]).map((a,i)=>({...a,id:i+1,ida:'',fecha:tod(),fcump_act:''})));
+  toast('✓ Plantilla "'+t.name+'" cargada. Ajusta fechas e IDs.','ok',4500);
+}
+
+function deleteTemplate(idx){
+  if(!confirm('¿Eliminar esta plantilla?')) return;
+  templates.splice(idx,1); saveTemplates(); renderTplList();
+  toast('Plantilla eliminada','warn');
+}
+
+document.getElementById('tpl-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('tpl-modal')) closeTplModal();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// LIVE PREVIEW
+// ══════════════════════════════════════════════════════════════════
+let previewOpen = false;
+let previewTimer = null;
+
+function togglePreview(){
+  previewOpen = !previewOpen;
+  const panel = document.getElementById('preview-panel');
+  const btn   = document.getElementById('preview-btn');
+  if(panel) panel.classList.toggle('open', previewOpen);
+  if(btn) btn.textContent = previewOpen?'✕ Preview':'👁 Preview';
+  if(previewOpen) renderLivePreview();
+}
+
+function schedulePreview(){
+  if(!previewOpen) return;
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(renderLivePreview, 400);
+}
+
+function renderLivePreview(){
+  const el = document.getElementById('live-preview-content');
+  if(!el) return;
+  const d = gd();
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||'';
+  let html = '';
+
+  html += `<div class="preview-section">
+    <div class="preview-label">Centro / BP</div>
+    <div class="preview-value"><strong>${d.razon||'<em style="color:var(--g4)">Sin seleccionar</em>'}</strong>${centro?'<br><span style="font-size:10px;color:var(--gd);">▶ '+centro+'</span>':''}</div>
+  </div>`;
+
+  if(d.fecha_a||d.mod){
+    html += `<div class="preview-section">
+      <div class="preview-label">Fecha · Modalidad</div>
+      <div class="preview-value">${d.fecha_a?fd(d.fecha_a):'<em style="color:var(--g4)">Sin fecha</em>'} · ${d.mod}</div>
+    </div>`;
+  }
+
+  if(participantes.length){
+    const parts = participantes.map(p=>`<div style="padding:2px 0;border-bottom:1px solid var(--g2);">👤 <strong>${p.nombre}</strong>${p.cargo?' <span style="color:var(--g4);font-size:10px;">· '+p.cargo+'</span>':''}</div>`).join('');
+    html += `<div class="preview-section">
+      <div class="preview-label">Participantes (${participantes.length+1})</div>
+      <div class="preview-value">${parts}<div style="padding:2px 0;">🔬 <strong>${d.enombre||''}</strong> <span style="color:var(--g4);font-size:10px;">· Experto ACHS</span></div></div>
+    </div>`;
+  }
+
+  if(d.obj&&d.obj.trim()){
+    html += `<div class="preview-section">
+      <div class="preview-label">Objetivo</div>
+      <div class="preview-value" style="font-size:10px;color:var(--g4);">${d.obj.length>120?d.obj.substring(0,120)+'…':d.obj}</div>
+    </div>`;
+  }
+
+  if(acts.length){
+    html += `<div class="preview-section"><div class="preview-label">Actividades (${acts.length})</div>`;
+    acts.forEach((a,i)=>{
+      const dept=cardDept[a.id]||'';
+      const mot=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+      const ida=v('aid'+a.id);
+      const deptClass=dept==='GIGE'?'gige':dept==='RED'?'red':dept==='HYE'?'hye':'';
+      const ok=dept&&mot&&ida;
+      html += `<div class="preview-act">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+          <div style="flex:1;min-width:0;">
+            ${dept?`<span class="preview-act-dept ${deptClass}">${dept}</span>`:'<span class="preview-act-dept" style="background:#fff0e0;color:#f5a000;">Sin dpto</span>'}
+            <div class="preview-act-title">${mot||'<em style="color:var(--g4);font-weight:400;">Sin motivo</em>'}</div>
+            ${ida?`<div style="font-size:9px;color:var(--g4);">ID: ${ida}</div>`:'<div style="font-size:9px;color:#f5a000;">⚠ Sin ID</div>'}
+          </div>
+          <span style="font-size:14px;color:${ok?'var(--g)':'#f5a000'};flex-shrink:0;">${ok?'✓':'⚠'}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  } else {
+    html += `<div class="preview-empty">Sin actividades registradas.</div>`;
+  }
+
+  const errors = validateAOA();
+  if(errors.length){
+    html += `<div style="background:#fff0e0;border:1px solid #f5a000;border-radius:6px;padding:8px 10px;margin-top:4px;">
+      <div style="font-size:9px;font-weight:800;color:#b37000;text-transform:uppercase;margin-bottom:4px;">⚠ Pendientes (${errors.length})</div>
+      ${errors.slice(0,3).map(e=>`<div style="font-size:10px;color:#8a5000;padding:1px 0;">· ${e}</div>`).join('')}
+      ${errors.length>3?`<div style="font-size:10px;color:#8a5000;">…y ${errors.length-3} más</div>`:''}
+    </div>`;
+  } else if(acts.length){
+    html += `<div style="background:var(--gl);border:1px solid var(--g);border-radius:6px;padding:8px 10px;margin-top:4px;font-size:11px;font-weight:700;color:var(--gd);">✓ Listo para generar PDF</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+document.addEventListener('input', ()=>schedulePreview());
+document.addEventListener('change', ()=>schedulePreview());
+
+// ══════════════════════════════════════════════════════════════════
+// HISTORIAL
+// ══════════════════════════════════════════════════════════════════
+let aoaHistory = [];
+try{ aoaHistory = JSON.parse(localStorage.getItem('aoa_history')||'[]'); }catch(e){}
+
+function saveToHistory(d){
+  const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
+  aoaHistory.unshift({
+    id:Date.now(), ts:new Date().toISOString(),
+    bp:d.bp, centro, razon:d.razon, razon_sub:centro,
+    mod:d.mod, fecha_a:d.fecha_a, obj:d.obj, fcump:d.fcump,
+    enombre:d.enombre, eemail:d.eemail,
+    rnombre:d.rnombre, rrut:d.rrut, rcargo:d.rcargo, remail:d.remail,
+    participantes:[...participantes], actsCount:acts.length,
+    actsState:getActsSnapshot()
+  });
+  if(aoaHistory.length>15) aoaHistory=aoaHistory.slice(0,15);
+  localStorage.setItem('aoa_history', JSON.stringify(aoaHistory));
+  updateHistBadge();
+}
+
+function updateHistBadge(){
+  const el = document.getElementById('hist-cnt');
+  if(el) el.textContent = aoaHistory.length;
+}
+
+function renderHistory(){
+  const list = document.getElementById('hist-list');
+  if(!aoaHistory.length){
+    list.innerHTML='<div class="empty">Sin historial. Genera tu primer PDF para que aparezca aquí.</div>';
+    return;
+  }
+  list.innerHTML = aoaHistory.map((h,i)=>{
+    const dt = new Date(h.ts).toLocaleString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div class="hist-card">
+      <div class="hist-info">
+        <div class="hist-bp">BP ${h.bp||'—'} <span class="hist-acts">${h.actsCount||0} actividades</span></div>
+        <div class="hist-meta">${h.razon_sub||h.centro||'—'} · ${dt}</div>
+      </div>
+      <div class="hist-actions">
+        <button class="btn-hist" onclick="loadFromHistory(${i})">📂 Cargar</button>
+        <button class="btn-hist danger" onclick="deleteHistory(${i})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadFromHistory(idx){
+  const h = aoaHistory[idx];
+  if(!h||!confirm('Esto reemplazará el formulario. ¿Continuar?')) return;
+  resetF(true);
+  document.getElementById('razon').value=h.razon||'';
+  document.getElementById('bp').value=h.bp||'';
+  document.getElementById('fecha_a').value=h.fecha_a||tod();
+  document.getElementById('fcump').value=h.fcump||'';
+  const objEl=document.getElementById('obj'); objEl.value=h.obj||''; ar(objEl);
+  if(h.mod==='REMOTO') document.querySelector('input[name="mod"][value="REMOTO"]').checked=true;
+  ['enombre','eemail','rnombre','rrut','rcargo','remail'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value=h[id]||'';
+  });
+  if(h.razon_sub){
+    const sub=document.getElementById('razon-sub');
+    if(sub){sub.textContent='▶ '+h.razon_sub;sub.style.display='block';}
+    document.getElementById('bp-selected-txt').textContent=h.razon_sub+' — '+h.bp;
+    document.getElementById('bp-selected').classList.add('show');
+  }
+  participantes=[...(h.participantes||[])]; renderChips();
+  acnt=0; restoreActsFromSnapshot(h.actsState);
+  showTab('datos', document.querySelector('.tab'));
+  toast('✓ AOA del '+new Date(h.ts).toLocaleDateString('es-CL')+' cargado','ok',4000);
+}
+
+function deleteHistory(idx){
+  if(!confirm('¿Eliminar este registro?')) return;
+  aoaHistory.splice(idx,1);
+  localStorage.setItem('aoa_history',JSON.stringify(aoaHistory));
+  updateHistBadge(); renderHistory();
+  toast('Registro eliminado','warn');
+}
+
+function clearHistory(){
+  if(!confirm('¿Borrar TODO el historial?')) return;
+  aoaHistory=[]; localStorage.setItem('aoa_history','[]');
+  updateHistBadge(); renderHistory();
+  toast('Historial borrado','warn');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ESTADÍSTICAS
+// ══════════════════════════════════════════════════════════════════
+function renderStats(){
+  const el = document.getElementById('stats-content');
+  if(!aoaHistory.length){
+    el.innerHTML='<div class="empty">Sin datos. Genera al menos una AOA.</div>'; return;
+  }
+  const total=aoaHistory.length;
+  const bpSet=new Set(aoaHistory.map(h=>h.bp).filter(Boolean));
+  const now=Date.now(); const week=7*24*3600*1000;
+  const thisWeek=aoaHistory.filter(h=>now-new Date(h.ts).getTime()<week).length;
+  const lastWeek=aoaHistory.filter(h=>{const a=now-new Date(h.ts).getTime();return a>=week&&a<2*week;}).length;
+  const trend=thisWeek>lastWeek?'↑':thisWeek<lastWeek?'↓':'→';
+  const trendColor=thisWeek>lastWeek?'var(--g)':thisWeek<lastWeek?'#C8102E':'var(--g4)';
+  const bpCounts={};
+  aoaHistory.forEach(h=>{if(h.bp) bpCounts[h.bp]=(bpCounts[h.bp]||0)+1;});
+  const topBPs=Object.entries(bpCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxBP=topBPs[0]?.[1]||1;
+  const actCounts={};
+  aoaHistory.forEach(h=>(h.actsState||[]).forEach(a=>{
+    const m=(a.motivo||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    if(m) actCounts[m]=(actCounts[m]||0)+1;
+  }));
+  const topActs=Object.entries(actCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  let html=`<div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">AOAs generadas</div></div>
+    <div class="stat-card"><div class="stat-num">${bpSet.size}</div><div class="stat-label">Centros atendidos</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:${trendColor};">${thisWeek}<span style="font-size:14px;">${trend}</span></div><div class="stat-label">Esta semana</div></div>
+  </div>`;
+
+  if(topBPs.length){
+    html+=`<div class="stitle" style="margin-bottom:8px;">Centros más visitados</div>`;
+    topBPs.forEach(([bp,count])=>{
+      const entry=BPS.find(b=>b.bp===bp);
+      html+=`<div class="bp-rank">
+        <div style="font-size:11px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${entry?.centro||bp}</div>
+        <div class="bp-rank-bar-wrap"><div class="bp-rank-bar" style="width:${Math.round(100*count/maxBP)}%"></div></div>
+        <div style="font-size:11px;font-weight:700;color:var(--g);flex-shrink:0;">${count}</div>
+      </div>`;
+    });
+  }
+  if(topActs.length){
+    html+=`<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Actividades más frecuentes</div>`;
+    topActs.forEach(([name,count])=>{
+      html+=`<div class="act-rank"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span><span class="act-rank-count">${count}×</span></div>`;
+    });
+  }
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FIRMA DIGITAL
+// ══════════════════════════════════════════════════════════════════
+let firmaCanvas, firmaCtx, firmaDrawing=false, firmaSigned=false, firmaData=null;
+
+function openFirmaModal(){
+  const d=gd();
+  document.getElementById('firma-firmante').textContent=(d.rnombre||'Receptor')+(d.rcargo?' — '+d.rcargo:'');
+  document.getElementById('firma-modal').style.display='flex';
+  firmaCanvas=document.getElementById('firma-canvas');
+  firmaCanvas.width=firmaCanvas.offsetWidth||460;
+  firmaCanvas.height=160;
+  firmaCtx=firmaCanvas.getContext('2d');
+  firmaCtx.strokeStyle='#111'; firmaCtx.lineWidth=2.5; firmaCtx.lineCap='round'; firmaCtx.lineJoin='round';
+  if(firmaData){
+    const img=new Image(); img.onload=()=>firmaCtx.drawImage(img,0,0); img.src=firmaData;
+  }
+  setupFirmaEvents();
+}
+
+function setupFirmaEvents(){
+  const c=firmaCanvas;
+  function getPos(e){ const r=c.getBoundingClientRect(); const src=e.touches?e.touches[0]:e; return{x:src.clientX-r.left,y:src.clientY-r.top}; }
+  function start(e){ e.preventDefault(); firmaDrawing=true; const p=getPos(e); firmaCtx.beginPath(); firmaCtx.moveTo(p.x,p.y); firmaSigned=true; }
+  function move(e){ e.preventDefault(); if(!firmaDrawing) return; const p=getPos(e); firmaCtx.lineTo(p.x,p.y); firmaCtx.stroke(); }
+  function stop(e){ e.preventDefault(); firmaDrawing=false; }
+  c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); c.addEventListener('mouseup',stop);
+  c.addEventListener('touchstart',start,{passive:false}); c.addEventListener('touchmove',move,{passive:false}); c.addEventListener('touchend',stop,{passive:false});
+}
+
+function clearFirma(){
+  if(!firmaCtx) return;
+  firmaCtx.clearRect(0,0,firmaCanvas.width,firmaCanvas.height); firmaSigned=false;
+  document.getElementById('firma-saved-preview').style.display='none';
+}
+
+function saveFirma(){
+  if(!firmaSigned){ toast('Dibuja la firma primero','warn'); return; }
+  firmaData=firmaCanvas.toDataURL('image/png');
+  const thumb=document.getElementById('firma-thumb');
+  const display=document.getElementById('firma-display');
+  if(thumb){ thumb.src=firmaData; thumb.style.display='block'; }
+  if(display){ display.textContent='✓ Firma capturada'; display.style.color='var(--gd)'; display.style.fontStyle='normal'; display.style.fontWeight='700'; }
+  document.getElementById('firma-clear-btn').style.display='inline-block';
+  const preview=document.getElementById('firma-saved-preview');
+  const pimg=document.getElementById('firma-preview-img');
+  if(preview) preview.style.display='block';
+  if(pimg) pimg.src=firmaData;
+  toast('✓ Firma guardada','ok');
+  setTimeout(closeFirmaModal,800);
+}
+
+function clearFirmaData(){
+  if(!confirm('¿Quitar la firma?')) return;
+  firmaData=null;
+  const thumb=document.getElementById('firma-thumb');
+  const display=document.getElementById('firma-display');
+  if(thumb){ thumb.style.display='none'; thumb.src=''; }
+  if(display){ display.textContent='Sin firma capturada'; display.style.color=''; display.style.fontStyle='italic'; display.style.fontWeight=''; }
+  document.getElementById('firma-clear-btn').style.display='none';
+}
+
+function closeFirmaModal(){ document.getElementById('firma-modal').style.display='none'; }
+document.getElementById('firma-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('firma-modal')) closeFirmaModal(); });
+
+// Inyectar firma en PDF
+const _origBuildDoc = buildDoc;
+window.buildDoc = function(d){
+  let html = _origBuildDoc(d);
+  if(firmaData){
+    html = html.replace('Firma Empresa: ________________________',
+      `Firma Empresa:<br><img src="${firmaData}" style="height:60px;max-width:220px;display:block;margin-top:4px;border:1px solid #ccc;border-radius:4px;padding:2px;background:#fff;">`);
+  }
+  return html;
+};
+
+// ══════════════════════════════════════════════════════════════════
+// SELECTOR CLIENTE DE CORREO
+// ══════════════════════════════════════════════════════════════════
+let selectedMailClient = 'outlook';
+
+function selectMailClient(client){
+  selectedMailClient = client;
+  ['outlook','gmail','apple','copy','n8n'].forEach(c=>{
+    const btn=document.getElementById('mc-'+c);
+    if(!btn) return;
+    btn.className='mail-client-btn'+(c===client?' selected '+c:'');
+  });
+  const labels={outlook:'📤 Abrir en Outlook',gmail:'📤 Abrir en Gmail',apple:'📤 Abrir en Apple Mail',copy:'📋 Copiar mensaje',n8n:'⚡ Enviar ahora (n8n)'};
+  const lbl=document.getElementById('send-btn-label');
+  if(lbl) lbl.textContent=labels[client]||'Enviar';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// OUTLOOK / CORREO
+// ══════════════════════════════════════════════════════════════════
+function buildOutlookSubject(){
+  const d=gd();
+  return 'AOA | BP '+(d.bp||'')+' | '+(d.fecha_a?fd(d.fecha_a):'');
+}
+
+function buildOutlookBody(){
+  const d=gd();
+  const centro=document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'[CENTRO]';
+  const fechaAseq=d.fecha_a?fd(d.fecha_a):'[FECHA]';
+  let actsSummary='';
+  acts.forEach((a,i)=>{
+    const mot=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    const acuer=document.getElementById('aa'+a.id)?.value||'Se entrega AOA para gestión interna.';
+    if(mot){ actsSummary+=`   ${i+1}. ${mot}\n      → ${acuer}\n`; }
+  });
+  let partsList='';
+  participantes.forEach(p=>{ partsList+=`   · ${p.nombre}${p.cargo?' — '+p.cargo:''}\n`; });
+  partsList+=`   · ${d.enombre||''} — Experto en Prevención ACHS\n`;
+
+  return `Estimado/a ${d.rnombre||'[RECEPTOR]'},
+
+Junto con saludar, le informo que el día ${fechaAseq} se realizó la Asesoría de Organismo Administrador (AOA) en modalidad ${d.mod||'Presencial'} en ${centro}.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DETALLE DE LA ASESORÍA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Centro: ${centro}
+• Fecha: ${fechaAseq}
+• Modalidad: ${d.mod||'Presencial'}
+• Fecha cumplimiento compromisos: ${d.fcump?fd(d.fcump):'[FECHA]'}
+
+PARTICIPANTES:
+${partsList}
+ACTIVIDADES REALIZADAS:
+${actsSummary||'   (Sin actividades)'}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Adjunto el Registro de Asesoría (AOA) para su revisión y firma.
+
+Saludos cordiales,
+${d.enombre||''}
+Experto en Prevención — ACHS
+${d.eemail||''}`;
+}
+
+function openOutlookModal(){
+  const d=gd();
+  document.getElementById('outlook-to').value=d.remail||'';
+  document.getElementById('outlook-cc').value=d.eemail||'';
+  document.getElementById('outlook-subject').value=buildOutlookSubject();
+  document.getElementById('outlook-body').value=buildOutlookBody();
+  document.getElementById('outlook-modal').style.display='flex';
+}
+
+function closeOutlookModal(){ document.getElementById('outlook-modal').style.display='none'; }
+
+function regenerateOutlookBody(){
+  document.getElementById('outlook-subject').value=buildOutlookSubject();
+  document.getElementById('outlook-body').value=buildOutlookBody();
+  toast('✓ Mensaje regenerado','ok');
+}
+
+function copyOutlookBody(){
+  const body=document.getElementById('outlook-body').value;
+  const subject=document.getElementById('outlook-subject').value;
+  const text='Asunto: '+subject+'\n\n'+body;
+  navigator.clipboard.writeText(text).then(()=>toast('✓ Copiado al portapapeles','ok')).catch(()=>{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    toast('✓ Copiado al portapapeles','ok');
+  });
+}
+
+function sendOutlook(){
+  const to=document.getElementById('outlook-to').value.trim();
+  const cc=document.getElementById('outlook-cc').value.trim();
+  const subject=document.getElementById('outlook-subject').value;
+  const body=document.getElementById('outlook-body').value;
+
+  if(selectedMailClient==='copy'){ copyOutlookBody(); return; }
+
+  if(selectedMailClient==='n8n'){
+    const btn=document.querySelector('#outlook-modal button[onclick="sendOutlook()"]');
+    if(btn){ btn.disabled=true; }
+    n8nEnviarCorreo(to,cc,subject,body)
+      .then(()=>{ toast('✉ Correo enviado via Gmail (n8n)','ok',4000); closeOutlookModal(); })
+      .catch(e=>{ toast('Error: '+e.message,'err',5000); if(btn) btn.disabled=false; });
+    return;
+  }
+
+  if(!to){ document.getElementById('outlook-to').style.borderColor='#C8102E'; toast('Ingresa el correo del destinatario','err'); return; }
+
+  const params=['cc='+encodeURIComponent(cc),'subject='+encodeURIComponent(subject),'body='+encodeURIComponent(body)].filter(Boolean).join('&');
+
+  if(selectedMailClient==='gmail'){
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)+'&cc='+encodeURIComponent(cc)+'&su='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body),'_blank');
+  } else {
+    window.location.href='mailto:'+encodeURIComponent(to)+'?'+params;
+  }
+  toast('📧 Abriendo cliente de correo...','ok',3000);
+  setTimeout(closeOutlookModal,1500);
+}
+
+function applyDarkOutlook(){
+  const isDark=document.body.classList.contains('dark');
+  document.querySelectorAll('#outlook-modal input, #outlook-modal textarea').forEach(el=>{
+    el.style.background=isDark?'#1e1e1e':''; el.style.color=isDark?'#e8e8e8':''; el.style.borderColor=isDark?'#444':'';
+  });
+  const modal=document.querySelector('#outlook-modal > div');
+  if(modal) modal.style.background=isDark?'#1e1e1e':'';
+}
+
+document.getElementById('outlook-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('outlook-modal')) closeOutlookModal();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// BP CONTADOR (counts per BP from history)
+// ══════════════════════════════════════════════════════════════════
+function getBPCounts(){
+  const counts={};
+  aoaHistory.forEach(h=>{ if(h.bp) counts[h.bp]=(counts[h.bp]||0)+1; });
+  return counts;
+}
+
+const _origBpFilter = bpFilter;
+window.bpFilter = function(){
+  const q=document.getElementById('bp-search').value.trim().toLowerCase();
+  const dd=document.getElementById('bp-dd');
+  if(!q){ dd.classList.remove('open'); return; }
+  const counts=getBPCounts();
+  const matches=BPS.filter(b=>b.centro.toLowerCase().includes(q)||b.bp.includes(q));
+  if(!matches.length){ dd.innerHTML='<div class="bp-opt" style="color:var(--g4);">Sin resultados</div>'; dd.classList.add('open'); return; }
+  dd.innerHTML=matches.map(b=>{
+    const c=counts[b.bp]||0;
+    const badge=c>0?` <span style="background:var(--gl);color:var(--gd);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;">${c} AOA${c>1?'s':''}</span>`:'';
+    return `<div class="bp-opt" onclick="bpSelect('${b.bp}')">${b.centro}${badge}<span class="bp-num">${b.bp}</span></div>`;
+  }).join('');
+  dd.classList.add('open');
+};
+
+// ══════════════════════════════════════════════════════════════════
+// CALENDARIO (.ics)
+// ══════════════════════════════════════════════════════════════════
+function agendarOutlook(){
+  const d=gd();
+  const centro=document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
+  let actsText='';
+  acts.forEach((a,i)=>{
+    const mot=(document.getElementById('am'+a.id)?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
+    if(mot) actsText+=`${i+1}. ${mot}\n`;
+  });
+  const subject='AOA | BP '+(d.bp||'')+' | '+centro;
+  const body=`Asesoria de Organismo Administrador\nCentro: ${centro}\nBP: ${d.bp||''}\nModalidad: ${d.mod||'Presencial'}\nExperto: ${d.enombre||''}\n\nActividades:\n${actsText||'Sin actividades'}`;
+  const startDate=d.fecha_a?new Date(d.fecha_a+'T09:00:00'):new Date();
+  const endDate=new Date(startDate.getTime()+60*60*1000);
+  function fmtICS(dt){ return dt.toISOString().replace(/[-:]/g,'').replace('.000',''); }
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AOA Generator ACHS//ES','BEGIN:VEVENT',
+    `UID:aoa-${d.bp}-${Date.now()}@achs`,`DTSTAMP:${fmtICS(new Date())}`,
+    `DTSTART:${fmtICS(startDate)}`,`DTEND:${fmtICS(endDate)}`,
+    `SUMMARY:${subject}`,`DESCRIPTION:${body.replace(/\n/g,'\\n')}`,`LOCATION:${centro}`,
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`AOA_BP${d.bp||'XXX'}_${(d.fecha_a||tod()).replace(/-/g,'')}.ics`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('📅 Archivo .ics descargado','ok',4000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MOBILE: swipe tabs + scroll to new act
+// ══════════════════════════════════════════════════════════════════
+function isMobile(){ return window.innerWidth<=640; }
+if(isMobile()){
+  const _addActOrig = addAct;
+  window.addAct = function(afterId){
+    const id = _addActOrig(afterId);
+    if(!afterId){ setTimeout(()=>{ const c=document.getElementById('ac'+id); if(c) c.scrollIntoView({behavior:'smooth',block:'start'}); },100); }
+    schedulePreview();
+    return id;
+  };
+  const _rmActOrig = rmAct;
+  window.rmAct = function(id){ _rmActOrig(id); schedulePreview(); };
+}
+
+(function(){
+  const tabs=document.querySelector('.tabs'); if(!tabs) return;
+  let startX=0;
+  tabs.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+  tabs.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    if(Math.abs(dx)<40) return;
+    const allTabs=[...document.querySelectorAll('.tab')];
+    const active=allTabs.findIndex(t=>t.classList.contains('active'));
+    const next=dx<0?Math.min(active+1,allTabs.length-1):Math.max(active-1,0);
+    if(next!==active) allTabs[next].click();
+  },{passive:true});
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// BOTÓN "GUARDAR PLANTILLA" en acts tab
+// ══════════════════════════════════════════════════════════════════
+setTimeout(()=>{
+  // Agendar button in abar
+  const abar=document.querySelector('.abar');
+  if(abar&&!document.getElementById('cal-btn')){
+    const btn=document.createElement('button');
+    btn.id='cal-btn'; btn.className='btn-s'; btn.title='Agendar en Calendario';
+    btn.style.cssText='font-size:11px;white-space:nowrap;';
+    btn.textContent='📅 Agendar'; btn.onclick=agendarOutlook;
+    const greenBtn=abar.querySelector('.btn-p.green');
+    if(greenBtn) abar.insertBefore(btn,greenBtn);
+  }
+  // Guardar plantilla button in acts tab top bar
+  const topBar=document.querySelector('.act-top-bar');
+  if(topBar&&!document.getElementById('tpl-save-btn')){
+    const btn=document.createElement('button');
+    btn.id='tpl-save-btn'; btn.className='btn-s';
+    btn.style.cssText='font-size:11px;white-space:nowrap;';
+    btn.textContent='💾 Guardar plantilla'; btn.onclick=saveAsTemplate;
+    topBar.insertBefore(btn,topBar.querySelector('.btn-add'));
+  }
+  updateHistBadge();
+},300);
+
+</script>
+</body>
+</html>
