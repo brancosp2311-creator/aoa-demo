@@ -429,15 +429,6 @@ body.dark .mail-client-btn.selected.gmail{background:#2e0d0d;}
   .mail-client-btn{flex:1 1 calc(50% - 4px);min-width:0;}
 }
 
-
-/* ── WIZARD STEPS ─────────────────────────────────────────────── */
-.step-header{display:flex;align-items:center;gap:14px;background:var(--gl);border:1.5px solid var(--g);border-radius:10px;padding:12px 16px;margin-bottom:18px;}
-.step-icon{font-size:26px;flex-shrink:0;}
-.step-title{font-size:13px;font-weight:800;color:var(--gd);}
-.step-sub{font-size:11px;color:var(--g4);margin-top:2px;}
-.tab.locked{opacity:.45;cursor:not-allowed;}
-body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
-
 </style>
 </head>
 <body>
@@ -466,167 +457,85 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 </div>
 
 <div class="tabs">
-  <div class="tab active" id="step-tab-1" onclick="goStep(1)">1 · Centro</div>
-  <div class="tab" id="step-tab-2" onclick="goStep(2)">2 · Contraparte</div>
-  <div class="tab" id="step-tab-3" onclick="goStep(3)">3 · Actividades <span class="cnt" id="cnt">0</span></div>
-  <div class="tab" id="step-tab-4" onclick="goStep(4)">4 · Generar</div>
-  <div class="tab" id="step-tab-agen" onclick="showTab('agendar',this)">📅 Próx. Visita</div>
-  <div class="tab" id="step-tab-hist" onclick="showTab('historial',this)">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
-  <div class="tab" id="step-tab-stats" onclick="showTab('stats',this)">📊 KPI</div>
+  <div class="tab active" onclick="showTab('datos',this)">Datos Generales</div>
+  <div class="tab" onclick="showTab('acts',this)">Actividades <span class="cnt" id="cnt">0</span></div>
+  <div class="tab" onclick="showTab('firmas',this)">Firmas</div>
+  <div class="tab" onclick="showTab('gen',this)">Generar</div>
+  <div class="tab" onclick="showTab('historial',this)" id="tab-btn-historial">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
+  <div class="tab" onclick="showTab('stats',this)">📊 Estadísticas</div>
 </div>
 
 <!-- TAB DATOS -->
 <div class="panel active" id="tab-datos">
+  <div class="csec" id="sec-emp">
+    <div class="ctitle" onclick="tog('emp')">Empresa <span class="arr">▼</span></div>
+    <div class="cbody">
 
-  <!-- STEP INDICATOR -->
-  <div class="step-header">
-    <div class="step-icon">🏥</div>
-    <div>
-      <div class="step-title">Paso 1 de 4 — Seleccionar Centro</div>
-      <div class="step-sub">Busca y selecciona el BP para continuar</div>
-    </div>
-  </div>
-
-  <!-- BP SELECTOR -->
-  <div class="f" style="margin-bottom:10px;">
-    <label>Buscar Centro / BP <span style="color:#C8102E;font-size:10px;">* obligatorio</span></label>
-    <div class="bp-search-wrap">
-      <input class="bp-input" id="bp-search" placeholder="Escribe nombre o número BP..." autocomplete="off"
-        oninput="bpFilter()" onkeydown="bpKey(event)" onfocus="bpOpen()" />
-      <div class="bp-dropdown" id="bp-dd"></div>
-    </div>
-    <div class="bp-selected" id="bp-selected">
-      <span id="bp-selected-txt"></span>
-      <button class="bp-clear" onclick="bpClear()" title="Cambiar centro">✕</button>
-    </div>
-  </div>
-
-  <!-- Hidden fields populated by bpSelect -->
-  <input type="hidden" id="razon" value=""/>
-  <input type="hidden" id="bp" value=""/>
-
-  <!-- FECHA + MODALIDAD -->
-  <div class="g2" style="margin-top:14px;">
-    <div class="f"><label>Fecha de Asesoría <span style="color:#C8102E;font-size:10px;">*</span></label>
-      <input type="date" id="fecha_a"/></div>
-    <div class="f"><label>Modalidad</label>
-      <div style="display:flex;gap:12px;margin-top:6px;">
-        <label style="font-size:13px;cursor:pointer;"><input type="radio" name="mod" value="PRESENCIAL" checked style="margin-right:4px;"/>Presencial</label>
-        <label style="font-size:13px;cursor:pointer;"><input type="radio" name="mod" value="REMOTO" style="margin-right:4px;"/>Remoto</label>
-      </div>
-    </div>
-  </div>
-
-  <!-- OBJETIVO -->
-  <div class="f" style="margin-top:10px;">
-    <label>Objetivo de la Asesoría</label>
-    <textarea id="obj" rows="3" placeholder="Fortalecer el seguimiento preventivo y técnico..." oninput="ar(this)"></textarea>
-  </div>
-
-  <!-- EXPERTO (pre-fijo pero editable) -->
-  <div class="stitle" style="margin-top:12px;">Experto ACHS</div>
-  <div class="g2">
-    <div class="f"><label>Nombre</label><input id="enombre" placeholder="Nombre del experto..."/></div>
-    <div class="f"><label>RUT</label><input id="erut" placeholder="12.345.678-9"/></div>
-    <div class="f"><label>Email</label><input id="eemail" placeholder="email@achs.cl"/></div>
-  </div>
-
-  <!-- NEXT BUTTON -->
-  <div style="display:flex;justify-content:flex-end;margin-top:18px;">
-    <button class="btn-p green" onclick="stepNext(1)" style="padding:10px 28px;font-size:13px;">
-      Siguiente → Contraparte
-    </button>
-  </div>
-
-</div>
-<div class="panel" id="tab-firmas">
-
-  <!-- STEP INDICATOR -->
-  <div class="step-header">
-    <div class="step-icon">🤝</div>
-    <div>
-      <div class="step-title">Paso 2 de 4 — Contraparte</div>
-      <div class="step-sub">Datos del receptor y participantes del centro</div>
-    </div>
-  </div>
-
-  <div class="stitle">Receptor — Empresa / CT</div>
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="f"><label>Nombre Receptor</label><input id="rnombre" placeholder="Nombre y apellido..."/></div>
-    <div class="f"><label>RUT Receptor</label><input id="rrut" placeholder="12.345.678-9"/></div>
-    <div class="f"><label>Cargo Receptor</label><input id="rcargo" placeholder="Jefatura / Referente..."/></div>
-    <div class="f"><label>Email Receptor</label><input id="remail" placeholder="correo@institución.cl"/></div>
-  </div>
-
-  <div class="stitle">Fecha de Cumplimiento de Compromisos</div>
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="f"><label>Fecha Cumplimiento Global</label><input type="date" id="fcump"/></div>
-  </div>
-
-  <div class="stitle">Participantes del Centro</div>
-  <div class="icard" style="margin-bottom:10px;">Agrega a todas las personas del centro que participaron en la asesoría.</div>
-  <div class="part-add-row" style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:10px;">
-    <input id="pnew-nombre" placeholder="Nombre y apellido" style="padding:8px 10px;border:1.5px solid var(--g3);border-radius:7px;font-family:inherit;font-size:13px;color:var(--tx);background:var(--wh);"/>
-    <input id="pnew-cargo"  placeholder="Cargo"            style="padding:8px 10px;border:1.5px solid var(--g3);border-radius:7px;font-family:inherit;font-size:13px;color:var(--tx);background:var(--wh);"/>
-    <button class="btn-part-add" onclick="addParticipante()">+ Agregar</button>
-  </div>
-  <div class="part-chips" id="part-chips" style="display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:8px;background:var(--g1);border:1.5px solid var(--g3);border-radius:7px;"></div>
-
-  <!-- Firmas digitales -->
-  <div style="margin-top:14px;">
-    <div class="stitle">Firmas Digitales <span style="font-size:10px;color:var(--g4);font-weight:400;">(opcionales)</span></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-
-      <!-- Firma Receptor -->
-      <div style="background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:12px;">
-        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Receptor / CT</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-          <div style="flex:1;min-width:0;">
-            <div id="firma-display" style="font-size:11px;color:var(--g4);font-style:italic;">Sin firma</div>
-            <img id="firma-thumb" style="display:none;height:40px;border:1px solid var(--g3);border-radius:4px;margin-top:4px;background:#fff;max-width:100%;" />
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-            <button onclick="openFirmaModal('receptor')" class="btn-s" style="font-size:11px;padding:4px 8px;">✍️ Capturar</button>
-            <button onclick="clearFirmaData('receptor')" id="firma-clear-btn" class="btn-s" style="font-size:11px;padding:4px 8px;display:none;color:#C8102E;border-color:#C8102E;">✕ Quitar</button>
-          </div>
+      <!-- BP SELECTOR -->
+      <div class="f" style="margin-bottom:10px;">
+        <label>Buscar Centro / BP</label>
+        <div class="bp-search-wrap">
+          <input class="bp-input" id="bp-search" placeholder="Escribe nombre o número BP..." autocomplete="off"
+            oninput="bpFilter()" onkeydown="bpKey(event)" onfocus="bpOpen()" />
+          <div class="bp-dropdown" id="bp-dd"></div>
+        </div>
+        <div class="bp-selected" id="bp-selected">
+          <span id="bp-selected-txt"></span>
+          <button class="bp-clear" onclick="bpClear()" title="Cambiar centro">✕</button>
         </div>
       </div>
 
-      <!-- Firma Experto -->
-      <div style="background:var(--wh);border:1.5px solid var(--g3);border-radius:8px;padding:12px;">
-        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Experto ACHS</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-          <div style="flex:1;min-width:0;">
-            <div id="firma-experto-display" style="font-size:11px;color:var(--g4);font-style:italic;">Sin firma</div>
-            <img id="firma-experto-thumb" style="display:none;height:40px;border:1px solid var(--g3);border-radius:4px;margin-top:4px;background:#fff;max-width:100%;" />
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-            <button onclick="openFirmaModal('experto')" class="btn-s" style="font-size:11px;padding:4px 8px;">✍️ Capturar</button>
-            <button onclick="clearFirmaData('experto')" id="firma-experto-clear-btn" class="btn-s" style="font-size:11px;padding:4px 8px;display:none;color:#C8102E;border-color:#C8102E;">✕ Quitar</button>
+      <div class="g2">
+        <div class="f full">
+          <label>Razón Social</label>
+          <input id="razon" value="" placeholder="Se rellena al seleccionar un BP..."/>
+          <span id="razon-sub" style="display:none;font-size:11px;font-weight:700;color:var(--gd);margin-top:3px;padding:3px 8px;background:var(--gl);border-radius:4px;border:1px solid #b8e8d0;">▶ Centro: </span>
+        </div>
+        <div class="f"><label>BP Empresa</label><input id="bp" value="" readonly style="background:#f5f5f3;color:#555;"/></div>
+        <div class="f"><label>Fecha Asesoría</label><input type="date" id="fecha_a"/></div>
+        <div class="f full"><label>Modalidad</label>
+          <div class="rgroup">
+            <label><input type="radio" name="mod" value="REMOTO"/> Remoto</label>
+            <label><input type="radio" name="mod" value="PRESENCIAL" checked/> Presencial</label>
           </div>
         </div>
+        <div class="f full"><label>Objetivo de la Asesoría</label>
+          <textarea id="obj" oninput="ar(this)" style="overflow:hidden;min-height:60px;">Fortalecer el seguimiento preventivo y técnico del Hospital del Salvador, abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.</textarea>
+        </div>
       </div>
-
     </div>
   </div>
 
-  <!-- NAV BUTTONS -->
-  <div style="display:flex;justify-content:space-between;margin-top:18px;">
-    <button class="btn-s" onclick="goStep(1)">← Centro</button>
-    <button class="btn-p green" onclick="stepNext(2)" style="padding:10px 28px;font-size:13px;">
-      Siguiente → Actividades
-    </button>
-  </div>
+  <div class="csec" id="sec-part">
+    <div class="ctitle" onclick="tog('part')">Participantes <span class="arr">▼</span></div>
+    <div class="cbody">
 
+      <!-- CHIPS PARTICIPANTES -->
+      <div class="part-wrap">
+        <div style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Participantes de la empresa</div>
+        <div class="part-chips" id="part-chips-empresa"></div>
+        <div class="part-add-row">
+          <input id="pnew-nombre" placeholder="Nombre del participante"/>
+          <input id="pnew-cargo" placeholder="Cargo"/>
+          <button class="btn-part-add" onclick="addParticipante()">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- EXPERTO ACHS (fijo) -->
+      <div style="background:var(--gl);border:1.5px solid var(--g);border-radius:6px;padding:10px 12px;margin-top:6px;">
+        <div style="font-size:10px;font-weight:800;color:var(--gd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Experto en Prevención ACHS</div>
+        <div class="g2">
+          <div class="f"><label>Nombre</label><input id="enombre" value="Branco Sandoval Palma"/></div>
+          <div class="f"><label>RUT</label><input id="erut" value="18151247-4"/></div>
+          <div class="f full"><label>Email</label><input id="eemail" value="bmsandovalp@achs.cl"/></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- TAB ACTIVIDADES -->
 <div class="panel" id="tab-acts">
-  <div class="step-header">
-    <div class="step-icon">📋</div>
-    <div>
-      <div class="step-title">Paso 3 de 4 — Actividades</div>
-      <div class="step-sub">Registra las actividades realizadas en la asesoría</div>
-    </div>
-  </div>
   <!-- ACCESO RÁPIDO -->
   <div class="fav-wrap">
     <div class="fav-head">⭐ Acceso Rápido — Favoritos</div>
@@ -647,10 +556,10 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 <div class="panel" id="tab-firmas">
   <div class="stitle">Receptor — Empresa / CT</div>
   <div class="g2" style="margin-bottom:14px;">
-    <div class="f"><label>Nombre Receptor</label><input id="rnombre" value="" placeholder="Se rellena al seleccionar BP..."/></div>
-    <div class="f"><label>RUT Receptor</label><input id="rrut" value="" placeholder="RUT..."/></div>
-    <div class="f"><label>Cargo Receptor</label><input id="rcargo" value="" placeholder="Cargo..."/></div>
-    <div class="f"><label>Email Receptor</label><input id="remail" value="" placeholder="correo@institución.cl"/></div>
+    <div class="f"><label>Nombre Receptor</label><input id="rnombre" value="Aida Espinosa"/></div>
+    <div class="f"><label>RUT Receptor</label><input id="rrut" value="11836520-8"/></div>
+    <div class="f"><label>Cargo Receptor</label><input id="rcargo" value="Jefatura Institucional HDS"/></div>
+    <div class="f"><label>Email Receptor</label><input id="remail" value="aespinosa@achs.cl"/></div>
   </div>
   <div class="stitle">Fecha de Cumplimiento</div>
   <div class="g2">
@@ -675,75 +584,11 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 
 <!-- TAB GENERAR -->
 <div class="panel" id="tab-gen">
-  <div class="step-header">
-    <div class="step-icon">📄</div>
-    <div>
-      <div class="step-title">Paso 4 de 4 — Generar AOA</div>
-      <div class="step-sub">Revisa el resumen y genera el PDF. Luego podrás enviar por correo.</div>
-    </div>
-  </div>
   <div class="smsg" id="smsg"></div>
   <div class="icard"><strong>Genera el documento AOA en PDF.</strong> El cliente solo verá el Motivo como título — sin códigos internos (AAD, SOP, etc.). El Submotivo e ID son solo para uso interno.</div>
   <div class="stitle">Vista Previa</div>
   <div class="prev" id="prev">Haz clic en "Actualizar Vista Previa"</div>
   <div style="margin-top:8px;text-align:right;"><button class="btn-s" onclick="updPrev()">Actualizar Vista Previa</button></div>
-</div>
-
-<!-- TAB AGENDAR PRÓXIMA VISITA -->
-<div class="panel" id="tab-agendar">
-
-  <div class="step-header">
-    <div class="step-icon">📅</div>
-    <div>
-      <div class="step-title">Agendar Próxima Visita</div>
-      <div class="step-sub">Define la fecha, contexto y puntos a tratar en la próxima asesoría</div>
-    </div>
-  </div>
-
-  <!-- Fecha próxima visita -->
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="f">
-      <label>Fecha propuesta</label>
-      <input type="date" id="ag-fecha"/>
-    </div>
-    <div class="f">
-      <label>Hora</label>
-      <input type="time" id="ag-hora" value="09:00"/>
-    </div>
-  </div>
-  <div class="f" style="margin-bottom:14px;">
-    <label>Duración estimada</label>
-    <select id="ag-duracion" style="padding:9px 10px;border:1.5px solid var(--g3);border-radius:7px;font-family:inherit;font-size:13px;background:var(--wh);color:var(--tx);">
-      <option value="60">1 hora</option>
-      <option value="90">1.5 horas</option>
-      <option value="120" selected>2 horas</option>
-      <option value="180">3 horas</option>
-    </select>
-  </div>
-
-  <!-- Contexto / objetivo próxima visita -->
-  <div class="f" style="margin-bottom:14px;">
-    <label>Objetivo / contexto de la próxima visita</label>
-    <textarea id="ag-objetivo" rows="2" placeholder="Ej: Seguimiento de compromisos adquiridos y revisión de MIPER actualizado..." oninput="ar(this)"></textarea>
-  </div>
-
-  <!-- Actividades a tratar -->
-  <div class="stitle" style="margin-bottom:8px;">Puntos a tratar <span style="font-size:10px;color:var(--g4);font-weight:400;">— selecciona las actividades previstas</span></div>
-  <div id="ag-acts-wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;"></div>
-  <div style="margin-bottom:14px;">
-    <button class="btn-s" onclick="agLoadActsFromCurrent()" style="font-size:11px;">↺ Cargar actividades de esta AOA</button>
-    <button class="btn-s" onclick="agAddCustomAct()" style="font-size:11px;margin-left:6px;">+ Agregar punto personalizado</button>
-  </div>
-  <div id="ag-custom-wrap"></div>
-
-  <!-- Acciones -->
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-    <button class="btn-p green" style="flex:1;padding:11px;" onclick="agendarVisita()">📅 Descargar .ics (Outlook/Calendar)</button>
-    <button class="btn-s" style="flex:1;padding:11px;" onclick="agendarGmail()">📧 Invitar por Gmail</button>
-  </div>
-
-  <div id="ag-status" style="margin-top:10px;font-size:11px;color:var(--g4);"></div>
-
 </div>
 
 <!-- TAB HISTORIAL -->
@@ -764,6 +609,7 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 <div class="abar">
   <button class="btn-s" onclick="resetF()">Limpiar</button>
   <button class="btn-s" onclick="saveDraft()" title="Guardar borrador">💾 Guardar</button>
+  <button class="btn-s" onclick="openTplModal()" title="Plantillas">📋 Plantillas</button>
   <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" title="Enviar por correo (Outlook)" style="color:#0078d4;border-color:#0078d4;">📧 Enviar</button>
   <button class="btn-p green" style="flex:2;" onclick="genPDF()">⬇ Generar PDF</button>
 </div>
@@ -874,11 +720,6 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
         <textarea id="outlook-body" rows="12" style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:10px;font-size:11.5px;font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;color:var(--tx);background:var(--wh);box-sizing:border-box;resize:vertical;"></textarea>
       </div>
       <!-- Acciones -->
-      <!-- Adjunto PDF -->
-      <div style="background:#f0f6ff;border:1.5px solid #c0d8f5;border-radius:7px;padding:10px 12px;font-size:11px;color:#1a4a8a;margin-bottom:14px;line-height:1.6;">
-        <strong>📎 Adjuntar el PDF:</strong> Descarga el archivo y adjúntalo manualmente al correo antes de enviar.<br>
-        <button onclick="downloadPdfFile()" style="margin-top:6px;background:#0078d4;color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;">⬇ Descargar PDF para adjuntar</button>
-      </div>
       <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
         <button onclick="closeOutlookModal()" class="btn-s" style="font-size:12px;">Cancelar</button>
         <button onclick="copyOutlookBody()" class="btn-s" style="font-size:12px;border-color:#0078d4;color:#0078d4;">📋 Copiar</button>
@@ -925,16 +766,6 @@ body.dark .step-header{background:#0d2e1e;border-color:var(--g);}
 </div>
 
 <script>
-
-
-
-
-
-
-
-
-
-
 
 // ══════════════════════════════════════════
 // DB — Tipos de Asesoría con Motivos y Submotivos
@@ -6097,12 +5928,9 @@ function v(id){return document.getElementById(id)?.value||''}
 function showTab(n,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const panel=document.getElementById('tab-'+n);
-  if(panel) panel.classList.add('active');
-  if(el) el.classList.add('active');
+  document.getElementById('tab-'+n).classList.add('active'); el.classList.add('active');
   if(n==='historial') renderHistory();
   if(n==='stats') renderStats();
-  if(n==='agendar') { if(typeof initAgendarPanel==='function') initAgendarPanel(); }
 }
 function tog(n){document.getElementById('sec-'+n).classList.toggle('collapsed')}
 function showS(msg,type){
@@ -6527,48 +6355,21 @@ function bpKey(e){
 function bpSelect(bpNum){
   const entry=BPS.find(b=>b.bp===bpNum);
   if(!entry) return;
+  // Razón Social siempre = prefijo SSMO + nombre del centro
   const PREFIX='SERVICIO DE SALUD METROPOLITANO ORIENTE';
-
-  // ── Limpiar campos receptor antes de rellenar ────────────────
-  ['rnombre','rrut','rcargo','remail','fcump'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
-  });
-
-  // ── Llenar datos del centro ──────────────────────────────────
   document.getElementById('razon').value=PREFIX;
   document.getElementById('razon-sub').textContent='▶ '+entry.centro;
   document.getElementById('razon-sub').style.display='block';
   document.getElementById('bp').value=entry.bp;
   document.getElementById('bp-search').value='';
   document.getElementById('bp-dd').classList.remove('open');
+  const sel=document.getElementById('bp-selected');
   document.getElementById('bp-selected-txt').textContent=entry.centro+' — '+entry.bp;
-  document.getElementById('bp-selected').classList.add('show');
-
-  // ── Pre-llenar experto ACHS si está vacío ────────────────────
-  if(!document.getElementById('enombre').value){
-    document.getElementById('enombre').value='Branco Sandoval Palma';
-    document.getElementById('erut').value='18.151.247-4';
-    document.getElementById('eemail').value='bmsandovalp@achs.cl';
-  }
-
-  // ── Auto objetivo ────────────────────────────────────────────
-  const objEl=document.getElementById('obj');
-  if(objEl&&!objEl.value.trim()){
-    objEl.value='Fortalecer el seguimiento preventivo y técnico en '+entry.centro
-      +', abordando casuística, inspecciones y planificación de acciones que comprometan la seguridad y salud en el trabajo.';
-    ar(objEl);
-  }
-
-  // ── Pre-load referentes como participantes ───────────────────
+  sel.classList.add('show');
+  // Pre-load referentes as participants
   participantes=[];
-  if(entry.referentes&&entry.referentes.length){
-    entry.referentes.forEach(r=>participantes.push({nombre:r,cargo:'Referente'}));
-  }
+  entry.referentes.forEach(r=>participantes.push({nombre:r,cargo:'Referente'}));
   renderChips();
-
-  // ── Reset wizard state ───────────────────────────────────────
-  if(typeof pdfGenerated!=='undefined') pdfGenerated=false;
-  if(typeof updateSendBtn==='function') updateSendBtn();
 }
 
 function bpClear(){
@@ -6764,34 +6565,20 @@ try{templates=JSON.parse(localStorage.getItem('aoa_templates')||'[]');}catch(e){
 function validateAOA(){
   const errors=[];
   const d=gd();
-  if(!d.bp) errors.push('🏥 Falta seleccionar un Centro / BP');
-  if(!d.fecha_a) errors.push('📅 Falta la fecha de la asesoría');
-  if(!d.obj||!d.obj.trim()) errors.push('📝 Falta el objetivo de la asesoría');
-  if(!d.enombre||!d.enombre.trim()) errors.push('👤 Falta el nombre del Experto ACHS');
-  if(!d.eemail||!d.eemail.trim()) errors.push('📧 Falta el email del Experto ACHS');
-  if(!d.rnombre||!d.rnombre.trim()) errors.push('🤝 Falta el nombre del Receptor');
-  if(!participantes.length) errors.push('👥 No hay participantes del centro registrados');
-  if(!acts.length) errors.push('📋 No hay actividades registradas');
+  if(!d.bp) errors.push('Falta seleccionar un Centro / BP');
+  if(!d.fecha_a) errors.push('Falta la fecha de la asesoría');
+  if(!d.obj.trim()) errors.push('Falta el objetivo de la asesoría');
+  if(!participantes.length) errors.push('No hay participantes del centro registrados');
+  if(!acts.length) errors.push('No hay actividades registradas');
   acts.forEach((a,i)=>{
     const motivo=document.getElementById('am'+a.id)?.getAttribute('data-mot')||'';
     const dept=cardDept[a.id]||'';
     if(!dept) errors.push('Actividad '+(i+1)+': falta seleccionar GIGE / RED / HYE');
     else if(!motivo) errors.push('Actividad '+(i+1)+': falta seleccionar el motivo');
     if(!v('aid'+a.id)) errors.push('Actividad '+(i+1)+': falta el ID de asesoría');
+    if(!v('af'+a.id)) errors.push('Actividad '+(i+1)+': falta la fecha');
   });
   return errors;
-}
-
-function showValidationAlert(errors){
-  // Show prominently in val-modal if exists, else fallback
-  const modal=document.getElementById('val-modal');
-  const list=document.getElementById('val-list');
-  if(modal&&list){
-    list.innerHTML=errors.map(e=>`<li>${e}</li>`).join('');
-    modal.style.display='flex'; modal.classList.add('open');
-  } else {
-    alert('Faltan datos requeridos:\n\n'+errors.map(e=>'• '+e).join('\n'));
-  }
 }
 
 function closeValModal(){document.getElementById('val-modal').classList.remove('open');}
@@ -6813,27 +6600,17 @@ window.genPDF = function(){
   }
 };
 
-let lastPdfHtml='';
-
 function _runGenPDF(){
   const d = gd();
   showS('Generando PDF...','load');
   setTimeout(()=>{
     try{
       const html = buildDoc(d);
-      lastPdfHtml = html;
       const win = window.open('','_blank','width=900,height=700');
       if(!win){ showS('Permite ventanas emergentes en el navegador.','err'); return; }
       win.document.open(); win.document.write(html); win.document.close();
       setTimeout(()=>{ win.focus(); win.print(); }, 800);
-      showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo. Luego envía por correo.','ok');
-      toast('✓ PDF listo — ya puedes enviar por correo','ok',3000);
-      isDirty=false;
-      if(typeof pdfGenerated!=='undefined'){ pdfGenerated=true; }
-      if(typeof updateSendBtn==='function') updateSendBtn();
-      // Guardar historial
-      if(typeof saveToHistory==='function') setTimeout(()=>{ const dd=gd(); if(dd.bp||dd.razon){ saveToHistory(dd); if(typeof updateHistBadge==='function') updateHistBadge(); } },300);
-      if(typeof n8nRegistrarAOA==='function') n8nRegistrarAOA(gd());
+      showS('✓ Abierto. Elige "Guardar como PDF" en el diálogo.','ok');
       toast('✓ PDF generado','ok');
       isDirty = false;
       // Guardar en historial
@@ -7359,26 +7136,20 @@ function renderStats(){
 // ══════════════════════════════════════════════════════════════════
 // FIRMA DIGITAL
 // ══════════════════════════════════════════════════════════════════
-let firmaExpertoData=null;
-let firmaTarget="receptor";
 let firmaCanvas, firmaCtx, firmaDrawing=false, firmaSigned=false, firmaData=null;
 
-function openFirmaModal(target){
-  firmaTarget = target||'receptor';
+function openFirmaModal(){
   const d=gd();
-  const label = firmaTarget==='experto'
-    ? (d.enombre||'Experto ACHS')+' — ACHS'
-    : (d.rnombre||'Receptor')+(d.rcargo?' — '+d.rcargo:'');
-  document.getElementById('firma-firmante').textContent=label;
+  document.getElementById('firma-firmante').textContent=(d.rnombre||'Receptor')+(d.rcargo?' — '+d.rcargo:'');
   document.getElementById('firma-modal').style.display='flex';
   firmaCanvas=document.getElementById('firma-canvas');
   firmaCanvas.width=firmaCanvas.offsetWidth||460;
   firmaCanvas.height=160;
   firmaCtx=firmaCanvas.getContext('2d');
   firmaCtx.strokeStyle='#111'; firmaCtx.lineWidth=2.5; firmaCtx.lineCap='round'; firmaCtx.lineJoin='round';
-  firmaCtx.clearRect(0,0,firmaCanvas.width,firmaCanvas.height);
-  const existing = firmaTarget==='experto' ? firmaExpertoData : firmaData;
-  if(existing){ const img=new Image(); img.onload=()=>firmaCtx.drawImage(img,0,0); img.src=existing; }
+  if(firmaData){
+    const img=new Image(); img.onload=()=>firmaCtx.drawImage(img,0,0); img.src=firmaData;
+  }
   setupFirmaEvents();
 }
 
@@ -7400,54 +7171,30 @@ function clearFirma(){
 
 function saveFirma(){
   if(!firmaSigned){ toast('Dibuja la firma primero','warn'); return; }
-  const dataUrl=firmaCanvas.toDataURL('image/png');
-  if(firmaTarget==='experto'){
-    firmaExpertoData=dataUrl;
-    const thumb=document.getElementById('firma-experto-thumb');
-    const display=document.getElementById('firma-experto-display');
-    const btn=document.getElementById('firma-experto-clear-btn');
-    if(thumb){ thumb.src=dataUrl; thumb.style.display='block'; }
-    if(display){ display.textContent='✓ Firma capturada'; display.style.color='var(--gd)'; display.style.fontStyle='normal'; display.style.fontWeight='700'; }
-    if(btn) btn.style.display='inline-block';
-  } else {
-    firmaData=dataUrl;
-    const thumb=document.getElementById('firma-thumb');
-    const display=document.getElementById('firma-display');
-    const btn=document.getElementById('firma-clear-btn');
-    if(thumb){ thumb.src=dataUrl; thumb.style.display='block'; }
-    if(display){ display.textContent='✓ Firma capturada'; display.style.color='var(--gd)'; display.style.fontStyle='normal'; display.style.fontWeight='700'; }
-    if(btn) btn.style.display='inline-block';
-  }
-  // Preview in modal
+  firmaData=firmaCanvas.toDataURL('image/png');
+  const thumb=document.getElementById('firma-thumb');
+  const display=document.getElementById('firma-display');
+  if(thumb){ thumb.src=firmaData; thumb.style.display='block'; }
+  if(display){ display.textContent='✓ Firma capturada'; display.style.color='var(--gd)'; display.style.fontStyle='normal'; display.style.fontWeight='700'; }
+  document.getElementById('firma-clear-btn').style.display='inline-block';
   const preview=document.getElementById('firma-saved-preview');
   const pimg=document.getElementById('firma-preview-img');
   if(preview) preview.style.display='block';
-  if(pimg) pimg.src=dataUrl;
+  if(pimg) pimg.src=firmaData;
   toast('✓ Firma guardada','ok');
   setTimeout(closeFirmaModal,800);
 }
 
-function clearFirmaData(target){
-  if(!confirm('¿Quitar esta firma?')) return;
-  const t=target||'receptor';
-  if(t==='experto'){
-    firmaExpertoData=null;
-    const thumb=document.getElementById('firma-experto-thumb');
-    const display=document.getElementById('firma-experto-display');
-    const btn=document.getElementById('firma-experto-clear-btn');
-    if(thumb){thumb.style.display='none';thumb.src='';}
-    if(display){display.textContent='Sin firma';display.style.color='';display.style.fontStyle='italic';display.style.fontWeight='';}
-    if(btn) btn.style.display='none';
-  } else {
-    firmaData=null;
-    const thumb=document.getElementById('firma-thumb');
-    const display=document.getElementById('firma-display');
-    const btn=document.getElementById('firma-clear-btn');
-    if(thumb){thumb.style.display='none';thumb.src='';}
-    if(display){display.textContent='Sin firma';display.style.color='';display.style.fontStyle='italic';display.style.fontWeight='';}
-    if(btn) btn.style.display='none';
-  }
+function clearFirmaData(){
+  if(!confirm('¿Quitar la firma?')) return;
+  firmaData=null;
+  const thumb=document.getElementById('firma-thumb');
+  const display=document.getElementById('firma-display');
+  if(thumb){ thumb.style.display='none'; thumb.src=''; }
+  if(display){ display.textContent='Sin firma capturada'; display.style.color=''; display.style.fontStyle='italic'; display.style.fontWeight=''; }
+  document.getElementById('firma-clear-btn').style.display='none';
 }
+
 function closeFirmaModal(){ document.getElementById('firma-modal').style.display='none'; }
 document.getElementById('firma-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('firma-modal')) closeFirmaModal(); });
 
@@ -7458,12 +7205,6 @@ window.buildDoc = function(d){
   if(firmaData){
     html = html.replace('Firma Empresa: ________________________',
       `Firma Empresa:<br><img src="${firmaData}" style="height:60px;max-width:220px;display:block;margin-top:4px;border:1px solid #ccc;border-radius:4px;padding:2px;background:#fff;">`);
-  }
-  if(typeof firmaExpertoData!=='undefined'&&firmaExpertoData){
-    html = html.replace(
-      'Firma Experto: ________________________',
-      `Firma Experto ACHS:<br><img src="${firmaExpertoData}" style="height:60px;max-width:220px;display:block;margin-top:4px;border:1px solid #ccc;border-radius:4px;padding:2px;background:#fff;">`
-    );
   }
   return html;
 };
@@ -7488,20 +7229,6 @@ function selectMailClient(client){
 // ══════════════════════════════════════════════════════════════════
 // OUTLOOK / CORREO
 // ══════════════════════════════════════════════════════════════════
-function downloadPdfFile(){
-  if(!lastPdfHtml){
-    toast('Genera el PDF primero','warn'); return;
-  }
-  const d=gd();
-  const fname='AOA_BP'+(d.bp||'XXX')+'_'+(d.fecha_a||'').replace(/-/g,'')+'.html';
-  const blob=new Blob([lastPdfHtml],{type:'text/html;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=fname; a.click();
-  URL.revokeObjectURL(url);
-  toast('📎 Archivo descargado — adjúntalo al correo','ok',4000);
-}
-
 function buildOutlookSubject(){
   const d=gd();
   return 'AOA | BP '+(d.bp||'')+' | '+(d.fecha_a?fd(d.fecha_a):'');
@@ -7728,454 +7455,6 @@ setTimeout(()=>{
   }
   updateHistBadge();
 },300);
-
-
-
-
-// ══════════════════════════════════════════════════════════════════
-// WIZARD STEP LOGIC
-// ══════════════════════════════════════════════════════════════════
-let currentStep = 1;
-let pdfGenerated = false; // track if PDF was generated this session
-
-const STEP_TABS = {1:'datos', 2:'firmas', 3:'acts', 4:'gen'};
-const STEP_IDS  = {datos:1, firmas:2, acts:3, gen:4};
-
-function goStep(n){
-  // Validate before moving forward
-  if(n > currentStep){
-    if(!validateStep(currentStep)) return;
-  }
-  currentStep = n;
-  const tabName = STEP_TABS[n] || String(n);
-  const allTabs = document.querySelectorAll('.tab');
-  const allPanels = document.querySelectorAll('.panel');
-  allPanels.forEach(p=>p.classList.remove('active'));
-  allTabs.forEach(t=>t.classList.remove('active'));
-  const panel = document.getElementById('tab-'+tabName);
-  const stepTab = document.getElementById('step-tab-'+n);
-  if(panel) panel.classList.add('active');
-  if(stepTab) stepTab.classList.add('active');
-  // Update send button state
-  updateSendBtn();
-}
-
-function showTab(name, el){
-  // For historial and stats tabs
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  const panel = document.getElementById('tab-'+name);
-  if(panel) panel.classList.add('active');
-  if(el) el.classList.add('active');
-  if(name==='historial') renderHistory();
-  if(name==='stats'){
-    // Filter stats by current BP
-    renderStats();
-  }
-}
-
-function stepNext(from){
-  if(!validateStep(from)) return;
-  goStep(from + 1);
-}
-
-function validateStep(step){
-  if(step === 1){
-    const bp = document.getElementById('bp').value;
-    if(!bp){
-      // Highlight BP selector
-      const bpSearch = document.getElementById('bp-search');
-      if(bpSearch){
-        bpSearch.style.borderColor = '#C8102E';
-        bpSearch.focus();
-        setTimeout(()=>bpSearch.style.borderColor='', 2000);
-      }
-      toast('Debes seleccionar un Centro / BP para continuar', 'err', 3000);
-      return false;
-    }
-    const fecha = document.getElementById('fecha_a').value;
-    if(!fecha){
-      toast('Selecciona la fecha de la asesoría', 'err', 3000);
-      document.getElementById('fecha_a').focus();
-      return false;
-    }
-  }
-  return true;
-}
-
-// ══════════════════════════════════════════════════════════════════
-// BP SELECT — auto-fill receptor from contacts data
-// ══════════════════════════════════════════════════════════════════
-// Override bpSelect to also populate experto and clear receptor fields
-const _origBpSelect = bpSelect;
-window.bpSelect = function(bp){
-  _origBpSelect(bp);
-  // Clear receptor fields when BP changes (fresh start)
-  ['rnombre','rrut','rcargo','remail'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el){ el.value = ''; }
-  });
-  // Pre-fill experto if empty
-  const enombre = document.getElementById('enombre');
-  if(enombre && !enombre.value) enombre.value = 'Branco Sandoval Palma';
-  const eemail = document.getElementById('eemail');
-  if(eemail && !eemail.value) eemail.value = 'bmsandovalp@achs.cl';
-  const erut = document.getElementById('erut');
-  if(erut && !erut.value) erut.value = '18.151.247-4';
-  // Auto-fill objetivo if empty
-  const obj = document.getElementById('obj');
-  if(obj && !obj.value){
-    const entry = BPS.find(b=>b.bp===bp);
-    const centro = entry?.centro || '';
-    obj.value = 'Fortalecer el seguimiento preventivo y técnico en '+centro+', abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.';
-    ar(obj);
-  }
-  // Try to pre-fill receptor from REFERENTES data if available
-  const ref = REFERENTES ? REFERENTES[bp] : null;
-  if(ref){
-    const rn = document.getElementById('rnombre');
-    const rc = document.getElementById('rcargo');
-    const re = document.getElementById('remail');
-    if(rn && ref.nombre) rn.value = ref.nombre;
-    if(rc && ref.cargo)  rc.value = ref.cargo;
-    if(re && ref.email)  re.value = ref.email;
-  }
-  // Move focus to next step prompt
-  pdfGenerated = false;
-  updateSendBtn();
-};
-
-// Referentes data (pre-loaded from CONTACTOS_REFERENTES)
-// Populated from BPS array if referente data is available
-const REFERENTES = {};
-// Populate from BPS array
-if(typeof BPS !== 'undefined'){
-  BPS.forEach(b=>{
-    if(b.referente) REFERENTES[b.bp] = b.referente;
-  });
-}
-
-// ══════════════════════════════════════════════════════════════════
-// PDF GENERATED FLAG + SEND BUTTON GATE
-// ══════════════════════════════════════════════════════════════════
-function updateSendBtn(){
-  const btn = document.getElementById('outlook-btn');
-  if(!btn) return;
-  if(!pdfGenerated){
-    btn.style.opacity = '0.4';
-    btn.style.cursor = 'not-allowed';
-    btn.title = 'Primero genera el PDF para habilitar el envío';
-  } else {
-    btn.style.opacity = '1';
-    btn.style.cursor = 'pointer';
-    btn.title = 'Enviar por correo';
-  }
-}
-
-// Override openOutlookModal to check PDF first
-const _origOpenOutlook = openOutlookModal;
-window.openOutlookModal = function(){
-  if(!pdfGenerated){
-    toast('⚠ Genera el PDF primero — esto asegura el registro en historial y KPI', 'warn', 4000);
-    return;
-  }
-  _origOpenOutlook();
-};
-
-// ══════════════════════════════════════════════════════════════════
-// OVERRIDE _runGenPDF to set pdfGenerated flag
-// ══════════════════════════════════════════════════════════════════
-const _origRunGenPDF2 = _runGenPDF;
-window._runGenPDF = function(){
-  const d = gd();
-  showS('Generando PDF...','load');
-  setTimeout(()=>{
-    try{
-      const html = buildDoc(d);
-      const win = window.open('','_blank','width=900,height=700');
-      if(!win){ showS('Permite ventanas emergentes en el navegador.','err'); return; }
-      win.document.open(); win.document.write(html); win.document.close();
-      setTimeout(()=>{ win.focus(); win.print(); }, 800);
-      showS('✓ PDF generado. Ahora puedes enviar por correo.','ok');
-      toast('✓ PDF generado — botón Enviar habilitado','ok', 3000);
-      isDirty = false;
-      pdfGenerated = true;
-      updateSendBtn();
-      // Guardar en historial y n8n
-      setTimeout(()=>{ if(d.bp||d.razon){ saveToHistory(d); updateHistBadge(); } }, 300);
-      n8nRegistrarAOA(d);
-    } catch(e){ showS('Error: '+e.message,'err'); }
-  }, 200);
-};
-
-// ══════════════════════════════════════════════════════════════════
-// KPI FILTRADO POR BP SELECCIONADO
-// ══════════════════════════════════════════════════════════════════
-// Override renderStats to filter by current BP
-const _origRenderStats = renderStats;
-window.renderStats = function(){
-  const el = document.getElementById('stats-content');
-  if(!el) return;
-  const currentBP = document.getElementById('bp')?.value || '';
-
-  if(!aoaHistory.length){
-    el.innerHTML='<div class="empty">Sin datos. Genera al menos una AOA.</div>'; return;
-  }
-
-  // Filter by current BP if one is selected
-  const filtered = currentBP
-    ? aoaHistory.filter(h=>h.bp===currentBP)
-    : aoaHistory;
-
-  const bpEntry = currentBP ? BPS.find(b=>b.bp===currentBP) : null;
-  const bpName  = bpEntry?.centro || '';
-
-  if(!filtered.length && currentBP){
-    el.innerHTML=`<div class="icard">Sin datos para <strong>BP ${currentBP}</strong> — ${bpName}.<br>Genera una AOA para este centro para ver estadísticas.</div>`;
-    return;
-  }
-
-  const total = filtered.length;
-  const totalActs = filtered.reduce((s,h)=>s+(h.actsCount||0),0);
-  const now=Date.now(), week=7*24*3600*1000;
-  const thisWeek=filtered.filter(h=>now-new Date(h.ts).getTime()<week).length;
-  const lastWeek=filtered.filter(h=>{const a=now-new Date(h.ts).getTime();return a>=week&&a<2*week;}).length;
-  const trend=thisWeek>lastWeek?'↑':thisWeek<lastWeek?'↓':'→';
-  const trendColor=thisWeek>lastWeek?'var(--g)':thisWeek<lastWeek?'#C8102E':'var(--g4)';
-
-  // Act frequency
-  const actCounts={};
-  filtered.forEach(h=>(h.actsState||[]).forEach(a=>{
-    const m=(a.motivo||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-    if(m) actCounts[m]=(actCounts[m]||0)+1;
-  }));
-  const topActs=Object.entries(actCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
-
-  let html = '';
-  if(currentBP){
-    html += `<div class="icard" style="margin-bottom:12px;">📊 Mostrando KPI para <strong>BP ${currentBP}</strong> — ${bpName}</div>`;
-  }
-
-  html += `<div class="stats-grid">
-    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">AOAs totales</div></div>
-    <div class="stat-card"><div class="stat-num">${totalActs}</div><div class="stat-label">Actividades</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:${trendColor};">${thisWeek}<span style="font-size:14px;">${trend}</span></div><div class="stat-label">Esta semana</div></div>
-  </div>`;
-
-  // Last AOAs for this BP
-  if(filtered.length){
-    html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Últimas asesorías</div>`;
-    filtered.slice(0,5).forEach(h=>{
-      const dt=new Date(h.ts).toLocaleDateString('es-CL',{day:'2-digit',month:'2-digit',year:'numeric'});
-      html += `<div style="font-size:11px;padding:5px 0;border-bottom:1px solid var(--g2);display:flex;justify-content:space-between;align-items:center;">
-        <span>${dt} · ${h.actsCount||0} actividades</span>
-        <span style="color:var(--g4);">${h.mod||'Presencial'}</span>
-      </div>`;
-    });
-  }
-
-  if(topActs.length){
-    html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Actividades frecuentes</div>`;
-    topActs.forEach(([name,count])=>{
-      html += `<div class="act-rank"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name}</span><span class="act-rank-count">${count}×</span></div>`;
-    });
-  }
-
-  // If showing all BPs, also show ranking
-  if(!currentBP){
-    const bpCounts={};
-    aoaHistory.forEach(h=>{ if(h.bp) bpCounts[h.bp]=(bpCounts[h.bp]||0)+1; });
-    const topBPs=Object.entries(bpCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    const maxBP=topBPs[0]?.[1]||1;
-    if(topBPs.length){
-      html += `<div class="stitle" style="margin-top:14px;margin-bottom:8px;">Centros más visitados</div>`;
-      topBPs.forEach(([bp,count])=>{
-        const entry=BPS.find(b=>b.bp===bp);
-        html += `<div class="bp-rank">
-          <div style="font-size:11px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${entry?.centro||bp}</div>
-          <div class="bp-rank-bar-wrap"><div class="bp-rank-bar" style="width:${Math.round(100*count/maxBP)}%"></div></div>
-          <div style="font-size:11px;font-weight:700;color:var(--g);flex-shrink:0;">${count}</div>
-        </div>`;
-      });
-    }
-  }
-
-  el.innerHTML = html;
-};
-
-// ══════════════════════════════════════════════════════════════════
-// RESET — clear all fields properly
-// ══════════════════════════════════════════════════════════════════
-// Override resetF to also reset wizard state
-const _origResetF = resetF;
-window.resetF = function(silent=false){
-  if(!silent && !confirm('¿Limpiar todos los datos?')) return;
-  // Call original
-  _origResetF(true);
-  // Clear all field values
-  ['razon','bp','enombre','erut','eemail','rnombre','rrut','rcargo','remail','obj'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.value='';
-  });
-  // Clear BP search display
-  const bpSearch=document.getElementById('bp-search');
-  if(bpSearch) bpSearch.value='';
-  // Reset wizard to step 1
-  pdfGenerated = false;
-  currentStep = 1;
-  goStep(1);
-  updateSendBtn();
-};
-
-// Init send button state on load
-updateSendBtn();
-
-
-
-
-
-
-
-
-// ══════════════════════════════════════════════════════════════════
-// AGENDAR PRÓXIMA VISITA
-// ══════════════════════════════════════════════════════════════════
-let agSelectedActs = new Set();
-let agCustomActs   = [];
-
-function initAgendarPanel(){
-  // Default fecha = 2 semanas desde hoy
-  const ag=document.getElementById('ag-fecha');
-  if(ag&&!ag.value){
-    const d=new Date(); d.setDate(d.getDate()+14);
-    ag.value=d.toISOString().split('T')[0];
-  }
-  // Sugerir objetivo
-  const obj=document.getElementById('ag-objetivo');
-  if(obj&&!obj.value.trim()){
-    const fechaAse=document.getElementById('fecha_a')?.value;
-    obj.value='Seguimiento de compromisos y acuerdos establecidos en asesoría'+(fechaAse?' del '+fd(fechaAse):'')+'.';
-    ar(obj);
-  }
-  agLoadActsFromCurrent();
-}
-
-function agLoadActsFromCurrent(){
-  const wrap=document.getElementById('ag-acts-wrap');
-  if(!wrap) return;
-  agSelectedActs=new Set(); agCustomActs=[];
-  const customWrap=document.getElementById('ag-custom-wrap');
-  if(customWrap) customWrap.innerHTML='';
-
-  const currentActs=acts.map(a=>{
-    const amEl=document.getElementById('am'+a.id);
-    const mot=(amEl?.getAttribute('data-mot')||'').replace(/\s*\([A-Z0-9]+\)\s*$/,'').trim();
-    const acuer=document.getElementById('aa'+a.id)?.value||'';
-    return {mot,acuer};
-  }).filter(a=>a.mot);
-
-  if(!currentActs.length){
-    wrap.innerHTML='<div style="color:var(--g4);font-size:12px;font-style:italic;grid-column:1/-1;padding:8px;">Agrega actividades en el Paso 3 para seleccionarlas aquí.</div>';
-    return;
-  }
-  wrap.innerHTML=currentActs.map((a,i)=>`
-    <label id="ag-lbl-${i}" style="display:flex;align-items:flex-start;gap:8px;background:var(--g1);border:1.5px solid var(--g3);border-radius:7px;padding:8px 10px;cursor:pointer;font-size:12px;transition:border .15s;">
-      <input type="checkbox" id="ag-chk-${i}" onchange="agToggleAct(${i},'${a.mot.replace(/'/g,"\'")}')" style="margin-top:2px;flex-shrink:0;accent-color:var(--g);"/>
-      <span>${a.mot}${a.acuer?'<div style="font-size:10px;color:var(--g4);margin-top:2px;">→ '+a.acuer.substring(0,60)+(a.acuer.length>60?'…':'')+'</div>':''}</span>
-    </label>`).join('');
-}
-
-function agToggleAct(idx,mot){
-  const lbl=document.getElementById('ag-lbl-'+idx);
-  const chk=document.getElementById('ag-chk-'+idx);
-  if(chk.checked){ agSelectedActs.add(mot); if(lbl) lbl.style.borderColor='var(--g)'; }
-  else { agSelectedActs.delete(mot); if(lbl) lbl.style.borderColor='var(--g3)'; }
-}
-
-function agAddCustomAct(){
-  const text=prompt('Punto a tratar en la próxima visita:');
-  if(!text||!text.trim()) return;
-  const t=text.trim();
-  agCustomActs.push(t); agSelectedActs.add(t);
-  const wrap=document.getElementById('ag-custom-wrap');
-  if(wrap){
-    const div=document.createElement('div');
-    div.style.cssText='display:flex;align-items:center;gap:8px;background:var(--gl);border:1.5px solid var(--g);border-radius:7px;padding:8px 10px;margin-bottom:6px;font-size:12px;';
-    const safe=t.replace(/'/g,"\'");
-    div.innerHTML=`<span style="color:var(--gd);flex:1;">✓ ${t}</span><button onclick="this.parentElement.remove();agSelectedActs.delete('${safe}');" style="background:none;border:none;color:var(--g4);cursor:pointer;font-size:14px;padding:0;">✕</button>`;
-    wrap.appendChild(div);
-  }
-  toast('✓ Punto agregado','ok',1500);
-}
-
-function agendarVisita(){
-  const d=gd();
-  const centro=document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'[CENTRO]';
-  const fechaStr=document.getElementById('ag-fecha')?.value;
-  const horaStr=document.getElementById('ag-hora')?.value||'09:00';
-  const durMin=parseInt(document.getElementById('ag-duracion')?.value||'120');
-  const objetivo=document.getElementById('ag-objetivo')?.value||'';
-  if(!fechaStr){ toast('Selecciona la fecha de la próxima visita','err'); return; }
-
-  const selActs=[...agSelectedActs];
-  const puntosBody=selActs.length
-    ? selActs.map((a,i)=>`${i+1}. ${a}`).join('\n')
-    : '(Sin puntos específicos seleccionados)';
-
-  const startDate=new Date(fechaStr+'T'+horaStr+':00');
-  const endDate=new Date(startDate.getTime()+durMin*60000);
-  const fmtICS=dt=>dt.toISOString().replace(/[-:]/g,'').replace('.000','');
-
-  const subject='Próxima AOA | BP '+(d.bp||'')+' | '+centro;
-  const body=`PRÓXIMA ASESORÍA DE ORGANISMO ADMINISTRADOR\n\nCentro: ${centro}\nBP: ${d.bp||''}\nExperto: ${d.enombre||''}${objetivo?'\n\nObjetivo:\n'+objetivo:''}\n\nPUNTOS A TRATAR:\n${puntosBody}\n\nGenerado por AOA Generator ACHS`;
-
-  const ics=[
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AOA Generator ACHS//ES','CALSCALE:GREGORIAN',
-    'BEGIN:VEVENT',
-    `UID:aoa-prox-${d.bp}-${Date.now()}@achs`,
-    `DTSTAMP:${fmtICS(new Date())}`,
-    `DTSTART:${fmtICS(startDate)}`,
-    `DTEND:${fmtICS(endDate)}`,
-    `SUMMARY:${subject}`,
-    `DESCRIPTION:${body.replace(/\n/g,'\\n')}`,
-    `LOCATION:${centro}`,
-    d.eemail?`ORGANIZER;CN="${d.enombre||'Experto ACHS'}":mailto:${d.eemail}`:'',
-    'END:VEVENT','END:VCALENDAR'
-  ].filter(Boolean).join('\r\n');
-
-  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download=`ProximaVisita_BP${d.bp||'XXX'}_${fechaStr.replace(/-/g,'')}.ics`;
-  a.click(); URL.revokeObjectURL(url);
-
-  const statusEl=document.getElementById('ag-status');
-  if(statusEl) statusEl.innerHTML='✅ Archivo <strong>.ics</strong> descargado — ábrelo para importar al calendario de Outlook o Google Calendar.';
-  toast('📅 Próxima visita agendada','ok',4000);
-}
-
-function agendarGmail(){
-  const d=gd();
-  const centro=document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
-  const fechaStr=document.getElementById('ag-fecha')?.value;
-  const horaStr=document.getElementById('ag-hora')?.value||'09:00';
-  const objetivo=document.getElementById('ag-objetivo')?.value||'';
-  const selActs=[...agSelectedActs];
-  const puntosBody=selActs.length
-    ? selActs.map((a,i)=>`${i+1}. ${a}`).join('\n')
-    : '(Sin puntos específicos)';
-
-  const subject='Próxima Asesoría AOA | BP '+(d.bp||'')+' | '+centro+(fechaStr?' | '+fd(fechaStr):'');
-  const body=`Estimado/a ${d.rnombre||'receptor'},\n\nConfirmo la próxima Asesoría de Organismo Administrador (AOA) según lo conversado.\n\nCentro: ${centro}\nFecha propuesta: ${fechaStr?fd(fechaStr):'A confirmar'} a las ${horaStr}\n${objetivo?'\nObjetivo: '+objetivo+'\n':''}\nPUNTOS A TRATAR:\n${puntosBody}\n\nQuedo atento a confirmación.\n\nSaludos,\n${d.enombre||''}\nExperto en Prevención — ACHS\n${d.eemail||''}`;
-
-  const url='https://mail.google.com/mail/?view=cm&fs=1'
-    +(d.remail?'&to='+encodeURIComponent(d.remail):'')
-    +(d.eemail?'&cc='+encodeURIComponent(d.eemail):'')
-    +'&su='+encodeURIComponent(subject)
-    +'&body='+encodeURIComponent(body);
-  window.open(url,'_blank');
-  toast('📧 Abriendo Gmail con la invitación','ok',3000);
-}
-
 
 </script>
 </body>
