@@ -6452,6 +6452,9 @@ function restoreActsFromSnapshot(actsState){
 }
 
 function loadDraft(){
+  // Safety: only run when main-app is visible
+  const app=document.getElementById('main-app');
+  if(!app||app.style.display==='none') return;
   const raw=localStorage.getItem('aoa_draft');
   if(!raw) return;
   try{
@@ -6484,10 +6487,16 @@ function loadDraft(){
   }catch(e){ toast('Error al restaurar borrador: '+e.message,'err'); }
 }
 
-document.addEventListener('input',e=>{if(e.target.closest('#main-app')) markDirty();});
-document.addEventListener('change',e=>{if(e.target.closest('#main-app')) markDirty();});
+document.addEventListener('input',e=>{
+  const app=document.getElementById('main-app');
+  if(app&&app.style.display!=='none'&&e.target.closest('#main-app')) markDirty();
+});
+document.addEventListener('change',e=>{
+  const app=document.getElementById('main-app');
+  if(app&&app.style.display!=='none'&&e.target.closest('#main-app')) markDirty();
+});
 window.addEventListener('beforeunload',e=>{if(isDirty){e.preventDefault();e.returnValue='';}});
-setTimeout(()=>{if(localStorage.getItem('aoa_draft')) loadDraft();},600);
+// Draft se carga después del login
 
 // ══════════════════════════════════════════════════════════════════
 // PLANTILLAS
@@ -6876,8 +6885,11 @@ function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('main-app').style.display='block';
     err.style.display='none';
-    // restore body bg
     document.body.style.background='';
+    // Restaurar borrador guardado (ahora que el DOM está visible)
+    setTimeout(()=>{
+      if(localStorage.getItem('aoa_draft')) loadDraft();
+    }, 300);
   } else {
     err.style.display='block';
     document.getElementById('login-pass').value='';
