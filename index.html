@@ -548,6 +548,38 @@ body.dark .sigla-row:hover{background:#0d2e1e;}
   .act-compact-id{display:none;}
 }
 
+
+/* ── CORCHETES COMO INPUTS INLINE ───────────────────────────── */
+.bracket-field{
+  display:inline-block;
+  background:#fff3cd;
+  border:1.5px dashed #f5a000;
+  border-radius:4px;
+  padding:1px 6px;
+  min-width:60px;
+  color:#8a5000;
+  font-weight:700;
+  font-size:inherit;
+  font-family:inherit;
+  cursor:text;
+  outline:none;
+  transition:all .15s;
+}
+.bracket-field:focus{
+  background:#fff;
+  border-color:var(--g);
+  border-style:solid;
+  color:var(--tx);
+  min-width:100px;
+  box-shadow:0 0 0 2px rgba(19,192,99,.2);
+}
+.bracket-field.filled{
+  background:var(--gl);
+  border-color:var(--g);
+  border-style:solid;
+  color:var(--gd);
+}
+
 </style>
 </head>
 <body>
@@ -615,7 +647,7 @@ body.dark .sigla-row:hover{background:#0d2e1e;}
       <option value="2000294186">INSTITUTO NACIONAL DE GERIATRIA — 2000294186</option>
       <option value="2000294185">INSTITUTO NACIONAL DEL TORAX — 2000294185</option>
     </select>
-    <div id="bp-selected" style="display:none;margin-top:8px;background:var(--gl);border:1.5px solid var(--g);border-radius:7px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+    <div id="bp-selected" style="display:none;margin-top:8px;background:var(--gl);border:1.5px solid var(--g);border-radius:7px;padding:8px 12px;align-items:center;justify-content:space-between;">
       <span id="bp-selected-txt" style="font-size:13px;font-weight:700;color:var(--gd);"></span>
       <button onclick="bpClear()" style="background:none;border:none;cursor:pointer;color:var(--g4);font-size:16px;padding:0 4px;" title="Cambiar">✕</button>
     </div>
@@ -6166,6 +6198,8 @@ function onSubChange(id){
       ar(descEl);
     }
   }
+  // Highlight any remaining brackets
+  setTimeout(()=>highlightBracketsInTextarea(id), 300);
 }
 function updBadge(id){
   const amEl=document.getElementById('am'+id);
@@ -7286,7 +7320,9 @@ function loadDraft(){
 document.addEventListener('input', e=>{ if(e.target.closest('#main-app')) markDirty(); });
 document.addEventListener('change', e=>{ if(e.target.closest('#main-app')) markDirty(); });
 window.addEventListener('beforeunload', e=>{ if(isDirty){ e.preventDefault(); e.returnValue=''; } });
-setTimeout(()=>{ if(localStorage.getItem('aoa_draft')) loadDraft(); }, 600);
+// Limpiar borradores viejos al cargar
+localStorage.removeItem('aoa_draft');
+// Draft auto-load desactivado — usar botón Borrador para restaurar manualmente
 
 // ══════════════════════════════════════════════════════════════════
 // PLANTILLAS
@@ -8022,12 +8058,13 @@ function validateStep(step){
   if(step === 1){
     const bp = document.getElementById('bp').value;
     if(!bp){
-      // Highlight BP selector
-      const bpSearch = document.getElementById('bp-search');
-      if(bpSearch){
-        bpSearch.style.borderColor = '#C8102E';
-        bpSearch.focus();
-        setTimeout(()=>bpSearch.style.borderColor='', 2000);
+      // Highlight native select
+      const nativeSel = document.getElementById('bp-select-native');
+      if(nativeSel){
+        nativeSel.style.borderColor = '#C8102E';
+        nativeSel.style.boxShadow = '0 0 0 3px rgba(200,16,46,.15)';
+        nativeSel.focus();
+        setTimeout(()=>{ nativeSel.style.borderColor=''; nativeSel.style.boxShadow=''; }, 2500);
       }
       toast('Debes seleccionar un Centro / BP para continuar', 'err', 3000);
       return false;
@@ -8471,6 +8508,7 @@ function fillBrackets(id){
 
   // Check for remaining brackets and warn
   checkBrackets(id);
+  highlightBracketsInTextarea(id);
 }
 
 function checkBrackets(id){
@@ -9126,6 +9164,72 @@ window.addAct = function(afterId){
 
 
 
+
+
+// ══════════════════════════════════════════════════════════════════
+// CORCHETES → CAMPOS EDITABLES INLINE
+// Cuando se carga texto con [CORCHETES], los convierte en 
+// cajas amarillas clickeables dentro del textarea
+// ══════════════════════════════════════════════════════════════════
+function highlightBracketsInTextarea(id){
+  const ta = document.getElementById('ad'+id);
+  if(!ta || !ta.value) return;
+
+  // Find brackets and create a tooltip/hint overlay
+  const text = ta.value;
+  const brackets = [...text.matchAll(/\[([^\]]+)\]/g)];
+  if(!brackets.length){
+    ta.classList.remove('bracket-warning');
+    const hint = document.getElementById('bracket-hint-'+id);
+    if(hint) hint.style.display='none';
+    return;
+  }
+
+  // Show warning styling
+  ta.classList.add('bracket-warning');
+
+  // Show or create hint with clickable bracket list
+  let hint = document.getElementById('bracket-hint-'+id);
+  if(!hint){
+    hint = document.createElement('div');
+    hint.id = 'bracket-hint-'+id;
+    hint.style.cssText = 'margin-top:6px;padding:8px 10px;background:#fff3cd;border:1.5px dashed #f5a000;border-radius:6px;font-size:11px;';
+    ta.parentElement.appendChild(hint);
+  }
+
+  const fields = [...new Set(brackets.map(b=>b[1]))];
+  hint.innerHTML = '<span style="font-weight:700;color:#8a5000;">⚠ Completa estos campos:</span><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">'
+    + fields.map(f=>`<button onclick="replaceBracket(${id},'${f.replace(/'/g,"\'")}',this)" style="background:#fff;border:1.5px dashed #f5a000;border-radius:5px;padding:4px 10px;font-size:11px;font-weight:700;color:#8a5000;cursor:pointer;font-family:inherit;" title="Click para reemplazar">${f}</button>`).join('')
+    + '</div>';
+  hint.style.display='block';
+}
+
+function replaceBracket(actId, fieldName, btn){
+  const ta = document.getElementById('ad'+actId);
+  if(!ta) return;
+  const current = ta.value;
+
+  // Inline edit: prompt with current value or empty
+  const val = prompt('Completa el campo "'+fieldName+'":', '');
+  if(val === null) return; // cancelled
+  if(!val.trim()){ toast('Escribe un valor para continuar','warn',2000); return; }
+
+  // Replace ALL occurrences of [fieldName] in the text
+  const regex = new RegExp('\\['+fieldName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\]','g');
+  ta.value = current.replace(regex, val.trim());
+  ar(ta);
+
+  // Mark button as done
+  btn.style.background = 'var(--gl)';
+  btn.style.borderColor = 'var(--g)';
+  btn.style.color = 'var(--gd)';
+  btn.style.borderStyle = 'solid';
+  btn.disabled = true;
+
+  // Re-check if more brackets remain
+  setTimeout(()=>highlightBracketsInTextarea(actId), 100);
+  toast('✓ Reemplazado en la descripción','ok',1500);
+}
 
 </script>
 </body>
