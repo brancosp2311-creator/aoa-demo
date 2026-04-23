@@ -597,23 +597,26 @@ body.dark .sigla-row:hover{background:#0d2e1e;}
     </div>
   </div>
 
-  <!-- BP SELECTOR -->
+  <!-- BP SELECTOR — select nativo, funciona en todos los entornos -->
   <div class="f" style="margin-bottom:10px;">
-    <label>Buscar Centro / BP <span style="color:#C8102E;font-size:10px;">* obligatorio</span></label>
-    <div class="bp-search-wrap">
-      <input class="bp-input" id="bp-search" placeholder="Escribe nombre o número BP..." autocomplete="off"
-        oninput="bpFilter()" onkeydown="bpKey(event)" onfocus="bpOpen()" />
-      <div class="bp-dropdown" id="bp-dd"></div>
-    </div>
-    <div class="bp-selected" id="bp-selected">
-      <span id="bp-selected-txt"></span>
-      <button class="bp-clear" onclick="bpClear()" title="Cambiar centro">✕</button>
+    <label>Centro / BP <span style="color:#C8102E;font-size:10px;">* obligatorio</span></label>
+    <select id="bp-select-native"
+      style="width:100%;padding:11px 12px;border:1.5px solid var(--g3);border-radius:8px;font-family:inherit;font-size:14px;background:var(--wh);color:var(--tx);cursor:pointer;appearance:auto;"
+      onchange="bpSelectFromNative(this.value)">
+      <option value="">— Selecciona un centro —</option>
+    </select>
+    <div id="bp-selected" style="display:none;margin-top:8px;background:var(--gl);border:1.5px solid var(--g);border-radius:7px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+      <span id="bp-selected-txt" style="font-size:13px;font-weight:700;color:var(--gd);"></span>
+      <button onclick="bpClear()" style="background:none;border:none;cursor:pointer;color:var(--g4);font-size:16px;padding:0 4px;" title="Cambiar">✕</button>
     </div>
   </div>
 
-  <!-- Hidden fields populated by bpSelect -->
+  <!-- Hidden fields populated by bpSelectFromNative -->
   <input type="hidden" id="razon" value=""/>
   <input type="hidden" id="bp" value=""/>
+  <!-- Compat: mantener bp-search y bp-dd ocultos para no romper funciones que los referencian -->
+  <input type="hidden" id="bp-search" value=""/>
+  <div id="bp-dd" style="display:none;"></div>
 
   <!-- FECHA + MODALIDAD -->
   <div class="g2" style="margin-top:14px;">
@@ -6639,45 +6642,19 @@ function resetF(silent=false){
   document.getElementById('cnt').textContent='0';
   document.getElementById('fecha_a').value=tod();
 
-// ── BP DROPDOWN — Event delegation (compatible con GitHub Pages) ──
+// ── Poblar el select nativo con todos los BPs ────────────────────
 (function(){
-  const dd = document.getElementById('bp-dd');
-  if(!dd) return;
-
-  // Click/tap on dropdown item
-  dd.addEventListener('mousedown', function(e){
-    const opt = e.target.closest('.bp-opt');
-    if(opt && opt.dataset.bp){
-      e.preventDefault();
-      bpSelect(opt.dataset.bp);
-    }
+  const sel = document.getElementById('bp-select-native');
+  if(!sel) return;
+  BPS.forEach(b=>{
+    const opt = document.createElement('option');
+    opt.value = b.bp;
+    opt.textContent = b.centro + ' — ' + b.bp;
+    sel.appendChild(opt);
   });
-
-  // Touch support for mobile
-  dd.addEventListener('touchstart', function(e){
-    const opt = e.target.closest('.bp-opt');
-    if(opt && opt.dataset.bp){
-      e.preventDefault();
-      bpSelect(opt.dataset.bp);
-    }
-  }, {passive:false});
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(e){
-    const search = document.getElementById('bp-search');
-    if(!dd.contains(e.target) && e.target !== search){
-      dd.classList.remove('open');
-    }
-  });
-
-  // Close on blur with delay
-  const search = document.getElementById('bp-search');
-  if(search){
-    search.addEventListener('blur', function(){
-      setTimeout(()=>dd.classList.remove('open'), 250);
-    });
-  }
 })();
+
+// BP selector: usando select nativo
   document.getElementById('fcump').value='';
   document.getElementById('razon').value='';
   document.getElementById('bp').value='';
@@ -6740,6 +6717,20 @@ function bpKey(e){
   else if(e.key==='Escape'){dd.classList.remove('open');}
 }
 
+function bpSelectFromNative(bpNum){
+  if(!bpNum){ bpClear(); return; }
+  // Reutiliza la lógica existente de bpSelect
+  bpSelect(bpNum);
+  // Mostrar badge de seleccionado
+  const entry = BPS.find(b=>b.bp===bpNum);
+  if(entry){
+    const sel = document.getElementById('bp-selected');
+    const txt = document.getElementById('bp-selected-txt');
+    if(txt) txt.textContent = entry.centro + ' — ' + bpNum;
+    if(sel) sel.style.display = 'flex';
+  }
+}
+
 function bpSelect(bpNum){
   const entry=BPS.find(b=>b.bp===bpNum);
   if(!entry) return;
@@ -6788,6 +6779,12 @@ function bpSelect(bpNum){
 }
 
 function bpClear(){
+  // Reset native select
+  const nativeSel=document.getElementById('bp-select-native');
+  if(nativeSel) nativeSel.value='';
+  // Hide selected badge
+  const badge=document.getElementById('bp-selected');
+  if(badge) badge.style.display='none';
   document.getElementById('razon').value='';
   const sub=document.getElementById('razon-sub');
   if(sub){sub.textContent='';sub.style.display='none';}
