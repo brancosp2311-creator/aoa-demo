@@ -6134,7 +6134,9 @@ function onSubChange(id){
         if(!el||el.getAttribute('data-ia-applied')==='1') return;
         const orig=el.value;
         el.style.borderColor='#ff6b35';
-        const mejorada=await n8nMejorarDescripcion(motivo,'',orig);
+        // Build participantes string for IA context
+        const partsStr = participantes.map(p=>p.nombre+(p.cargo?' ('+p.cargo+')':'')).join(', ');
+        const mejorada=await n8nMejorarDescripcion(motivo,'',orig,partsStr);
         el.style.borderColor='';
         if(mejorada){
           el.value=mejorada; ar(el);
@@ -7005,6 +7007,11 @@ function _runGenPDF(){
       isDirty=false;
       if(typeof pdfGenerated!=='undefined'){ pdfGenerated=true; }
       if(typeof updateSendBtn==='function') updateSendBtn();
+      // ── Registrar en Google Sheets (silencioso) ──
+      n8nRegistrarAOA(d);
+      // ── Guardar copia en Google Drive (silencioso) ──
+      n8nGuardarDrive(d, html);
+      if(typeof updateSendBtn==='function') updateSendBtn();
       // Guardar historial
       if(typeof saveToHistory==='function') setTimeout(()=>{ const dd=gd(); if(dd.bp||dd.razon){ saveToHistory(dd); if(typeof updateHistBadge==='function') updateHistBadge(); } },300);
       if(typeof n8nRegistrarAOA==='function') n8nRegistrarAOA(gd());
@@ -7028,7 +7035,7 @@ document.getElementById('val-modal').addEventListener('click',e=>{
 const N8N = {
   enabled: true,
   base: 'https://null2311.app.n8n.cloud/webhook',
-  endpoints: { registro:'aoa-registro', correo:'aoa-correo', ia:'aoa-ia-descripcion' },
+  endpoints: { registro:'aoa-registro', correo:'aoa-correo', ia:'aoa-ia-descripcion', drive:'aoa-drive' },
   url(k){ return this.base+'/'+this.endpoints[k]; }
 };
 
@@ -7054,6 +7061,23 @@ async function n8nRegistrarAOA(d){
   }catch(e){ console.warn('n8n registro:',e); }
 }
 
+async function n8nGuardarDrive(d, htmlContent){
+  if(!N8N.enabled) return;
+  try{
+    const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
+    await fetch(N8N.url('drive'),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        bp: d.bp,
+        centro,
+        fecha_a: d.fecha_a,
+        html_content: htmlContent
+      })
+    });
+  }catch(e){ console.warn('n8n drive:',e); }
+}
+
 async function n8nEnviarCorreo(to,cc,subject,body){
   if(!N8N.enabled) throw new Error('n8n desactivado');
   const r = await fetch(N8N.url('correo'),{
@@ -7064,17 +7088,21 @@ async function n8nEnviarCorreo(to,cc,subject,body){
   return r.json();
 }
 
-async function n8nMejorarDescripcion(motivo, area, descActual){
+async function n8nMejorarDescripcion(motivo, area, descActual, participantesStr=''){
   if(!N8N.enabled) return null;
   const d = gd();
   try{
+    const centro = document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'';
     const r = await fetch(N8N.url('ia'),{
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         motivo, area: area||'área no especificada',
-        centro: document.getElementById('razon-sub')?.textContent?.replace('▶ ','')||d.razon||'',
+        centro,
         desc_actual: descActual,
-        experto: d.enombre||'Branco Sandoval Palma'
+        experto: d.enombre||'Branco Sandoval Palma',
+        participantes: participantesStr || participantes.map(p=>p.nombre+(p.cargo?' ('+p.cargo+')':'')).join(', '),
+        fecha: d.fecha_a||'',
+        modalidad: d.mod||'Presencial'
       })
     });
     if(r.ok){ const data=await r.json(); return data.descripcion_mejorada||null; }
