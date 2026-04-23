@@ -631,7 +631,7 @@ body.dark .sigla-row:hover{background:#0d2e1e;}
 
   <!-- BP SELECTOR — select nativo, funciona en todos los entornos -->
   <div class="f" style="margin-bottom:10px;">
-    <label>Centro / BP <span style="color:#C8102E;font-size:10px;">* obligatorio</span></label>
+    <label>Centro / BP</label>
     <select id="bp-select-native"
       style="width:100%;padding:11px 12px;border:1.5px solid var(--g3);border-radius:8px;font-family:inherit;font-size:14px;background:var(--wh);color:var(--tx);cursor:pointer;appearance:auto;"
       onchange="bpSelectFromNative(this.value)">
@@ -8055,27 +8055,8 @@ function stepNext(from){
 }
 
 function validateStep(step){
-  if(step === 1){
-    const bp = document.getElementById('bp').value;
-    if(!bp){
-      // Highlight native select
-      const nativeSel = document.getElementById('bp-select-native');
-      if(nativeSel){
-        nativeSel.style.borderColor = '#C8102E';
-        nativeSel.style.boxShadow = '0 0 0 3px rgba(200,16,46,.15)';
-        nativeSel.focus();
-        setTimeout(()=>{ nativeSel.style.borderColor=''; nativeSel.style.boxShadow=''; }, 2500);
-      }
-      toast('Debes seleccionar un Centro / BP para continuar', 'err', 3000);
-      return false;
-    }
-    const fecha = document.getElementById('fecha_a').value;
-    if(!fecha){
-      toast('Selecciona la fecha de la asesoría', 'err', 3000);
-      document.getElementById('fecha_a').focus();
-      return false;
-    }
-  }
+  // Sin validación obligatoria — el usuario puede avanzar libremente
+  // La validación completa ocurre solo al intentar generar el PDF
   return true;
 }
 
