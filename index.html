@@ -604,6 +604,16 @@ body.dark .sigla-row:hover{background:#0d2e1e;}
       style="width:100%;padding:11px 12px;border:1.5px solid var(--g3);border-radius:8px;font-family:inherit;font-size:14px;background:var(--wh);color:var(--tx);cursor:pointer;appearance:auto;"
       onchange="bpSelectFromNative(this.value)">
       <option value="">— Selecciona un centro —</option>
+      <option value="2000574070">DIRECCION S. S. M. ORIENTE — 2000574070</option>
+      <option value="2000294182">HOSPITAL DEL SALVADOR — 2000294182</option>
+      <option value="2000294188">HOSPITAL DR. LUIS TISNE BROUSSE — 2000294188</option>
+      <option value="2000294189">HOSPITAL HANGA ROA — 2000294189</option>
+      <option value="2000294183">HOSPITAL LUIS CALVO MACKENNA — 2000294183</option>
+      <option value="2000906772">HOSPITAL METROPOLITANO DE SANTIAGO — 2000906772</option>
+      <option value="2000294187">INST. NAC. REHAB. PEDRO AGUIRRE CERDA — 2000294187</option>
+      <option value="2000294184">INSTITUTO DE NEUROCIRUGIA — 2000294184</option>
+      <option value="2000294186">INSTITUTO NACIONAL DE GERIATRIA — 2000294186</option>
+      <option value="2000294185">INSTITUTO NACIONAL DEL TORAX — 2000294185</option>
     </select>
     <div id="bp-selected" style="display:none;margin-top:8px;background:var(--gl);border:1.5px solid var(--g);border-radius:7px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
       <span id="bp-selected-txt" style="font-size:13px;font-weight:700;color:var(--gd);"></span>
@@ -6642,17 +6652,7 @@ function resetF(silent=false){
   document.getElementById('cnt').textContent='0';
   document.getElementById('fecha_a').value=tod();
 
-// ── Poblar el select nativo con todos los BPs ────────────────────
-(function(){
-  const sel = document.getElementById('bp-select-native');
-  if(!sel) return;
-  BPS.forEach(b=>{
-    const opt = document.createElement('option');
-    opt.value = b.bp;
-    opt.textContent = b.centro + ' — ' + b.bp;
-    sel.appendChild(opt);
-  });
-})();
+// BP options: generadas estáticamente en HTML
 
 // BP selector: usando select nativo
   document.getElementById('fcump').value='';
