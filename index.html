@@ -730,6 +730,7 @@ body.dark .visit-type-btn{background:var(--s1);}
 
 
 
+
 // ══ DATOS ════════════════════════════════════════════════════════
 const BPS = [
   {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']
@@ -4533,7 +4534,7 @@ function bpSelectFromNative(bpNum){
     if(txt) txt.textContent = entry.centro + ' — ' + bpNum;
     if(badge) badge.classList.add('show');
   }
-  if(sfIds.length > 0) sfRenderIds();
+  if(sfIds.length > 0){ try{ sfRenderIds(); }catch(e){ console.warn('sfRenderIds error:',e); } }
 }
 
 function bpSelect(bpNum){
@@ -4547,26 +4548,33 @@ function bpSelect(bpNum){
   if(entry.referentes && entry.referentes.length > 0){
     if(el('rnombre') && !el('rnombre').value) el('rnombre').value = entry.referentes[0];
   }
-  // Generate objective with OpenAI (blank while loading)
+  // Generate objective with OpenAI — fire and forget, never blocks navigation
   if(el('obj')){
-    var bpCentro=entry.centro||'';
-    el('obj').value='';
-    el('obj').placeholder='Generando con IA...';
-    var iaPrompt='Centro: '+bpCentro+' (BP '+entry.bp+') | DSSMO | Experto: '+(el('enombre')&&el('enombre').value||'Branco Sandoval Palma')+' | Fecha: '+(el('fecha_a')&&el('fecha_a').value||'');
-    n8nMejorarDescripcion('OBJETIVO_BP','GIGE','',iaPrompt).then(function(res){
-      var txt=typeof res==='string'?res:((res&&res.descripcion_mejorada)||(res&&res.descripcion)||'');
-      if(el('obj')){
-        el('obj').value=txt||'Fortalecer el seguimiento preventivo y tecnico de '+bpCentro+', abordando casuistica e inspecciones institucionales que comprometan la seguridad y salud en el trabajo.';
-        el('obj').placeholder='Objetivo de la asesoria...';
-        ar(el('obj'));
+    var bpCentro = entry.centro || '';
+    var fallback = 'Fortalecer el seguimiento preventivo y técnico de ' + bpCentro + ', abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.';
+    el('obj').value = '';
+    el('obj').placeholder = 'Generando objetivo con IA...';
+    setTimeout(function(){
+      try {
+        var iaPrompt = 'Centro: ' + bpCentro + ' (BP ' + entry.bp + ') | DSSMO | Experto: ' +
+          (el('enombre') ? el('enombre').value : 'Branco Sandoval Palma') +
+          ' | Fecha: ' + (el('fecha_a') ? el('fecha_a').value : '');
+        n8nMejorarDescripcion('OBJETIVO_BP', 'GIGE', '', iaPrompt)
+          .then(function(res){
+            if(!el('obj')) return;
+            var txt = typeof res === 'string' ? res : ((res && res.descripcion_mejorada) || (res && res.descripcion) || '');
+            el('obj').value = txt || fallback;
+            el('obj').placeholder = 'Objetivo de la asesoría...';
+            ar(el('obj'));
+          })
+          .catch(function(){
+            if(el('obj')){ el('obj').value = fallback; el('obj').placeholder = 'Objetivo de la asesoría...'; ar(el('obj')); }
+          });
+      } catch(e) {
+        console.warn('BP IA error:', e);
+        if(el('obj')){ el('obj').value = fallback; el('obj').placeholder = 'Objetivo de la asesoría...'; ar(el('obj')); }
       }
-    }).catch(function(){
-      if(el('obj')){
-        el('obj').value='Fortalecer el seguimiento preventivo y tecnico de '+bpCentro+', abordando casuistica e inspecciones institucionales.';
-        el('obj').placeholder='Objetivo de la asesoria...';
-        ar(el('obj'));
-      }
-    });
+    }, 200);
   }
   // Set default dates
   if(el('fecha_a') && !el('fecha_a').value) el('fecha_a').value = tod();
@@ -5057,6 +5065,7 @@ function sfRenderIds(){
   var list      = el('sf-ids-list');
   var dropZone  = el('sf-drop-zone');
   if(!container || !list) return;
+  if(!sfIds || !sfIds.length){ container.style.display='none'; return; }
   container.style.display = 'block';
   if(dropZone) dropZone.classList.add('loaded');
 
@@ -5988,6 +5997,7 @@ async function n8nGuardarDrive(d, htmlContent){
 
 async function n8nMejorarDescripcion(tipo, dept, descActual, contextoCompleto){
   if(!N8N.enabled) return null;
+  if(typeof AbortController === 'undefined') return null; // safety check
   var d = gd();
   var bpEntry = BPS.find(function(b){ return b.bp===d.bp; }) || {};
   var centro = bpEntry.centro || d.razon || '';
@@ -6581,6 +6591,7 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
 
 
 
