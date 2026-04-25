@@ -698,6 +698,8 @@ body.dark .visit-type-btn{background:var(--s1);}
 
 <script>
 
+
+
 // ══ DATOS ════════════════════════════════════════════════════════
 const BPS = [
   {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']},
@@ -4654,16 +4656,21 @@ function populateMotivoSelect(id, dept){
   if(!sel) return;
   const currentVal = sel.getAttribute('data-mot') || sel.value || '';
   sel.innerHTML = '<option value="">— Selecciona el motivo —</option>';
-  const motivos = Object.keys(TEXTOS[dept] || {});
-  motivos.forEach(m=>{
+  // TEXTOS is a flat dict: {CODE: {desc, acuer}}
+  // Show all entries as options — code + first 60 chars of desc
+  const codes = Object.keys(TEXTOS||{});
+  codes.forEach(code=>{
+    const entry = TEXTOS[code];
+    if(!entry) return;
+    const label = code + ' — ' + (entry.desc||'').slice(0,70).replace(/\[.*?\]/g,'...').trim();
     const opt = document.createElement('option');
-    opt.value = m; opt.textContent = m;
+    opt.value = code;
+    opt.textContent = label;
     sel.appendChild(opt);
   });
-  if(currentVal && motivos.includes(currentVal)){
+  if(currentVal && TEXTOS[currentVal]){
     sel.value = currentVal;
     sel.setAttribute('data-mot', currentVal);
-    // Also populate submotivo
     onMotivoChange(id, true);
   }
 }
@@ -4672,38 +4679,26 @@ function onMotivoChange(id, skipReset){
   const mSel  = el('am'+id);
   const ssSel = el('as'+id);
   if(!mSel || !ssSel) return;
-  const dept   = cardDept[id] || 'GIGE';
-  const motivo = mSel.value;
-  mSel.setAttribute('data-mot', motivo);
+  const code = mSel.value;
+  mSel.setAttribute('data-mot', code);
 
-  if(!motivo){ ssSel.style.display='none'; return; }
+  // Hide submotivo — flat TEXTOS has no submotivos
+  ssSel.style.display = 'none';
 
-  const submotivos = TEXTOS[dept]?.[motivo];
-  if(!submotivos || typeof submotivos !== 'object'){
-    ssSel.style.display = 'none';
-    // Direct text
-    if(!skipReset && el('ad'+id)){
-      const txt = typeof submotivos === 'string' ? submotivos : motivo;
-      el('ad'+id).value = txt;
+  if(!code) return;
+
+  // Fill desc and acuerdo from TEXTOS flat entry
+  const entry = TEXTOS[code];
+  if(!skipReset && entry){
+    if(el('ad'+id) && !el('ad'+id).value){
+      el('ad'+id).value = entry.desc || '';
       ar(el('ad'+id));
-      highlightBracketsInTextarea(id);
-      triggerIA(id, motivo, '');
     }
-    return;
-  }
-
-  // Populate submotivo select
-  const currentSub = ssSel.getAttribute('data-sub') || '';
-  ssSel.innerHTML  = '<option value="">— Selecciona el submotivo —</option>';
-  Object.keys(submotivos).forEach(s=>{
-    const opt = document.createElement('option');
-    opt.value = s; opt.textContent = s;
-    ssSel.appendChild(opt);
-  });
-  ssSel.style.display = 'block';
-  if(currentSub && Object.keys(submotivos).includes(currentSub)){
-    ssSel.value = currentSub;
-    onSubChange(id, true);
+    if(el('aa'+id) && !el('aa'+id).value){
+      el('aa'+id).value = entry.acuer || 'Se entrega AOA para gestión interna.';
+      ar(el('aa'+id));
+    }
+    highlightBracketsInTextarea(id);
   }
 }
 
@@ -4716,7 +4711,7 @@ function onSubChange(id, skipReset){
   ssSel.setAttribute('data-sub', sub);
   if(!sub) return;
 
-  const txt = TEXTOS[dept]?.[motivo]?.[sub] || sub;
+  const txt = (TEXTOS[sub]?.desc) || (TEXTOS[motivo]?.desc) || sub;
   if(!skipReset && el('ad'+id)){
     el('ad'+id).value = txt;
     ar(el('ad'+id));
@@ -5147,7 +5142,24 @@ function _runGenPDF(){
 
   setTimeout(()=>{
     try{
-      const html = buildDoc(d);
+      // Build acts array for buildDoc
+      const _actsForDoc = acts.map(a => {
+        const motivo = el('am'+a.id)?.getAttribute('data-mot') || '';
+        const idaVal = el('aid'+a.id)?.value || '';
+        const descVal = el('ad'+a.id)?.value || '';
+        const acuerdo = el('aa'+a.id)?.value || 'Se entrega AOA para gestión interna.';
+        return {
+          fecha: d.fecha_a,
+          ida: idaVal,
+          motivo: motivo,
+          desc: descVal,
+          acuerdo: acuerdo,
+          responsable: d.enombre || 'Branco Sandoval Palma',
+          cargo_resp: 'Experto ACHS',
+          fcump: d.fcump,
+        };
+      });
+      const html = buildDoc({...d, acts: _actsForDoc, participantes});
       lastPdfHtml = html;
 
       // Inject into print-area
@@ -5240,7 +5252,8 @@ function renderGenSummary(){
         <div style="border-top:1px solid var(--s2);padding-top:12px;">
           <div style="font-size:9px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;">Actividades</div>
           ${acts.map((a,i)=>{
-            const motivo = el('am'+a.id)?.getAttribute('data-mot')||'';
+            const code = el('am'+a.id)?.getAttribute('data-mot')||'';
+            const motivo = code ? (TEXTOS[code] ? code+' — '+(TEXTOS[code].desc||'').slice(0,60) : code) : '';
             const id     = el('aid'+a.id)?.value||'—';
             const dept   = cardDept[a.id]||'';
             return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--s2);">
@@ -6331,6 +6344,8 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
+
 
 </script>
 </body>
