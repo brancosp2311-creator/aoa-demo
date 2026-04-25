@@ -340,6 +340,11 @@ body.dark .visit-type-btn{background:var(--s1);}
   .part-add-row{grid-template-columns:1fr auto;}
 }
 </style>
+<!-- PDF.js for Salesforce PDF parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- SheetJS for Excel parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </head>
 <body>
 
@@ -706,6 +711,9 @@ body.dark .visit-type-btn{background:var(--s1);}
 </div>
 
 <script>
+
+
+
 
 
 
@@ -4541,7 +4549,7 @@ function bpSelect(bpNum){
     el('obj').placeholder='Generando con IA...';
     var iaPrompt='Centro: '+bpCentro+' (BP '+entry.bp+') | DSSMO | Experto: '+(el('enombre')&&el('enombre').value||'Branco Sandoval Palma')+' | Fecha: '+(el('fecha_a')&&el('fecha_a').value||'');
     n8nMejorarDescripcion('OBJETIVO_BP','GIGE','',iaPrompt).then(function(res){
-      var txt=typeof res==='string'?res:(res&&res.descripcion_mejorada||res&&res.descripcion||'');
+      var txt=typeof res==='string'?res:((res&&res.descripcion_mejorada)||(res&&res.descripcion)||'');
       if(el('obj')){
         el('obj').value=txt||'Fortalecer el seguimiento preventivo y tecnico de '+bpCentro+', abordando casuistica e inspecciones institucionales que comprometan la seguridad y salud en el trabajo.';
         el('obj').placeholder='Objetivo de la asesoria...';
@@ -4782,6 +4790,18 @@ function onSubChange(id, skipReset){
     if(el('aa'+id)) el('aa'+id).value='';
     triggerIA(id,mCode,subCode);
   }
+  // Try auto-match SF ID for this activity
+  if(sfIds.length){
+    var inp=el('aid'+id);
+    if(inp&&!inp.value.trim()){
+      var match=sfIds.find(function(s){
+        if(sfUsedIds.has(s.id)) return false;
+        var lbl=(s.label||'').toUpperCase();
+        return subCode&&lbl.includes(subCode.toUpperCase());
+      });
+      if(match){ inp.value=match.id; sfUsedIds.add(match.id); isDirty=true; sfRenderIds(); }
+    }
+  }
 }
 
 function triggerIA(id, mCode, subCode){
@@ -4803,7 +4823,7 @@ function triggerIA(id, mCode, subCode){
   var prompt='Centro: '+centro+' (BP '+(d.bp||'—')+') | Fecha: '+(d.fecha_a||'—')+' | Modalidad: '+(d.mod||'Presencial')+' | Experto: '+(d.enombre||'Branco Sandoval Palma')+' | Receptor: '+(d.rnombre||'—')+' | Dept: '+dept+' | Motivo: '+mLabel+' | Submotivo: '+sLabel+(ctx?' | '+ctx:'');
   n8nMejorarDescripcion(mCode+'|'+subCode,dept,'',prompt)
     .then(function(res){
-      var txt = typeof res==='string' ? res : (res&&res.descripcion);
+      var txt = typeof res==='string' ? res : (res&&(res.descripcion_mejorada||res.descripcion));
       var acuerdo = res&&res.acuerdo||'';
       if(txt&&el('ad'+id)){ el('ad'+id).value=txt; ar(el('ad'+id)); checkBrackets(id); }
       if(acuerdo&&el('aa'+id)&&!el('aa'+id).value){ el('aa'+id).value=acuerdo; ar(el('aa'+id)); }
@@ -4877,27 +4897,48 @@ function sfHandleDrop(e){
 function sfLoadFile(file){
   if(!file) return;
   const ext = (file.name||'').split('.').pop().toLowerCase();
+
   if(ext==='pdf'){
-    // PDF: read as ArrayBuffer, extract 8-10 digit numbers directly from binary text
+    // Use PDF.js to extract text with proper glyph mapping
     const reader = new FileReader();
-    reader.onload = e=>{
+    reader.onload = async function(e){
       try{
-        // Convert ArrayBuffer to string safely (latin-1 pass-through)
-        const arr = new Uint8Array(e.target.result);
-        let text = '';
-        // Extract only printable ASCII from PDF binary
-        for(let i=0; i<arr.length; i++){
-          const c = arr[i];
-          if(c>=32&&c<127) text += String.fromCharCode(c);
-          else if(c===10||c===13) text += ' ';
+        // Set PDF.js worker
+        if(typeof pdfjsLib === 'undefined'){
+          toast('PDF.js no disponible. Usa Excel o CSV en su lugar.','warn',6000);
+          return;
         }
-        sfParseRows(text, file.name);
-      }catch(err){ toast('Error al leer PDF: '+err.message,'err',5000); }
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const typedArray = new Uint8Array(e.target.result);
+        const pdf = await pdfjsLib.getDocument({data: typedArray}).promise;
+        let fullText = '';
+        for(let p=1; p<=pdf.numPages; p++){
+          const page = await pdf.getPage(p);
+          const tc = await page.getTextContent();
+          // Join items with space, rows with newline
+          let lastY = null;
+          tc.items.forEach(function(item){
+            if(lastY !== null && Math.abs(item.transform[5] - lastY) > 5){
+              fullText += '\n';
+            }
+            fullText += item.str + ' ';
+            lastY = item.transform[5];
+          });
+          fullText += '\n';
+        }
+        sfParseRows(fullText, file.name);
+      } catch(err){
+        toast('Error al leer PDF: '+err.message+'. Intenta exportar como Excel desde Salesforce.','err',7000);
+        console.error(err);
+      }
     };
     reader.readAsArrayBuffer(file);
+
   } else if(ext==='xlsx'||ext==='xls'){
     const reader = new FileReader();
-    reader.onload = e=>{
+    reader.onload = function(e){
       try{
         const wb = XLSX.read(e.target.result, {type:'binary'});
         const ws = wb.Sheets[wb.SheetNames[0]];
@@ -4906,61 +4947,69 @@ function sfLoadFile(file){
       }catch(err){ toast('Error al leer Excel: '+err.message,'err',5000); }
     };
     reader.readAsBinaryString(file);
+
   } else {
     // CSV / text
     const reader = new FileReader();
-    reader.onload = e=>{
+    reader.onload = function(e){
       try{ sfParseRows(e.target.result, file.name); }
-      catch(err){ toast('Error al leer archivo: '+err.message,'err',5000); }
+      catch(err){ toast('Error: '+err.message,'err',5000); }
     };
     reader.readAsText(file, 'UTF-8');
   }
 }
 
 function sfParseRows(data, filename){
-  // Extract 8-10 digit numeric IDs from any text (PDF, CSV, Excel)
-  // Also try to extract context (BP/centro) near each ID
-  const bpMap = {};
-  // BPS codes for context lookup
-  BPS.forEach(function(b){ bpMap[b.bp] = b.centro; });
-
-  // Split into lines
+  // Extract Salesforce N° de Asesoria (8-digit IDs starting with ~116xxxxx)
+  // Skip zero-padded, BP codes, dates
   const lines = data.split(/[\r\n]+/).map(function(l){ return l.trim(); }).filter(Boolean);
   const ids = [];
   const seen = new Set();
+  const bpCodes = new Set(BPS.map(function(b){ return b.bp; }));
 
   lines.forEach(function(line){
-    // Find all 8-10 digit numbers in this line
-    const nums = line.match(/\b(\d{8,10})\b/g)||[];
+    const nums = line.match(/\b(\d{7,10})\b/g) || [];
     nums.forEach(function(num){
       if(seen.has(num)) return;
-      // Skip numbers that look like BP codes (known BPs)
-      const isBP = BPS.some(function(b){ return b.bp===num; });
-      if(isBP) return;
-      // Skip numbers that are all same digit or obviously not IDs
-      if(/^(\d)\1+$/.test(num)) return;
+      if(bpCodes.has(num)) return;
+      if(/^0{4}/.test(num)) return;            // zero-padded font artifacts
+      if(/^202[0-9]/.test(num)) return;        // dates like 20260430
+      if(/^(\d)\1{5,}$/.test(num)) return;   // all same digit
       seen.add(num);
-      // Build context label: look for BP, centro or motivo keywords near this line
+
+      // Build label — prioritize submotivo code (e.g. SOP04, ITC109, AAD01)
       let label = '';
-      // Look for known BP in same line
+      // 1. BP match → centro name
       const bpInLine = BPS.find(function(b){ return line.includes(b.bp); });
-      if(bpInLine) label = bpInLine.centro+' — ';
-      // Look for motivo code in same line (e.g. SOP, AAD, ITC)
-      const motivoMatch = line.match(/\b([A-Z]{2,4})\d{2,3}\b/);
-      if(motivoMatch) label += motivoMatch[0];
-      if(!label) label = line.replace(/[^\x20-\x7Eá-úÁ-ÚñÑ]/g,'').slice(0,70).trim();
-      ids.push({id:num, label:label||'—'});
+      if(bpInLine) label = bpInLine.centro + ' · ';
+
+      // 2. Submotivo code (e.g. SOP04, ITC109, AAD01, APD04)
+      const submotivoMatch = line.match(/\b([A-Z]{2,4}\d{2,4})\b/g);
+      if(submotivoMatch && submotivoMatch.length){
+        // Filter out things that look like ids or dates
+        const codes = submotivoMatch.filter(function(m){ return !/^\d/.test(m) && m.length<=7; });
+        if(codes.length) label += codes.join(' / ');
+      }
+
+      // 3. Fallback: cleaned line text
+      if(!label || label.endsWith(' · ')){
+        const cleaned = line.replace(/[^\x20-\x7Eá-úÁ-ÚñÑ]/g,' ').replace(/\s+/g,' ').slice(0,70).trim();
+        label += cleaned;
+      }
+
+      ids.push({id: num, label: label.trim() || '—'});
     });
   });
 
   if(!ids.length){
-    toast('No se encontraron IDs en el archivo. Usa el PDF de Salesforce o un Excel/CSV con los números de asesoría.','warn',6000);
+    toast('No se encontraron IDs válidos. Asegúrate de usar el PDF o Excel de "Mis Asesorías" de Salesforce.','warn',8000);
     return;
   }
+
   sfIds = ids;
   sfUsedIds = new Set();
   sfRenderIds();
-  toast('✓ '+ids.length+' IDs cargados desde '+filename,'ok');
+  toast('✓ ' + ids.length + ' IDs cargados desde ' + filename, 'ok');
 }
 
 function sfRenderIds(){
@@ -4970,8 +5019,12 @@ function sfRenderIds(){
   if(!container || !list) return;
   container.style.display = 'block';
   if(dropZone) dropZone.classList.add('loaded');
+
+  // Try auto-match: assign IDs to acts that have matching motivo/submotivo codes
+  sfAutoMatch();
+
   list.innerHTML = sfIds.map(s=>`
-    <div class="sf-id-row">
+    <div class="sf-id-row" id="sfrow-${s.id}">
       <span class="sf-id-num">${s.id}</span>
       <span class="sf-id-label">${s.label||'—'}</span>
       ${sfUsedIds.has(s.id)
@@ -4980,6 +5033,38 @@ function sfRenderIds(){
       }
     </div>
   `).join('');
+}
+
+// Auto-match: try to assign SF IDs to activities based on submotivo code in label
+function sfAutoMatch(){
+  if(!sfIds.length || !acts.length) return;
+  let matched = 0;
+  acts.forEach(function(a){
+    // Skip if already has an ID
+    const inp = el('aid'+a.id);
+    if(!inp || inp.value.trim()) return;
+
+    const subCode = el('as'+a.id)&&el('as'+a.id).getAttribute('data-sub')||'';
+    const mCode   = el('am'+a.id)&&el('am'+a.id).getAttribute('data-mot')||'';
+    if(!subCode && !mCode) return;
+
+    // Find an unassigned sfId whose label contains this submotivo or motivo code
+    const match = sfIds.find(function(s){
+      if(sfUsedIds.has(s.id)) return false;
+      const lbl = (s.label||'').toUpperCase();
+      if(subCode && lbl.includes(subCode.toUpperCase())) return true;
+      if(mCode   && lbl.includes(mCode.toUpperCase()))   return true;
+      return false;
+    });
+
+    if(match){
+      inp.value = match.id;
+      sfUsedIds.add(match.id);
+      isDirty = true;
+      matched++;
+    }
+  });
+  if(matched > 0) toast('✓ '+matched+' ID'+(matched>1?'s':'')+' auto-asignado'+(matched>1?'s':'')+' por submotivo','ok');
 }
 
 function sfClear(){
@@ -5012,40 +5097,31 @@ function sfAutoAssign(){
 // ── VISIT TEMPLATES ───────────────────────────────────────────────
 const VISIT_TEMPLATES = [
   {
-    name: 'Visita Estándar',
-    icon: '📋',
-    acts: [
-      {dept:'GIGE', motivo:'Análisis casuístico semanal'},
-      {dept:'GIGE', motivo:'Cierre mensual — Accidentes de Trabajo'},
-      {dept:'GIGE', motivo:'Asesoría a CPHS'},
-      {dept:'HYE', motivo:'Inspección de condiciones ambientales'},
-      {dept:'RED', motivo:'Revisión reglamento interno'},
-    ]
-  },
-  {
-    name: 'Visita CPHS',
-    icon: '🤝',
-    acts: [
-      {dept:'GIGE', motivo:'Análisis casuístico semanal'},
-      {dept:'GIGE', motivo:'Asesoría a CPHS'},
-      {dept:'GIGE', motivo:'Investigación de accidentes'},
-    ]
-  },
-  {
-    name: 'Visita Técnica',
-    icon: '🔧',
-    acts: [
-      {dept:'HYE', motivo:'Inspección de condiciones ambientales'},
-      {dept:'HYE', motivo:'Evaluación de riesgos ergonómicos'},
-      {dept:'GIGE', motivo:'Actualización MIPER'},
-    ]
-  },
-  {
-    name: 'Administrativa',
+    name: 'Casuística semanal',
     icon: '📊',
     acts: [
-      {dept:'GIGE', motivo:'Análisis casuístico semanal'},
-      {dept:'GIGE', motivo:'Cierre mensual — Accidentes de Trabajo'},
+      {dept:'GIGE', mCode:'ITC', sCode:'ITC109'},
+    ]
+  },
+  {
+    name: 'CPHS',
+    icon: '🤝',
+    acts: [
+      {dept:'GIGE', mCode:'CPH', sCode:'CPH01'},
+    ]
+  },
+  {
+    name: 'MIPER',
+    icon: '📋',
+    acts: [
+      {dept:'GIGE', mCode:'ARS', sCode:'ARS04'},
+    ]
+  },
+  {
+    name: 'Reunión Jefatura',
+    icon: '👥',
+    acts: [
+      {dept:'GIGE', mCode:'SOP', sCode:'SOP04'},
     ]
   }
 ];
@@ -5062,29 +5138,39 @@ function renderVisitTypes(){
   `).join('');
 }
 
-function loadVisitTemplate(i){
-  const tpl = VISIT_TEMPLATES[i];
+function loadVisitTemplate(tplIdx){
+  const tpl = VISIT_TEMPLATES[tplIdx];
   if(!tpl) return;
-  // Clear existing activities
-  acts = []; cardDept = {};
-  // Add template activities
-  tpl.acts.forEach(a=>{
-    actIdCounter++;
-    acts.push({id: actIdCounter});
-    cardDept[actIdCounter] = a.dept || 'GIGE';
-  });
+  // Each template adds ONE activity
+  actIdCounter++;
+  const id = actIdCounter;
+  acts.push({id});
+  cardDept[id] = tpl.acts[0]&&tpl.acts[0].dept || 'GIGE';
   renderActs();
-  // Set motivos after render
-  tpl.acts.forEach((a,idx)=>{
-    const actId = idx + (actIdCounter - tpl.acts.length + 1);
-    const sel = el('am'+actId);
-    if(sel){
-      sel.value = a.motivo || '';
-      sel.setAttribute('data-mot', a.motivo || '');
-      onMotivoChange(actId);
-    }
-  });
-  toast(`✓ Plantilla "${tpl.name}" cargada (${tpl.acts.length} actividades)`, 'ok');
+
+  // Set motivo + submotivo from BIBLIOTECA codes
+  const a0 = tpl.acts[0];
+  if(a0){
+    setTimeout(function(){
+      const mSel = el('am'+id);
+      if(mSel && a0.mCode){
+        mSel.value = a0.mCode;
+        mSel.setAttribute('data-mot', a0.mCode);
+        onMotivoChange(id, false);
+        if(a0.sCode){
+          setTimeout(function(){
+            const sSel = el('as'+id);
+            if(sSel){
+              sSel.value = a0.sCode;
+              sSel.setAttribute('data-sub', a0.sCode);
+              onSubChange(id, false);
+            }
+          }, 100);
+        }
+      }
+    }, 50);
+  }
+  toast('✓ Actividad "'+tpl.name+'" agregada','ok');
   updateProgress();
   renderLivePreview();
 }
@@ -5830,7 +5916,11 @@ async function n8nMejorarDescripcion(tipo, dept, descActual, contextoCompleto){
           fecha:d.fecha_a||'',modalidad:d.mod||'Presencial',contexto:contextoCompleto||''
         })});
       if(r.ok){ var data=await r.json(); return data; }
-    }catch(e){ console.warn('n8n IA:',e); }
+    }catch(e){
+      console.warn('n8n IA error:', e.message||e);
+      // Show toast only if it looks like a network error (not a 4xx from n8n)
+      if(e.name==='TypeError') toast('Error de red al contactar IA. Verifica conexión.','warn',4000);
+    }
     return null;
   }).catch(function(){ return null; }));
   return resultado;
@@ -6349,6 +6439,9 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
+
+
 
 
 
