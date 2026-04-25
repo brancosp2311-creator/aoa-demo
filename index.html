@@ -476,6 +476,7 @@ body.dark .visit-type-btn{background:var(--s1);}
   <div class="tab" id="step-tab-4" onclick="goStep(4)">4 · Generar</div>
   <div class="tab" id="step-tab-hist" onclick="showTab('historial',this)">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
   <div class="tab" id="step-tab-stats" onclick="showTab('stats',this)">📊 KPI</div>
+  <div class="tab" id="step-tab-acts-mes" onclick="showTab('acts-mes',this)">📅 Actividades</div>
 </div>
 
 <!-- PASO 1: CENTRO -->
@@ -714,6 +715,9 @@ body.dark .visit-type-btn{background:var(--s1);}
 </div>
 
 <script>
+
+
+
 
 
 
@@ -4514,6 +4518,7 @@ function showTab(name, tabEl){
   if(tabEl) tabEl.classList.add('active');
   if(name==='historial') renderHistory();
   if(name==='stats') renderStats();
+  if(name==='acts-mes') renderActsMes();
   window.scrollTo(0,0);
 }
 
@@ -4867,8 +4872,8 @@ function triggerIA(id, mCode, subCode){
       ar(el('aa' + id));
     }
     if(status){
-      status.textContent = txt ? ' · ✓ IA' : ' · Sin respuesta';
-      status.style.color = txt ? 'var(--gd)' : '#dc2626';
+      status.textContent = txt ? ' · ✓' : ' · Reintenta';
+      status.style.color = txt ? 'var(--gd)' : 'var(--tx3)';
     }
   }).catch(function(err){
     console.warn('triggerIA error:', err);
@@ -5481,7 +5486,7 @@ function _runGenPDF(){
         const entry = TEXTOS[motivoKey] || TEXTOS[prefix+'01'] || {};
         // For display in PDF: clean desc without "[placeholders]"
         const descRaw = el('ad'+a.id)?.value || entry.desc || '';
-        const acuerdo = el('aa'+a.id)?.value || entry.acuer || 'Se entrega AOA para gestión interna.';
+        const acuerdo = (el('aa'+a.id)?.value||'').trim() || (entry&&entry.acuer||'') || 'Se entrega AOA para gestión interna.';
         // Title = submotivo code + short desc cleaned
         // Build human-readable title from BIBLIOTECA
         const dept2 = cardDept[a.id] || 'GIGE';
@@ -6017,50 +6022,34 @@ async function n8nGuardarDrive(d, htmlContent){
 
 async function n8nMejorarDescripcion(tipo, dept, descActual, contextoCompleto){
   if(!N8N.enabled) return null;
-  if(typeof AbortController === 'undefined') return null; // safety check
   var d = gd();
   var bpEntry = BPS.find(function(b){ return b.bp===d.bp; }) || {};
   var centro = bpEntry.centro || d.razon || '';
   var payload = {
-    tipo: tipo,
-    dept: dept,
-    centro: centro,
-    bp: d.bp || '',
+    tipo: tipo, dept: dept, centro: centro, bp: d.bp || '',
     experto: d.enombre || 'Branco Sandoval Palma',
-    receptor: d.rnombre || '',
-    cargo_receptor: d.rcargo || '',
+    receptor: d.rnombre || '', cargo_receptor: d.rcargo || '',
     participantes: participantes.map(function(p){
       return p.nombre + (p.cargo ? ' (' + p.cargo + ')' : '');
     }).join(', '),
-    fecha: d.fecha_a || '',
-    modalidad: d.mod || 'Presencial',
+    fecha: d.fecha_a || '', modalidad: d.mod || 'Presencial',
     contexto: contextoCompleto || ''
   };
   try {
-    var controller = new AbortController();
-    var timeout = setTimeout(function(){ controller.abort(); }, 15000);
     var r = await fetch(N8N.url('ia'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      mode: 'cors',
-      body: JSON.stringify(payload),
-      signal: controller.signal
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-    clearTimeout(timeout);
     if(r.ok){
       var data = await r.json();
       return data;
     } else {
-      console.warn('n8n IA HTTP ' + r.status);
+      console.warn('n8n IA HTTP:', r.status);
       return null;
     }
   } catch(e) {
-    if(e.name === 'AbortError'){
-      toast('IA tardó demasiado (>15s). Intenta de nuevo.','warn',4000);
-    } else {
-      console.warn('n8n IA fetch error:', e.message);
-      toast('Error contactando IA: ' + e.message,'warn',4000);
-    }
+    console.warn('n8n IA error:', e.name, e.message);
     return null;
   }
 }
@@ -6699,6 +6688,9 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
+
+
 
 
 
