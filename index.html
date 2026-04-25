@@ -708,9 +708,13 @@ body.dark .visit-type-btn{background:var(--s1);}
   <button class="btn-s" onclick="saveDraft()">💾 Borrador</button>
   <button class="btn-p green" id="gen-pdf-btn" onclick="genPDF()" style="flex:3;font-size:13px;font-weight:800;">📄 Generar PDF</button>
   <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" style="opacity:.4;cursor:not-allowed;" title="Genera el PDF primero">📧 Enviar</button>
+
+<!-- PASO 7: ACTIVIDADES DEL MES -->
+<div class="panel" id="tab-acts-mes"><div class="step-hdr"><div class="step-icon">📅</div><div><div class="step-t" id="acts-mes-title">Actividades del Mes</div><div class="step-sub">Asesorías cargadas desde Salesforce — filtradas por BP</div></div></div><div id="acts-mes-content" style="overflow-x:auto;padding:8px;"><div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce y selecciona un centro.</div></div></div>
 </div>
 
 <script>
+
 
 
 
@@ -4478,8 +4482,8 @@ function renderLivePreview(){
 }
 
 // ── TABS / WIZARD ────────────────────────────────────────────────
-const STEP_TABS = {1:'tab-datos', 2:'tab-firmas', 3:'tab-acts', 4:'tab-gen'};
-const PANEL_IDS = ['tab-datos','tab-firmas','tab-acts','tab-gen','tab-historial','tab-stats'];
+const STEP_TABS = {1:'tab-datos', 2:'tab-firmas', 3:'tab-acts', 4:'tab-gen', 5:'tab-historial', 6:'tab-stats', 7:'tab-acts-mes'};
+const PANEL_IDS = ['tab-datos','tab-firmas','tab-acts','tab-gen','tab-historial','tab-stats','tab-acts-mes'];
 
 function goStep(n){
   currentStep = n;
@@ -4498,6 +4502,7 @@ function goStep(n){
   updateProgress();
   if(n===4) renderGenSummary();
   if(isPreviewOpen) renderLivePreview();
+  if(n===7) renderActsMes();
   window.scrollTo(0,0);
 }
 
@@ -5000,65 +5005,79 @@ function sfLoadFile(file){
 }
 
 function sfParseRows(data, filename){
-  // Parse Salesforce "Mis Asesorías" export
-  // Extract: N° de Asesoría, BP, Motivo code, Submotivo code
-  var lines = data.split(/[\r\n]+/).map(function(l){ return l.trim(); }).filter(Boolean);
-  var ids = [];
-  var seen = new Set();
   var bpCodes = new Set(BPS.map(function(b){ return b.bp; }));
+  var bpMap = {};
+  BPS.forEach(function(b){ bpMap[b.bp] = b.centro; });
 
-  lines.forEach(function(line){
-    // Find all 7-10 digit numbers
-    var nums = line.match(/\b(\d{7,10})\b/g) || [];
-    nums.forEach(function(num){
-      if(seen.has(num)) return;
-      if(bpCodes.has(num)) return;           // skip BP codes
-      if(/^0{4}/.test(num)) return;          // skip zero-padded
-      if(/^202[0-9]/.test(num)) return;      // skip dates
-      if(new Set(num.split('')).size === 1) return; // all same digit
+  var EXCLUDE_MOT = new Set(['PPP','SST','BP','RUT','PDF','HTML','AOA','DEL',
+    'ITA','SAL','SER','CON','PAR','PRO','CEN','EST','INC','RED','HYE','SUC',
+    'TIP','ASI','MOT','SUB','FEC','VEN','EST','CEN']);
 
-      seen.add(num);
+  // Step 1: find ALL ID positions in raw text (slice-between-IDs approach)
+  var idRe = /\b(\d{7,10})\b/g;
+  var allMatches = [];
+  var m;
+  while((m = idRe.exec(data)) !== null){
+    var num = m[1];
+    if(bpCodes.has(num)) continue;
+    if(/^0{4}/.test(num)) continue;
+    if(/^202[0-9]/.test(num)) continue;
+    if(new Set(num.split('')).size === 1) continue;
+    allMatches.push({pos: m.index, id: num});
+  }
 
-      // Extract BP from same line
-      var bpInLine = BPS.find(function(b){ return line.includes(b.bp); });
-      var bp = bpInLine ? bpInLine.bp : '';
-      var centro = bpInLine ? bpInLine.centro : '';
-
-      // Extract motivo and submotivo codes (e.g. SOP, AAD, SOP04, ITC109)
-      // Submotivo codes: 2-4 letters + 2-4 digits (e.g. SOP04, ITC109, AAD01)
-      var subMatches = line.match(/\b([A-Z]{2,4}\d{2,4})\b/g) || [];
-      subMatches = subMatches.filter(function(m){ return m.length >= 4 && m.length <= 8; });
-
-      // Motivo codes: 2-4 letters only that appear before the submotivo
-      var motMatches = line.match(/\b([A-Z]{2,4})\b/g) || [];
-      motMatches = motMatches.filter(function(m){ return m.length >= 2 && m.length <= 4 && !/^(BP|RUT|PDF|HTML|AOA|SST|PPP|SAL|SER)$/.test(m); });
-
-      // Build label: centro · submotivo codes
-      var labelParts = [];
-      if(centro) labelParts.push(centro);
-      if(subMatches.length) labelParts.push(subMatches.slice(0,2).join(' / '));
-      else if(motMatches.length) labelParts.push(motMatches.slice(0,2).join(' / '));
-
-      ids.push({
-        id: num,
-        bp: bp,
-        centro: centro,
-        mCodes: motMatches,
-        sCodes: subMatches,
-        label: labelParts.join(' · ') || '—'
-      });
-    });
+  // Deduplicate keeping first occurrence
+  var seen = new Set();
+  var unique = allMatches.filter(function(x){
+    if(seen.has(x.id)) return false;
+    seen.add(x.id); return true;
   });
 
-  if(!ids.length){
-    toast('No se encontraron IDs. Usa el Excel/PDF de "Mis Asesorías" de Salesforce.','warn',7000);
+  if(!unique.length){
+    toast('No se encontraron IDs en el archivo. Usa el Excel/PDF de "Mis Asesorías".','warn',7000);
     return;
   }
+
+  // Step 2: for each ID, slice text until next ID → extract BP + codes
+  var ids = unique.map(function(x, i){
+    var nextPos = i+1 < unique.length ? unique[i+1].pos : data.length;
+    var slice = data.substring(x.pos, nextPos);
+
+    // BP
+    var bp = ''; var centro = '';
+    for(var code in bpMap){
+      if(slice.indexOf(code) >= 0){ bp = code; centro = bpMap[code]; break; }
+    }
+
+    // Submotivo codes: 2-4 letters + 2-4 digits
+    var sCodes = [];
+    var sRe = /\b([A-Z]{2,4}\d{2,4})\b/g; var sm;
+    while((sm = sRe.exec(slice)) !== null){
+      if(sm[1].length>=4 && sm[1].length<=8) sCodes.push(sm[1]);
+    }
+    sCodes = [...new Set(sCodes)];
+
+    // Motivo codes: 2-4 capital letters
+    var mCodes = [];
+    var mRe = /\b([A-Z]{2,4})\b/g; var mm;
+    while((mm = mRe.exec(slice)) !== null){
+      if(!EXCLUDE_MOT.has(mm[1])) mCodes.push(mm[1]);
+    }
+    mCodes = [...new Set(mCodes)];
+
+    // Label
+    var labelParts = [];
+    if(centro) labelParts.push(centro);
+    if(sCodes.length) labelParts.push(sCodes.slice(0,2).join(' / '));
+    else if(mCodes.length) labelParts.push(mCodes.slice(0,2).join(' / '));
+
+    return {id: x.id, bp: bp, centro: centro, sCodes: sCodes, mCodes: mCodes, label: labelParts.join(' · ') || '\u2014'};
+  });
 
   sfIds = ids;
   sfUsedIds = new Set();
   sfRenderIds();
-  toast('✓ ' + ids.length + ' IDs cargados — ' + filename, 'ok');
+  toast('\u2713 ' + ids.length + ' IDs cargados \u2014 ' + filename, 'ok');
 }
 
 function sfRenderIds(){
@@ -6022,7 +6041,8 @@ async function n8nMejorarDescripcion(tipo, dept, descActual, contextoCompleto){
     var timeout = setTimeout(function(){ controller.abort(); }, 15000);
     var r = await fetch(N8N.url('ia'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      mode: 'cors',
       body: JSON.stringify(payload),
       signal: controller.signal
     });
@@ -6151,6 +6171,93 @@ function retriggerIAWithCtx(id){
   if(el('ad'+id)) el('ad'+id).value='';
   triggerIA(id,m,s);
 }
+
+// ── ACTIVIDADES DEL MES ──────────────────────────────────────────
+function renderActsMes(){
+  var content = el('acts-mes-content');
+  var title = el('acts-mes-title');
+  if(!content) return;
+
+  var d = gd();
+  var bpEntry = BPS.find(function(b){ return b.bp===d.bp; });
+  var now = new Date();
+  var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var mesLabel = months[now.getMonth()] + ' ' + now.getFullYear();
+  if(title) title.textContent = 'Actividades ' + mesLabel;
+
+  if(!sfIds.length){
+    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce en el Paso 3 para ver las asesorías.</div>';
+    return;
+  }
+
+  var pool = d.bp ? sfIds.filter(function(s){ return !s.bp || s.bp===d.bp; }) : sfIds;
+  if(!pool.length){
+    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">No hay asesorías para el centro seleccionado en el archivo cargado.</div>';
+    return;
+  }
+
+  var rows = pool.map(function(s, i){
+    var asignado = sfUsedIds.has(s.id);
+    var sLabel = '';
+    if(s.sCodes && s.sCodes.length){
+      var depts = ['GIGE','RED','HYE'];
+      outer: for(var di=0;di<depts.length;di++){
+        var mots = BIBLIOTECA[depts[di]]||[];
+        for(var mi=0;mi<mots.length;mi++){
+          var m2=mots[mi];
+          if(!m2.subs) continue;
+          for(var si=0;si<m2.subs.length;si++){
+            if(s.sCodes.indexOf(m2.subs[si].code)>=0){
+              sLabel = m2.label + ' › ' + m2.subs[si].label + ' (' + m2.subs[si].code + ')';
+              break outer;
+            }
+          }
+        }
+      }
+    }
+    if(!sLabel && s.sCodes && s.sCodes.length) sLabel = s.sCodes.join(', ');
+    var bg = i%2===0?'var(--s2)':'var(--wh)';
+    var badge = asignado
+      ? '<span style="background:#dcfce7;color:#166534;font-size:9px;font-weight:800;padding:2px 7px;border-radius:3px;white-space:nowrap;">✓ ASIGNADO</span>'
+      : '<span style="background:#fef9c3;color:#854d0e;font-size:9px;font-weight:800;padding:2px 7px;border-radius:3px;white-space:nowrap;">PENDIENTE</span>';
+    return '<tr style="background:'+bg+';">'
+      + '<td style="padding:8px 12px;font-family:monospace;font-weight:800;font-size:12px;white-space:nowrap;">'+s.id+'</td>'
+      + '<td style="padding:8px 12px;font-size:11px;color:var(--tx3);white-space:nowrap;">'+s.centro+'</td>'
+      + '<td style="padding:8px 12px;font-size:11px;">'+sLabel+'</td>'
+      + '<td style="padding:8px 12px;text-align:center;">'+badge+'</td>'
+      + '<td style="padding:8px 12px;text-align:center;">'
+        + (asignado ? '' : '<button onclick="assignSiglaFromMes(\"' + s.id + '\")" style="font-size:10px;padding:3px 9px;background:var(--g);color:#fff;border:none;border-radius:3px;cursor:pointer;">Asignar</button>')
+      + '</td>'
+      + '</tr>';
+  });
+
+  content.innerHTML = '<table style="width:100%;border-collapse:collapse;font-family:inherit;">'
+    + '<thead><tr style="background:var(--hdr,#111);">'
+    + '<th style="padding:8px 12px;text-align:left;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;">N° Asesoría</th>'
+    + '<th style="padding:8px 12px;text-align:left;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Centro</th>'
+    + '<th style="padding:8px 12px;text-align:left;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Motivo / Submotivo</th>'
+    + '<th style="padding:8px 12px;text-align:center;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Estado</th>'
+    + '<th style="padding:8px 12px;text-align:center;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Acción</th>'
+    + '</tr></thead>'
+    + '<tbody>' + rows.join('') + '</tbody>'
+    + '</table>'
+    + '<div style="padding:10px 12px;font-size:10px;color:var(--tx3);">Total: '+pool.length+' | Asignados: '+pool.filter(function(s){return sfUsedIds.has(s.id);}).length+' | Pendientes: '+pool.filter(function(s){return !sfUsedIds.has(s.id);}).length+'</div>';
+}
+
+function assignSiglaFromMes(id){
+  // Find which activity to assign to (first without ID)
+  var target = null;
+  for(var i=0;i<acts.length;i++){
+    var inp = el('aid'+acts[i].id);
+    if(inp && !inp.value.trim()){ target = acts[i].id; break; }
+  }
+  if(target === null){
+    toast('Todas las actividades ya tienen ID. Agrega una nueva primero.','warn'); return;
+  }
+  var inp2 = el('aid'+target);
+  if(inp2){ inp2.value=id; sfUsedIds.add(id); isDirty=true; sfRenderIds(); renderActsMes(); toast('✓ ID '+id+' asignado a Actividad '+(acts.indexOf(acts.find(function(a){return a.id===target;}))+1),'ok'); }
+}
+
 document.addEventListener('DOMContentLoaded', function(){
   // Dark mode
   isDarkMode = localStorage.getItem('aoa_dark') === '1';
@@ -6592,6 +6699,7 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
 
 
 
