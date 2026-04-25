@@ -298,10 +298,19 @@ body.dark .visit-type-btn{background:var(--s1);}
 .pdf-txt{color:#fff;font-size:13px;font-weight:700;}
 
 /* PRINT */
+/* ── PRINT ───────────────────────────────────────────────────────────────── */
 @media print{
   body>*:not(#print-area){display:none!important;}
-  #print-area{display:block!important;position:fixed;top:0;left:0;width:100%;height:100%;z-index:999999;background:white;}
-  #pdf-overlay,#toast-container,.abar{display:none!important;}
+  #print-area{
+    display:block!important;
+    position:absolute;top:0;left:0;
+    width:100%;min-height:auto;
+    z-index:999999;background:white;
+    margin:0;padding:0;
+  }
+  #pdf-overlay,#toast-container,.abar,
+  .hdr,.tabs,.preview-panel{display:none!important;}
+  html,body{margin:0!important;padding:0!important;overflow:visible!important;}
 }
 
 /* AGENDAR */
@@ -697,6 +706,11 @@ body.dark .visit-type-btn{background:var(--s1);}
 </div>
 
 <script>
+
+
+
+
+
 
 
 
@@ -4620,9 +4634,23 @@ function renderActs(){
         <div class="f">
           <label>Descripción de la actividad
             <span class="sub-note" id="ia-status-${a.id}"></span>
+            <button onclick="retriggerIA(${a.id})" style="margin-left:8px;font-size:9px;font-weight:700;background:var(--g);color:#fff;border:none;border-radius:3px;padding:1px 7px;cursor:pointer;font-family:inherit;">↺ IA</button>
           </label>
-          <textarea id="ad${a.id}" rows="4" placeholder="Describe la actividad realizada..." oninput="ar(this);isDirty=true;"></textarea>
+          <textarea id="ad${a.id}" rows="4" placeholder="Describe la actividad realizada..." oninput="ar(this);isDirty=true;checkBrackets(${a.id});"></textarea>
         </div>
+        <!-- CONTEXTO OPCIONAL -->
+        <div id="ctx-${a.id}" style="display:none;">
+          <div class="g2" style="margin-bottom:8px;">
+            <div class="f"><label style="font-size:9px;color:var(--tx3);">Área / Servicio <span style="font-weight:400;">(opcional)</span></label>
+              <input id="ctx-area-${a.id}" placeholder="Ej: Central de Mezclas Farmacia" oninput="isDirty=true;"/></div>
+            <div class="f"><label style="font-size:9px;color:var(--tx3);">Semana / Fecha <span style="font-weight:400;">(opcional)</span></label>
+              <input id="ctx-fecha-${a.id}" placeholder="Ej: Semana 16" oninput="isDirty=true;"/></div>
+          </div>
+          <button onclick="retriggerIAWithCtx(${a.id})" class="btn-s" style="font-size:10px;background:var(--g);color:#fff;border-color:var(--g);width:100%;margin-bottom:8px;">⚡ Regenerar con OpenAI usando este contexto</button>
+        </div>
+        <button onclick="toggleCtx(${a.id})" style="font-size:10px;color:var(--tx3);background:none;border:none;cursor:pointer;padding:0;margin-bottom:8px;font-family:inherit;">
+          <span id="ctx-lbl-${a.id}">＋ Agregar contexto (área, semana)</span>
+        </button>
         <!-- ACUERDO -->
         <div class="f">
           <label>Acuerdo / Compromiso</label>
@@ -4651,27 +4679,55 @@ function setDept(id, dept, btn){
   isDirty = true;
 }
 
+// ── TAXONOMÍA GIGE/RED/HYE ────────────────────────────────────────
+// Clasifica cada código según keywords en la descripción
+function getTextosDept(){
+  if(window._textosDept) return window._textosDept;
+  const GIGE_kw = ['gestión','indicador','estadístic','casuístic','asesor','colaboración','acuerdo','contacto','plan de prev','charla','taller','difusión','campaña','protocolo','normativa','certificac','sistema','administra','cphs','formulario','informe','cierre','DS 44','DS44','semana','diagnóstico','bienvenida','seguimiento','reunión','capacitac','programa'];
+  const RED_kw  = ['accidente','investigación de acc','causa','análisis de acc','casuística de acc','lesión','trayecto','enfermedad profesional','EP','AT ','AT,'];
+  const HYE_kw  = ['higiene','ergon','ruido','vibrac','químic','agente','exposición','temperatura','iluminac','psicosocial','estrés','carga manual','manejo manual','asbesto','plaguicida','UV ','radiación','ventilación','ergométr','musculoesquel','fatiga','sobreesfuerzo','biológic','contaminante','MIPER','espacio confinado','altura','caída','incendio','extintor','RIESGO','peligro'];
+  const dept = {GIGE:{}, RED:{}, HYE:{}};
+  Object.keys(TEXTOS||{}).forEach(code=>{
+    const e = TEXTOS[code];
+    if(!e) return;
+    const desc = (e.desc||'').toLowerCase();
+    let d = 'GIGE';
+    if(HYE_kw.some(k=>desc.includes(k.toLowerCase()))) d='HYE';
+    else if(RED_kw.some(k=>desc.includes(k.toLowerCase()))) d='RED';
+    const prefix = code.replace(/\d+$/,'');
+    if(!dept[d][prefix]) dept[d][prefix]=[];
+    dept[d][prefix].push(code);
+  });
+  window._textosDept = dept;
+  return dept;
+}
+
 function populateMotivoSelect(id, dept){
   const sel = el('am'+id);
   if(!sel) return;
   const currentVal = sel.getAttribute('data-mot') || sel.value || '';
   sel.innerHTML = '<option value="">— Selecciona el motivo —</option>';
-  // TEXTOS is a flat dict: {CODE: {desc, acuer}}
-  // Show all entries as options — code + first 60 chars of desc
-  const codes = Object.keys(TEXTOS||{});
-  codes.forEach(code=>{
-    const entry = TEXTOS[code];
-    if(!entry) return;
-    const label = code + ' — ' + (entry.desc||'').slice(0,70).replace(/\[.*?\]/g,'...').trim();
+  const deptData = getTextosDept()[dept] || getTextosDept()['GIGE'];
+  // Each key in deptData is a prefix → motivo group
+  Object.keys(deptData).sort().forEach(prefix=>{
     const opt = document.createElement('option');
-    opt.value = code;
+    // Use first code's desc as motivo label
+    const firstCode = deptData[prefix][0];
+    const rawDesc = (TEXTOS[firstCode]?.desc||'').replace(/\[.*?\]/g,'').trim();
+    // Extract verb+topic (first ~50 chars without "Se realiza ")
+    const label = prefix + ' — ' + rawDesc.replace(/^Se realiza(n)?\s*/i,'').slice(0,55);
+    opt.value = prefix;
     opt.textContent = label;
     sel.appendChild(opt);
   });
-  if(currentVal && TEXTOS[currentVal]){
-    sel.value = currentVal;
-    sel.setAttribute('data-mot', currentVal);
-    onMotivoChange(id, true);
+  if(currentVal){
+    // currentVal may be a prefix (motivo) or a full code (submotivo from old data)
+    const prefix = currentVal.replace(/\d+$/,'');
+    if(deptData[prefix]||deptData[currentVal]){
+      sel.value = prefix in deptData ? prefix : currentVal;
+      sel.setAttribute('data-mot', sel.value);
+      onMotivoChange(id, true);
+    }
   }
 }
 
@@ -4679,45 +4735,68 @@ function onMotivoChange(id, skipReset){
   const mSel  = el('am'+id);
   const ssSel = el('as'+id);
   if(!mSel || !ssSel) return;
-  const code = mSel.value;
-  mSel.setAttribute('data-mot', code);
+  const prefix = mSel.value; // now a prefix like "AAD"
+  mSel.setAttribute('data-mot', prefix);
 
-  // Hide submotivo — flat TEXTOS has no submotivos
-  ssSel.style.display = 'none';
+  if(!prefix){ ssSel.style.display='none'; return; }
 
-  if(!code) return;
+  // Populate submotivo select with codes from this prefix+dept
+  const dept = cardDept[id] || 'GIGE';
+  const deptData = getTextosDept()[dept] || {};
+  const codes = deptData[prefix] || [];
 
-  // Fill desc and acuerdo from TEXTOS flat entry
-  const entry = TEXTOS[code];
-  if(!skipReset && entry){
-    if(el('ad'+id) && !el('ad'+id).value){
-      el('ad'+id).value = entry.desc || '';
-      ar(el('ad'+id));
-    }
-    if(el('aa'+id) && !el('aa'+id).value){
-      el('aa'+id).value = entry.acuer || 'Se entrega AOA para gestión interna.';
-      ar(el('aa'+id));
-    }
-    highlightBracketsInTextarea(id);
+  if(codes.length === 0){
+    ssSel.style.display = 'none';
+    return;
+  }
+
+  const currentSub = ssSel.getAttribute('data-sub') || '';
+  ssSel.innerHTML = '<option value="">— Selecciona el submotivo —</option>';
+  codes.forEach(code=>{
+    const e = TEXTOS[code];
+    if(!e) return;
+    const rawDesc = (e.desc||'').replace(/\[.*?\]/g,'').trim();
+    const label = code + ' — ' + rawDesc.replace(/^Se realiza(n)?\s*/i,'').slice(0,60);
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = label;
+    ssSel.appendChild(opt);
+  });
+  ssSel.style.display = 'block';
+
+  if(currentSub && codes.includes(currentSub)){
+    ssSel.value = currentSub;
+    ssSel.setAttribute('data-sub', currentSub);
+    if(!skipReset) onSubChange(id, skipReset);
+  } else if(!skipReset && codes.length === 1){
+    // Auto-select if only one submotivo
+    ssSel.value = codes[0];
+    ssSel.setAttribute('data-sub', codes[0]);
+    onSubChange(id, false);
   }
 }
 
 function onSubChange(id, skipReset){
   const ssSel = el('as'+id);
   if(!ssSel) return;
-  const dept   = cardDept[id] || 'GIGE';
-  const motivo = el('am'+id)?.value || '';
-  const sub    = ssSel.value;
-  ssSel.setAttribute('data-sub', sub);
-  if(!sub) return;
+  const code = ssSel.value; // full code like "AAD01"
+  ssSel.setAttribute('data-sub', code);
+  if(!code) return;
 
-  const txt = (TEXTOS[sub]?.desc) || (TEXTOS[motivo]?.desc) || sub;
-  if(!skipReset && el('ad'+id)){
-    el('ad'+id).value = txt;
-    ar(el('ad'+id));
-    highlightBracketsInTextarea(id);
+  const entry = TEXTOS[code];
+  if(!skipReset && entry){
+    if(el('ad'+id)){
+      el('ad'+id).value = entry.desc || '';
+      ar(el('ad'+id));
+      highlightBracketsInTextarea(id);
+    }
+    if(el('aa'+id) && !el('aa'+id).value){
+      el('aa'+id).value = entry.acuer || 'Se entrega AOA para gestión interna.';
+      ar(el('aa'+id));
+    }
   }
-  triggerIA(id, motivo, sub);
+  const motivo = el('am'+id)?.value || '';
+  triggerIA(id, motivo, code);
 }
 
 function triggerIA(id, motivo, sub){
@@ -5144,22 +5223,30 @@ function _runGenPDF(){
     try{
       // Build acts array for buildDoc
       const _actsForDoc = acts.map(a => {
-        const motivo = el('am'+a.id)?.getAttribute('data-mot') || '';
-        const idaVal = el('aid'+a.id)?.value || '';
-        const descVal = el('ad'+a.id)?.value || '';
-        const acuerdo = el('aa'+a.id)?.value || 'Se entrega AOA para gestión interna.';
+        const prefix  = el('am'+a.id)?.getAttribute('data-mot') || '';
+        const subCode = el('as'+a.id)?.getAttribute('data-sub') || el('as'+a.id)?.value || '';
+        // Motivo title: use submotivo code if selected, else prefix
+        const motivoKey = subCode || prefix;
+        const entry = TEXTOS[motivoKey] || TEXTOS[prefix+'01'] || {};
+        // For display in PDF: clean desc without "[placeholders]"
+        const descRaw = el('ad'+a.id)?.value || entry.desc || '';
+        const acuerdo = el('aa'+a.id)?.value || entry.acuer || 'Se entrega AOA para gestión interna.';
+        // Title = submotivo code + short desc cleaned
+        const motivoTitle = motivoKey
+          ? (motivoKey + (entry.desc ? ' — ' + entry.desc.replace(/\[.*?\]/g,'[...]').slice(0,60) : ''))
+          : 'Sin motivo';
         return {
-          fecha: d.fecha_a,
-          ida: idaVal,
-          motivo: motivo,
-          desc: descVal,
-          acuerdo: acuerdo,
+          fecha:       d.fecha_a,
+          ida:         el('aid'+a.id)?.value || '',
+          motivo:      motivoTitle,
+          desc:        descRaw,
+          acuerdo:     acuerdo,
           responsable: d.enombre || 'Branco Sandoval Palma',
-          cargo_resp: 'Experto ACHS',
-          fcump: d.fcump,
+          cargo_resp:  'Experto ACHS',
+          fcump:       d.fcump,
         };
       });
-      const html = buildDoc({...d, acts: _actsForDoc, participantes});
+      const html = buildDoc({...d, acts: _actsForDoc, participantes, firmaR: firmaDataReceptor, firmaE: firmaDataExperto});
       lastPdfHtml = html;
 
       // Inject into print-area
@@ -5715,6 +5802,63 @@ async function n8nEnviarResumen(){
   return r.json();
 }
 
+
+// ── CONTEXT PANEL ──────────────────────────────────────────────
+function toggleCtx(id){
+  const box = el('ctx-'+id);
+  const lbl = el('ctx-lbl-'+id);
+  if(!box) return;
+  const open = box.style.display === 'block';
+  box.style.display = open ? 'none' : 'block';
+  if(lbl) lbl.textContent = open ? '＋ Agregar contexto (área, semana)' : '－ Ocultar contexto';
+}
+
+function checkBrackets(id){
+  const ta = el('ad'+id);
+  if(!ta) return;
+  const hasBrackets = /\[.*?\]/.test(ta.value);
+  ta.classList.toggle('bracket-warning', hasBrackets);
+}
+
+function retriggerIA(id){
+  const prefix  = el('am'+id)?.getAttribute('data-mot') || '';
+  const subCode = el('as'+id)?.getAttribute('data-sub') || el('as'+id)?.value || '';
+  const motivo  = subCode || prefix;
+  if(!motivo){ toast('Selecciona un motivo primero', 'warn'); return; }
+  const status = el('ia-status-'+id);
+  if(status) status.textContent = ' · Generando...';
+  n8nMejorarDescripcion(motivo, cardDept[id]||'GIGE', '', '')
+    .then(txt=>{
+      if(txt && el('ad'+id)){ el('ad'+id).value=txt; ar(el('ad'+id)); checkBrackets(id); }
+      if(status) status.textContent = txt ? ' · IA ✓' : '';
+    }).catch(()=>{ if(status) status.textContent=''; });
+}
+
+function retriggerIAWithCtx(id){
+  const prefix  = el('am'+id)?.getAttribute('data-mot') || '';
+  const subCode = el('as'+id)?.getAttribute('data-sub') || el('as'+id)?.value || '';
+  const motivo  = subCode || prefix;
+  if(!motivo){ toast('Selecciona un motivo primero', 'warn'); return; }
+  const area  = el('ctx-area-'+id)?.value || '';
+  const fecha = el('ctx-fecha-'+id)?.value || '';
+  const extra = [area, fecha].filter(Boolean).join(' · ');
+  const status = el('ia-status-'+id);
+  if(status) status.textContent = ' · Generando...';
+  n8nMejorarDescripcion(motivo, cardDept[id]||'GIGE', '', extra)
+    .then(txt=>{
+      if(txt && el('ad'+id)){
+        // Replace [ÁREA/SERVICIO] with actual value if provided
+        let result = txt;
+        if(area) result = result.replace(/\[ÁREA\/SERVICIO\]/gi, area).replace(/\[ÁREA\]/gi, area);
+        if(fecha) result = result.replace(/\[SEMANA\]/gi, fecha).replace(/\[MES\]/gi, fecha).replace(/\[FECHA\]/gi, fecha);
+        el('ad'+id).value = result;
+        ar(el('ad'+id));
+        checkBrackets(id);
+      }
+      if(status) status.textContent = txt ? ' · IA ✓' : '';
+    }).catch(()=>{ if(status) status.textContent=''; });
+}
+
 // ── MODAL CLOSE ON OVERLAY CLICK ─────────────────────────────────
 document.addEventListener('click', function(e){
   if(e.target.classList.contains('modal-overlay')){
@@ -5859,14 +6003,14 @@ th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;bor
         <b>RUT:</b> ${d.erut}<br>
         <b>Cargo:</b> Experto en Prevención ACHS<br>
         <b>Email:</b> ${d.eemail}<br><br>
-        Firma ACHS: ___________________________
+        ${(d.firmaE||firmaDataExperto) ? `<img src="${d.firmaE||firmaDataExperto}" style="height:55px;max-width:180px;object-fit:contain;display:block;margin-top:4px;" alt="Firma ACHS"/>` : 'Firma ACHS: ___________________________'}
       </td>
       <td style="border:1px solid #ccc;padding:10px 8px;vertical-align:top;font-size:9pt;color:#000;">
         <b>Nombre y Apellido:</b> ${d.rnombre}<br>
         <b>RUT:</b> ${d.rrut}<br>
         <b>Cargo:</b> ${d.rcargo}<br>
         <b>Email:</b> ${d.remail}<br><br>
-        Firma Empresa: ________________________
+        ${(d.firmaR||firmaDataReceptor) ? `<img src="${d.firmaR||firmaDataReceptor}" style="height:55px;max-width:180px;object-fit:contain;display:block;margin-top:4px;" alt="Firma Empresa"/>` : 'Firma Empresa: ________________________'}
       </td>
     </tr>
   </tbody>
@@ -6344,6 +6488,11 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
+
+
+
+
 
 
 
