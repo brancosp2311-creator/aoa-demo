@@ -714,6 +714,9 @@ body.dark .visit-type-btn{background:var(--s1);}
 
 
 
+
+
+
 // ══ DATOS ════════════════════════════════════════════════════════
 const BPS = [
   {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']},
@@ -727,6 +730,34 @@ const BPS = [
   {bp:'2000906772', centro:'HOSPITAL METROPOLITANO DE SANTIAGO', referentes:['Felipe Gongora','Patricio Galaz']},
   {bp:'2000294187', centro:'INST. NAC. REHAB. PEDRO AGUIRRE CERDA', referentes:['Marcela Gonzalez']}
 ];
+
+const BIBLIOTECA = {
+  GIGE: [
+    {code:"AAD",label:"Actividad administrativa",subs:[{"code": "AAD03", "label": "Generación de indicadores"}, {"code": "AAD01", "label": "Generar estadísticas y casuística"}, {"code": "AAD04", "label": "Habilitación y reportabilidad de Capacitación"}, {"code": "AAD02", "label": "Preparación de material de charla"}, {"code": "AAD05", "label": "Preparación y entrega de material físico"}, {"code": "AAD06", "label": "Riesgo de emergencia - Generación de informe y/o presentación de resultados simulacro vía correo eléctronico"}, {"code": "AAD07", "label": "Gestión de Riesgo en SST - Generación de propuesta medidas para riesgos críticos"}, {"code": "AAD08", "label": "Protocolo Minsal - Generación de informe"}, {"code": "AAD09", "label": "Reunión de Trabajo"}, {"code": "AAD10", "label": "Presentación Resultados"}, {"code": "AAD11", "label": "Presentación de Venta FDT"}]},
+    {code:"AAG",label:"Asesoría Gestión de Aspectos Legales",subs:[{"code": "AAG01", "label": "Asesoría en normativas de SST"}, {"code": "AAG04", "label": "Presentación de actualización D.S. 67"}, {"code": "AAG03", "label": "Generación y/o actualización D.S. 67"}]},
+    {code:"ACO",label:"Acuerdo de colaboración",subs:[{"code": "ACO01", "label": "Diagnóstico empresa"}, {"code": "ACO03", "label": "Firma de acuerdo de colaboración"}, {"code": "ACO02", "label": "Generación de acuerdo de colaboración"}, {"code": "ACO06", "label": "Modificación de actividades en acuerdo de colaboración"}, {"code": "ACO04", "label": "Verificación y control de actividades en acuerdo de colaboración"}, {"code": "ACO05", "label": "Verificación y control global de acuerdo de colaboración"}, {"code": "ACO07", "label": "Verificación y control de actividades en acuerdo de colaboración periodo 2"}, {"code": "ACO08", "label": "Verificación y control de actividades en acuerdo de colaboración periodo 3"}]},
+    {code:"AGC",label:"Administrativos -  Gestión de Contratistas",subs:[{"code": "AGC01", "label": "Asesoría en gestión de contratistas revisión documental"}, {"code": "AGC02", "label": "Asesoría en gestión de contratistas capacitación"}]},
+    {code:"AGP",label:"Asesoría y gestión de protocolo",subs:[{"code": "AGP03", "label": "Presentación de resultados y plan de acción sobre protocolos MINSAL"}, {"code": "AGP04", "label": "Seguimiento de plan de acción sobre protocolos MINSAL"}, {"code": "AGP01", "label": "Verificación de cumplimiento de protocolos MINSAL"}]},
+    {code:"AGS",label:"Asesoría Gestión En SST",subs:[{"code": "AGS05", "label": "Asesoría departamento prevención de riesgo"}, {"code": "AGS06", "label": "Asesoría en gestión de contratistas"}, {"code": "AGS02", "label": "Asesoría en seguridad industrial"}, {"code": "AGS10", "label": "Asesoría teletrabajo y trabajo a distancia"}, {"code": "AGS14", "label": "Construcción plan de acción"}, {"code": "AGS08", "label": "Elaboración de material seguridad"}, {"code": "AGS11", "label": "Generar programa de capacitación"}, {"code": "AGS13", "label": "Metodología Dekra"}, {"code": "AGS03", "label": "Realización charla/taller"}, {"code": "AGS09", "label": "Revisión de material seguridad"}, {"code": "AGS12", "label": "Actividad de liderazgo visible"}, {"code": "AGS15", "label": "Seguimiento asesoría en seguridad industrial"}, {"code": "AGS16", "label": "Investigación accidente metodología árbol causal"}, {"code": "AGS17", "label": "Asistencia técnica a todos los ingresos y seguimiento telefonico por cada control"}]},
+    {code:"ARE",label:"Asesoría en riesgos de emergencia",subs:[{"code": "ARE03", "label": "Ejecución de simulacro"}, {"code": "ARE01", "label": "Generación de planes de emergencia y evacuación"}, {"code": "ARE02", "label": "Presentación de contexto de simulacro"}, {"code": "ARE05", "label": "Presentación de informe de resultados de simulacro"}, {"code": "ARE07", "label": "Realización actividades apoyo a gestión de riesgos de emergencia"}, {"code": "ARE06", "label": "Seguimiento de cumplimiento plan de acción de simulacro"}]},
+    {code:"ARS",label:"Asesoría Gestion de Riesgo en SST",subs:[{"code": "ARS04", "label": "Construcción de MIPER"}, {"code": "ARS02", "label": "Presentación de medidas para riesgos críticos"}, {"code": "ARS03", "label": "Seguimiento de cumplimiento en medidas para riesgos críticos"}]},
+    {code:"AUD",label:"Auditorías de seguridad y salud ocupacional",subs:[{"code": "AUD02", "label": "Aplicación de auditoría de seguridad y salud ocupacional"}, {"code": "AUD03", "label": "Informe de auditoría de seguridad y salud ocupacional"}, {"code": "AUD01", "label": "Presentación de herramienta de auditoría de seguridad y salud ocupacional"}]},
+    {code:"CIN",label:"Coordinación interna",subs:[{"code": "CIN01", "label": "Coordinación interna por proyecto"}]},
+    {code:"CPH",label:"Comité Paritario de Higiene y Seguridad",subs:[{"code": "CPH05", "label": "Actividad práctica con CPHS"}, {"code": "CPH03", "label": "Asesoría en certificación de CPHS"}, {"code": "CPH04", "label": "Asesoría en elaboración de programa de trabajo"}, {"code": "CPH01", "label": "Asesoría en gestión de CPHS"}, {"code": "CPH02", "label": "Presentación de proceso de certificación"}]},
+    {code:"FTG",label:"FDT Tradicional  GIGE",subs:[{"code": "FTG01", "label": "Diagnóstico y Plan de Acción"}, {"code": "FTG02", "label": "Observación de exposiciones- Entrenamiento al equipo de ejecución"}, {"code": "FTG03", "label": "Observación de exposiciones- Modelamiento y Coaching"}, {"code": "FTG04", "label": "Observación de exposiciones- Verificación de la calidad"}, {"code": "FTG05", "label": "Observación de exposiciones- Evaluación de sostenibilidad"}, {"code": "FTG06", "label": "Sesiones de Seguridad en el trabajo - Entrenamiento al equipo de ejecución"}, {"code": "FTG07", "label": "Sesiones de Seguridad en el trabajo -  Modelamiento y Coaching"}, {"code": "FTG08", "label": "Sesiones de Seguridad en el trabajo - Verificación de la calidad"}, {"code": "FTG09", "label": "Sesiones de Seguridad en el trabajo -  Evaluación de sostenibilidad"}, {"code": "FTG10", "label": "Verificación de Controles Críticos - Entrenamiento al equipo de ejecución"}, {"code": "FTG11", "label": "Verificación de Controles Críticos - Modelamiento y Coaching"}, {"code": "FTG12", "label": "Verificación de Controles Críticos - Verificación de la calidad"}, {"code": "FTG13", "label": "Verificación de Controles Críticos -  Evaluación de sostenibilidad"}, {"code": "FTG14", "label": "Asistencia Técnica FDT GIGE"}, {"code": "FTG15", "label": "Diagnóstico y Plan de Acción GIGE"}, {"code": "FTG16", "label": "Entrega de resultados y Plan de acción del líder GIGE"}, {"code": "FTG17", "label": "Coaching en Terreno 1 GIGE"}, {"code": "FTG18", "label": "Coaching en Terreno 2 GIGE"}, {"code": "FTG19", "label": "Coaching en Terreno 3 GIGE"}, {"code": "FTG20", "label": "Evaluación de sostenibilidad Informe al Líder del Sitio / CT GIGE"}]},
+    {code:"GLK",label:"Gestión sello Ley Karín",subs:[{"code": "GLK01", "label": "Sensibilización y presentación"}, {"code": "GLK02", "label": "Asistencia Técnica"}, {"code": "GLK03", "label": "Verificación y cumplimiento Sello Ley Karin"}, {"code": "GLK04", "label": "Certificación de Gestión Sello Ley Karín Nivel 1"}, {"code": "GLK05", "label": "Certificación de Gestión Sello Ley Karín Nivel 2"}, {"code": "GLK06", "label": "Entrega de certificado - Ceremonia"}]},
+    {code:"IDT",label:"Infracciones DT",subs:[{"code": "IDT01", "label": "Prescripción por infracción"}, {"code": "IDT02", "label": "Verificación y control infracción gravísima"}]},
+    {code:"ITC",label:"Intervención Táctica Accidentabilidad ITA",subs:[{"code": "ITC108", "label": "Aplicación de campaña preventiva"}, {"code": "ITC109", "label": "Generación de informe técnico de análisis casuístico"}, {"code": "ITC101", "label": "Identificación de peligros y evaluación de riesgos"}, {"code": "ITC105", "label": "Investigación de accidentes de incidentes"}, {"code": "ITC103", "label": "Inspección en procesos críticos"}, {"code": "ITC110", "label": "Seguimiento a acuerdos y medidas pendientes"}, {"code": "ITC102", "label": "Seguimiento identificación de peligros y evaluación de riesgos"}, {"code": "ITC106", "label": "Seguimiento investigación de accidentes de incidentes"}, {"code": "ITC104", "label": "Seguimiento Observación en procesos críticos"}, {"code": "ITC111", "label": "Generación de plan tactico de accidentabilidad"}, {"code": "ITC112", "label": "Generación de resultados de Plan táctico"}, {"code": "ITC30", "label": "Realización charla o taller (= o <5)"}, {"code": "ITC31", "label": "Difusión de Material Preventivo"}, {"code": "ITC113", "label": "Observación en procesos críticos"}, {"code": "ITC33", "label": "Seguimiento inspección en procesos críticos"}, {"code": "ITC32", "label": "Realización charla o taller (>5)"}]},
+    {code:"SOP",label:"Soporte en SST",subs:[{"code": "SOP06", "label": "Asesoría en la elaboración en videos corporativos"}, {"code": "SOP07", "label": "Desarrollo de innovaciones en conjunto con la empresa"}, {"code": "SOP08", "label": "Gestión de prestaciones  y  documentación de siniestros"}, {"code": "SOP01", "label": "Reunión con área de prevención de riesgos"}, {"code": "SOP02", "label": "Reunión con dirigentes sindicales"}, {"code": "SOP03", "label": "Reunión con Gerencia o Directivos"}, {"code": "SOP04", "label": "Reunión con Jefaturas"}, {"code": "SOP09", "label": "Reunión con Recursos Humanos de la empresa"}]},
+  ],
+  RED: [
+    {code:"ATS",label:"Asistencia en SST",subs:[{"code": "ATS01", "label": "Análisis de accidentes y acuerdo de medidas de control en focos críticos"}, {"code": "ATS03", "label": "Análisis casuístico de casos"}, {"code": "ATS04", "label": "Jornadas preventivas"}, {"code": "ATS02", "label": "Seguimiento de medidas de control en focos críticos"}]},
+  ],
+  HYE: [
+    {code:"TUP",label:"Turnos",subs:[{"code": "TUP01", "label": "Evaluación cualitativa"}]},
+  ],
+};
+
 
 const TEXTOS = {
   "AAD01": {
@@ -4502,10 +4533,25 @@ function bpSelect(bpNum){
   if(entry.referentes && entry.referentes.length > 0){
     if(el('rnombre') && !el('rnombre').value) el('rnombre').value = entry.referentes[0];
   }
-  // Set default objective
-  if(el('obj') && !el('obj').value.trim()){
-    el('obj').value = `Fortalecer el seguimiento preventivo y técnico de ${entry.centro}, abordando casuística, inspecciones y planificación de acciones institucionales que comprometan la seguridad y salud en el trabajo.`;
-    ar(el('obj'));
+  // Generate objective with OpenAI (blank while loading)
+  if(el('obj')){
+    var bpCentro=entry.centro||'';
+    el('obj').value='';
+    el('obj').placeholder='Generando con IA...';
+    var iaPrompt='Centro: '+bpCentro+' (BP '+entry.bp+') | DSSMO | Experto: '+(el('enombre')&&el('enombre').value||'Branco Sandoval Palma')+' | Fecha: '+(el('fecha_a')&&el('fecha_a').value||'');
+    n8nMejorarDescripcion('OBJETIVO_BP','GIGE','',iaPrompt).then(function(txt){
+      if(el('obj')){
+        el('obj').value=txt||'Fortalecer el seguimiento preventivo y tecnico de '+bpCentro+', abordando casuistica e inspecciones institucionales que comprometan la seguridad y salud en el trabajo.';
+        el('obj').placeholder='Objetivo de la asesoria...';
+        ar(el('obj'));
+      }
+    }).catch(function(){
+      if(el('obj')){
+        el('obj').value='Fortalecer el seguimiento preventivo y tecnico de '+bpCentro+', abordando casuistica e inspecciones institucionales.';
+        el('obj').placeholder='Objetivo de la asesoria...';
+        ar(el('obj'));
+      }
+    });
   }
   // Set default dates
   if(el('fecha_a') && !el('fecha_a').value) el('fecha_a').value = tod();
@@ -4643,8 +4689,12 @@ function renderActs(){
           <div class="g2" style="margin-bottom:8px;">
             <div class="f"><label style="font-size:9px;color:var(--tx3);">Área / Servicio <span style="font-weight:400;">(opcional)</span></label>
               <input id="ctx-area-${a.id}" placeholder="Ej: Central de Mezclas Farmacia" oninput="isDirty=true;"/></div>
-            <div class="f"><label style="font-size:9px;color:var(--tx3);">Semana / Fecha <span style="font-weight:400;">(opcional)</span></label>
-              <input id="ctx-fecha-${a.id}" placeholder="Ej: Semana 16" oninput="isDirty=true;"/></div>
+            <div class="f"><label style="font-size:9px;color:var(--tx3);">Semana / Período <span style="font-weight:400;">(opcional)</span></label>
+              <input id="ctx-fecha-${a.id}" placeholder="Ej: Semana 16, Marzo 2026" oninput="isDirty=true;"/></div>
+          </div>
+          <div class="f" style="margin-bottom:8px;">
+            <label style="font-size:9px;color:var(--tx3);">Observación adicional <span style="font-weight:400;">(opcional)</span></label>
+            <input id="ctx-extra-${a.id}" placeholder="Ej: Se trabajó con CPHS presente, total 12 participantes..." oninput="isDirty=true;"/>
           </div>
           <button onclick="retriggerIAWithCtx(${a.id})" class="btn-s" style="font-size:10px;background:var(--g);color:#fff;border-color:var(--g);width:100%;margin-bottom:8px;">⚡ Regenerar con OpenAI usando este contexto</button>
         </div>
@@ -4679,140 +4729,81 @@ function setDept(id, dept, btn){
   isDirty = true;
 }
 
-// ── TAXONOMÍA GIGE/RED/HYE ────────────────────────────────────────
-// Clasifica cada código según keywords en la descripción
-function getTextosDept(){
-  if(window._textosDept) return window._textosDept;
-  const GIGE_kw = ['gestión','indicador','estadístic','casuístic','asesor','colaboración','acuerdo','contacto','plan de prev','charla','taller','difusión','campaña','protocolo','normativa','certificac','sistema','administra','cphs','formulario','informe','cierre','DS 44','DS44','semana','diagnóstico','bienvenida','seguimiento','reunión','capacitac','programa'];
-  const RED_kw  = ['accidente','investigación de acc','causa','análisis de acc','casuística de acc','lesión','trayecto','enfermedad profesional','EP','AT ','AT,'];
-  const HYE_kw  = ['higiene','ergon','ruido','vibrac','químic','agente','exposición','temperatura','iluminac','psicosocial','estrés','carga manual','manejo manual','asbesto','plaguicida','UV ','radiación','ventilación','ergométr','musculoesquel','fatiga','sobreesfuerzo','biológic','contaminante','MIPER','espacio confinado','altura','caída','incendio','extintor','RIESGO','peligro'];
-  const dept = {GIGE:{}, RED:{}, HYE:{}};
-  Object.keys(TEXTOS||{}).forEach(code=>{
-    const e = TEXTOS[code];
-    if(!e) return;
-    const desc = (e.desc||'').toLowerCase();
-    let d = 'GIGE';
-    if(HYE_kw.some(k=>desc.includes(k.toLowerCase()))) d='HYE';
-    else if(RED_kw.some(k=>desc.includes(k.toLowerCase()))) d='RED';
-    const prefix = code.replace(/\d+$/,'');
-    if(!dept[d][prefix]) dept[d][prefix]=[];
-    dept[d][prefix].push(code);
-  });
-  window._textosDept = dept;
-  return dept;
-}
+// getTextosDept removed — BIBLIOTECA used instead
+
 
 function populateMotivoSelect(id, dept){
-  const sel = el('am'+id);
+  var sel=el('am'+id);
   if(!sel) return;
-  const currentVal = sel.getAttribute('data-mot') || sel.value || '';
-  sel.innerHTML = '<option value="">— Selecciona el motivo —</option>';
-  const deptData = getTextosDept()[dept] || getTextosDept()['GIGE'];
-  // Each key in deptData is a prefix → motivo group
-  Object.keys(deptData).sort().forEach(prefix=>{
-    const opt = document.createElement('option');
-    // Use first code's desc as motivo label
-    const firstCode = deptData[prefix][0];
-    const rawDesc = (TEXTOS[firstCode]?.desc||'').replace(/\[.*?\]/g,'').trim();
-    // Extract verb+topic (first ~50 chars without "Se realiza ")
-    const label = prefix + ' — ' + rawDesc.replace(/^Se realiza(n)?\s*/i,'').slice(0,55);
-    opt.value = prefix;
-    opt.textContent = label;
-    sel.appendChild(opt);
+  var cur=sel.getAttribute('data-mot')||'';
+  sel.innerHTML='<option value="">— Selecciona el motivo —</option>';
+  (BIBLIOTECA[dept]||BIBLIOTECA.GIGE||[]).forEach(function(m){
+    var opt=document.createElement('option');
+    opt.value=m.code; opt.textContent=m.code+' — '+m.label; sel.appendChild(opt);
   });
-  if(currentVal){
-    // currentVal may be a prefix (motivo) or a full code (submotivo from old data)
-    const prefix = currentVal.replace(/\d+$/,'');
-    if(deptData[prefix]||deptData[currentVal]){
-      sel.value = prefix in deptData ? prefix : currentVal;
-      sel.setAttribute('data-mot', sel.value);
-      onMotivoChange(id, true);
-    }
-  }
+  if(cur){ sel.value=cur; sel.setAttribute('data-mot',cur); onMotivoChange(id,true); }
 }
 
 function onMotivoChange(id, skipReset){
-  const mSel  = el('am'+id);
-  const ssSel = el('as'+id);
-  if(!mSel || !ssSel) return;
-  const prefix = mSel.value; // now a prefix like "AAD"
-  mSel.setAttribute('data-mot', prefix);
-
-  if(!prefix){ ssSel.style.display='none'; return; }
-
-  // Populate submotivo select with codes from this prefix+dept
-  const dept = cardDept[id] || 'GIGE';
-  const deptData = getTextosDept()[dept] || {};
-  const codes = deptData[prefix] || [];
-
-  if(codes.length === 0){
-    ssSel.style.display = 'none';
-    return;
-  }
-
-  const currentSub = ssSel.getAttribute('data-sub') || '';
-  ssSel.innerHTML = '<option value="">— Selecciona el submotivo —</option>';
-  codes.forEach(code=>{
-    const e = TEXTOS[code];
-    if(!e) return;
-    const rawDesc = (e.desc||'').replace(/\[.*?\]/g,'').trim();
-    const label = code + ' — ' + rawDesc.replace(/^Se realiza(n)?\s*/i,'').slice(0,60);
-    const opt = document.createElement('option');
-    opt.value = code;
-    opt.textContent = label;
-    ssSel.appendChild(opt);
+  var mSel=el('am'+id),ssSel=el('as'+id);
+  if(!mSel||!ssSel) return;
+  var mCode=mSel.value;
+  mSel.setAttribute('data-mot',mCode);
+  if(!mCode){ ssSel.style.display='none'; return; }
+  var dept=cardDept[id]||'GIGE';
+  var mEntry=(BIBLIOTECA[dept]||BIBLIOTECA.GIGE||[]).find(function(m){ return m.code===mCode; });
+  var subs=mEntry&&mEntry.subs||[];
+  var curSub=ssSel.getAttribute('data-sub')||'';
+  ssSel.innerHTML='<option value="">— Selecciona el submotivo —</option>';
+  subs.forEach(function(s){
+    var opt=document.createElement('option');
+    opt.value=s.code; opt.textContent=s.code+' — '+s.label; ssSel.appendChild(opt);
   });
-  ssSel.style.display = 'block';
-
-  if(currentSub && codes.includes(currentSub)){
-    ssSel.value = currentSub;
-    ssSel.setAttribute('data-sub', currentSub);
-    if(!skipReset) onSubChange(id, skipReset);
-  } else if(!skipReset && codes.length === 1){
-    // Auto-select if only one submotivo
-    ssSel.value = codes[0];
-    ssSel.setAttribute('data-sub', codes[0]);
-    onSubChange(id, false);
-  }
+  if(subs.length>0){
+    ssSel.style.display='block';
+    if(curSub&&subs.find(function(s){ return s.code===curSub; })){
+      ssSel.value=curSub; ssSel.setAttribute('data-sub',curSub);
+      if(!skipReset) onSubChange(id,true);
+    }
+  } else { ssSel.style.display='none'; }
 }
 
 function onSubChange(id, skipReset){
-  const ssSel = el('as'+id);
+  var ssSel=el('as'+id);
   if(!ssSel) return;
-  const code = ssSel.value; // full code like "AAD01"
-  ssSel.setAttribute('data-sub', code);
-  if(!code) return;
-
-  const entry = TEXTOS[code];
-  if(!skipReset && entry){
-    if(el('ad'+id)){
-      el('ad'+id).value = entry.desc || '';
-      ar(el('ad'+id));
-      highlightBracketsInTextarea(id);
-    }
-    if(el('aa'+id) && !el('aa'+id).value){
-      el('aa'+id).value = entry.acuer || 'Se entrega AOA para gestión interna.';
-      ar(el('aa'+id));
-    }
+  var subCode=ssSel.value;
+  ssSel.setAttribute('data-sub',subCode);
+  if(!subCode) return;
+  if(!skipReset){
+    var mCode=el('am'+id)&&el('am'+id).getAttribute('data-mot')||'';
+    if(el('ad'+id)) el('ad'+id).value='';
+    if(el('aa'+id)) el('aa'+id).value='';
+    triggerIA(id,mCode,subCode);
   }
-  const motivo = el('am'+id)?.value || '';
-  triggerIA(id, motivo, code);
 }
 
-function triggerIA(id, motivo, sub){
-  const area = cardDept[id] || '';
-  const status = el(`ia-status-${id}`);
-  if(status) status.textContent = ' · Generando con IA...';
-  n8nMejorarDescripcion(motivo, sub || area, '', '')
-    .then(txt=>{
-      if(txt && el('ad'+id)){
-        el('ad'+id).value = txt;
-        ar(el('ad'+id));
-        highlightBracketsInTextarea(id);
-      }
-      if(status) status.textContent = txt ? ' · IA ✓' : '';
-    })
-    .catch(()=>{ if(status) status.textContent = ''; });
+function triggerIA(id, mCode, subCode){
+  var status=el('ia-status-'+id);
+  if(status) status.textContent=' · IA...';
+  var d=gd();
+  var bpEntry=BPS.find(function(b){ return b.bp===d.bp; })||{};
+  var centro=bpEntry.centro||d.razon||'';
+  var dept=cardDept[id]||'GIGE';
+  var motivos=BIBLIOTECA[dept]||BIBLIOTECA.GIGE||[];
+  var mEntry=motivos.find(function(m){ return m.code===mCode; });
+  var mLabel=mEntry&&mEntry.label||mCode||'';
+  var sEntry=mEntry&&mEntry.subs&&mEntry.subs.find(function(s){ return s.code===subCode; });
+  var sLabel=sEntry&&sEntry.label||subCode||'';
+  var area=el('ctx-area-'+id)&&el('ctx-area-'+id).value||'';
+  var fecha=el('ctx-fecha-'+id)&&el('ctx-fecha-'+id).value||'';
+  var extra=el('ctx-extra-'+id)&&el('ctx-extra-'+id).value||'';
+  var ctx=[area,fecha,extra].filter(Boolean).join(' | ');
+  var prompt='Centro: '+centro+' (BP '+(d.bp||'—')+') | Fecha: '+(d.fecha_a||'—')+' | Modalidad: '+(d.mod||'Presencial')+' | Experto: '+(d.enombre||'Branco Sandoval Palma')+' | Receptor: '+(d.rnombre||'—')+' | Dept: '+dept+' | Motivo: '+mLabel+' | Submotivo: '+sLabel+(ctx?' | '+ctx:'');
+  n8nMejorarDescripcion(mCode+'|'+subCode,dept,'',prompt)
+    .then(function(txt){
+      if(txt&&el('ad'+id)){ el('ad'+id).value=txt; ar(el('ad'+id)); checkBrackets(id); }
+      if(status) status.textContent=txt?' · ✓':'';
+    }).catch(function(){ if(status) status.textContent=''; });
 }
 
 // ── BRACKETS ─────────────────────────────────────────────────────
@@ -5226,20 +5217,35 @@ function _runGenPDF(){
         const prefix  = el('am'+a.id)?.getAttribute('data-mot') || '';
         const subCode = el('as'+a.id)?.getAttribute('data-sub') || el('as'+a.id)?.value || '';
         // Motivo title: use submotivo code if selected, else prefix
-        const motivoKey = subCode || prefix;
+        const mCode   = prefix;
+        const subCode2 = subCode;
+        const motivoKey = subCode2 || mCode;
         const entry = TEXTOS[motivoKey] || TEXTOS[prefix+'01'] || {};
         // For display in PDF: clean desc without "[placeholders]"
         const descRaw = el('ad'+a.id)?.value || entry.desc || '';
         const acuerdo = el('aa'+a.id)?.value || entry.acuer || 'Se entrega AOA para gestión interna.';
         // Title = submotivo code + short desc cleaned
-        const motivoTitle = motivoKey
-          ? (motivoKey + (entry.desc ? ' — ' + entry.desc.replace(/\[.*?\]/g,'[...]').slice(0,60) : ''))
-          : 'Sin motivo';
+        // Build human-readable title from BIBLIOTECA
+        const dept2 = cardDept[a.id] || 'GIGE';
+        const biLib = BIBLIOTECA[dept2] || BIBLIOTECA['GIGE'] || [];
+        const mEntry2 = biLib.find(m=>m.code===mCode);
+        const mLabel2 = mEntry2?.label || mCode || '';
+        const sEntry2 = mEntry2?.subs?.find(s=>s.code===subCode2);
+        const sLabel2 = sEntry2?.label || subCode2 || '';
+        const motivoTitle = sLabel2 || mLabel2 || 'Sin motivo';
+        // Merge context into desc if not already there
+        const ctxArea  = el('ctx-area-'+a.id)?.value || '';
+        const ctxFecha = el('ctx-fecha-'+a.id)?.value || '';
+        const ctxExtra = el('ctx-extra-'+a.id)?.value || '';
+        let finalDesc = descRaw;
+        if(ctxArea  && !finalDesc.includes(ctxArea))  finalDesc = finalDesc.replace(/\[ÁREA\/SERVICIO\]/gi, ctxArea).replace(/\[ÁREA\]/gi, ctxArea);
+        if(ctxFecha && !finalDesc.includes(ctxFecha))  finalDesc = finalDesc.replace(/\[SEMANA\]/gi, ctxFecha).replace(/\[MES\]/gi, ctxFecha).replace(/\[FECHA\]/gi, ctxFecha).replace(/\[PERÍODO\]/gi, ctxFecha);
+        if(ctxExtra && !finalDesc.includes(ctxExtra))  finalDesc += (finalDesc ? ' ' : '') + ctxExtra;
         return {
           fecha:       d.fecha_a,
           ida:         el('aid'+a.id)?.value || '',
           motivo:      motivoTitle,
-          desc:        descRaw,
+          desc:        finalDesc,
           acuerdo:     acuerdo,
           responsable: d.enombre || 'Branco Sandoval Palma',
           cargo_resp:  'Experto ACHS',
@@ -5751,27 +5757,24 @@ async function n8nGuardarDrive(d, htmlContent){
   }catch(e){ console.warn('n8n drive:', e); }
 }
 
-async function n8nMejorarDescripcion(motivo, area, descActual, participantesStr){
+async function n8nMejorarDescripcion(tipo, dept, descActual, contextoCompleto){
   if(!N8N.enabled) return null;
-  const resultado = await (_iaQueue = _iaQueue.then(async ()=>{
-    await new Promise(r=>setTimeout(r, 800));
-    const d = gd();
-    const centro = BPS.find(b=>b.bp===d.bp)?.centro || d.razon || '';
+  var resultado=await (_iaQueue=_iaQueue.then(async function(){
+    await new Promise(function(r){ setTimeout(r,500); });
+    var d=gd();
+    var centro=BPS.find(function(b){ return b.bp===d.bp; })&&BPS.find(function(b){ return b.bp===d.bp; }).centro||d.razon||'';
     try{
-      const r = await fetch(N8N.url('ia'),{
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          motivo, area: area||'área no especificada',
-          centro, desc_actual:'',
-          experto: d.enombre||'Branco Sandoval Palma',
-          participantes: participantesStr || participantes.map(p=>p.nombre+(p.cargo?' ('+p.cargo+')':'')).join(', '),
-          fecha: d.fecha_a||'', modalidad: d.mod||'Presencial'
-        })
-      });
-      if(r.ok){ const data=await r.json(); return data.descripcion_mejorada||null; }
-    }catch(e){ console.warn('n8n IA:', e); }
+      var r=await fetch(N8N.url('ia'),{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({tipo:tipo,dept:dept,centro:centro,bp:d.bp||'',
+          experto:d.enombre||'Branco Sandoval Palma',receptor:d.rnombre||'',
+          cargo_receptor:d.rcargo||'',
+          participantes:participantes.map(function(p){ return p.nombre+(p.cargo?' ('+p.cargo+')':''); }).join(', '),
+          fecha:d.fecha_a||'',modalidad:d.mod||'Presencial',contexto:contextoCompleto||''
+        })});
+      if(r.ok){ var data=await r.json(); return data.descripcion_mejorada||null; }
+    }catch(e){ console.warn('n8n IA:',e); }
     return null;
-  }).catch(()=>null));
+  }).catch(function(){ return null; }));
   return resultado;
 }
 
@@ -5820,44 +5823,9 @@ function checkBrackets(id){
   ta.classList.toggle('bracket-warning', hasBrackets);
 }
 
-function retriggerIA(id){
-  const prefix  = el('am'+id)?.getAttribute('data-mot') || '';
-  const subCode = el('as'+id)?.getAttribute('data-sub') || el('as'+id)?.value || '';
-  const motivo  = subCode || prefix;
-  if(!motivo){ toast('Selecciona un motivo primero', 'warn'); return; }
-  const status = el('ia-status-'+id);
-  if(status) status.textContent = ' · Generando...';
-  n8nMejorarDescripcion(motivo, cardDept[id]||'GIGE', '', '')
-    .then(txt=>{
-      if(txt && el('ad'+id)){ el('ad'+id).value=txt; ar(el('ad'+id)); checkBrackets(id); }
-      if(status) status.textContent = txt ? ' · IA ✓' : '';
-    }).catch(()=>{ if(status) status.textContent=''; });
-}
 
-function retriggerIAWithCtx(id){
-  const prefix  = el('am'+id)?.getAttribute('data-mot') || '';
-  const subCode = el('as'+id)?.getAttribute('data-sub') || el('as'+id)?.value || '';
-  const motivo  = subCode || prefix;
-  if(!motivo){ toast('Selecciona un motivo primero', 'warn'); return; }
-  const area  = el('ctx-area-'+id)?.value || '';
-  const fecha = el('ctx-fecha-'+id)?.value || '';
-  const extra = [area, fecha].filter(Boolean).join(' · ');
-  const status = el('ia-status-'+id);
-  if(status) status.textContent = ' · Generando...';
-  n8nMejorarDescripcion(motivo, cardDept[id]||'GIGE', '', extra)
-    .then(txt=>{
-      if(txt && el('ad'+id)){
-        // Replace [ÁREA/SERVICIO] with actual value if provided
-        let result = txt;
-        if(area) result = result.replace(/\[ÁREA\/SERVICIO\]/gi, area).replace(/\[ÁREA\]/gi, area);
-        if(fecha) result = result.replace(/\[SEMANA\]/gi, fecha).replace(/\[MES\]/gi, fecha).replace(/\[FECHA\]/gi, fecha);
-        el('ad'+id).value = result;
-        ar(el('ad'+id));
-        checkBrackets(id);
-      }
-      if(status) status.textContent = txt ? ' · IA ✓' : '';
-    }).catch(()=>{ if(status) status.textContent=''; });
-}
+
+
 
 // ── MODAL CLOSE ON OVERLAY CLICK ─────────────────────────────────
 document.addEventListener('click', function(e){
@@ -5868,6 +5836,20 @@ document.addEventListener('click', function(e){
 });
 
 // ── INIT ──────────────────────────────────────────────────────────
+function retriggerIA(id){
+  var m=el('am'+id)&&el('am'+id).getAttribute('data-mot')||'';
+  var s=el('as'+id)&&el('as'+id).getAttribute('data-sub')||'';
+  if(!m){ toast('Selecciona un motivo','warn'); return; }
+  if(el('ad'+id)) el('ad'+id).value='';
+  triggerIA(id,m,s);
+}
+function retriggerIAWithCtx(id){
+  var m=el('am'+id)&&el('am'+id).getAttribute('data-mot')||'';
+  var s=el('as'+id)&&el('as'+id).getAttribute('data-sub')||'';
+  if(!m){ toast('Selecciona un motivo','warn'); return; }
+  if(el('ad'+id)) el('ad'+id).value='';
+  triggerIA(id,m,s);
+}
 document.addEventListener('DOMContentLoaded', function(){
   // Dark mode
   isDarkMode = localStorage.getItem('aoa_dark') === '1';
@@ -6016,188 +5998,9 @@ th{background:#111;color:#fff;padding:6px 8px;font-size:9pt;font-weight:bold;bor
   </tbody>
 </table>
 
-<div class="foot">© 2026 Branco Sandoval Palma · Asociación Chilena de Seguridad (ACHS) · AOA Generator v4.0 · Uso interno exclusivo</div>
+<div class="foot" style="page-break-inside:avoid;padding-top:6px;border-top:1px solid #ccc;font-size:7pt;color:#555;text-align:center;">© 2026 · Asociación Chilena de Seguridad (ACHS) · Uso interno exclusivo</div>
 
-<!-- OUTLOOK MODAL -->
-<div id="outlook-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9000;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--wh);border-radius:10px;width:540px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);">
-
-    <!-- Modal Header -->
-    <div style="background:#0078d4;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:10px 10px 0 0;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">📧</span>
-        <div>
-          <div style="font-size:13px;font-weight:800;letter-spacing:.3px;">Enviar por Correo</div>
-          <div style="font-size:10px;opacity:.8;">Se abrirá Outlook con el mensaje pre-completado</div>
-        </div>
-      </div>
-      <button onclick="closeOutlookModal()" style="background:none;border:1.5px solid rgba(255,255,255,.4);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</button>
-    </div>
-
-    <!-- Modal Body -->
-    <div style="padding:18px;">
-
-      <!-- Cliente de correo -->
-      <div style="margin-bottom:16px;">
-        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:8px;">Enviar con</label>
-        <div class="mail-client-row">
-          <button class="mail-client-btn selected outlook" id="mc-outlook" onclick="selectMailClient('outlook')">
-            <span class="mail-client-icon">📘</span>
-            <span class="mail-client-label">Outlook</span>
-          </button>
-          <button class="mail-client-btn" id="mc-gmail" onclick="selectMailClient('gmail')">
-            <span class="mail-client-icon">📩</span>
-            <span class="mail-client-label">Gmail</span>
-          </button>
-          <button class="mail-client-btn" id="mc-apple" onclick="selectMailClient('apple')">
-            <span class="mail-client-icon">🍎</span>
-            <span class="mail-client-label">Apple Mail</span>
-          </button>
-          <button class="mail-client-btn" id="mc-copy" onclick="selectMailClient('copy')">
-            <span class="mail-client-icon">📋</span>
-            <span class="mail-client-label">Solo copiar</span>
-          </button>
-          <button class="mail-client-btn" id="mc-n8n" onclick="selectMailClient('n8n')" title="Envía directamente desde tu Gmail via n8n sin abrir ningún cliente">
-            <span class="mail-client-icon">⚡</span>
-            <span class="mail-client-label">Envío directo</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Para -->
-      <div style="margin-bottom:14px;">
-        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Para (correo receptor)</label>
-        <input id="outlook-to" type="email" placeholder="correo@institución.cl"
-          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
-          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
-        <div style="font-size:10px;color:var(--g4);margin-top:4px;">Se pre-carga con el correo del receptor configurado en la pestaña Firmas</div>
-      </div>
-
-      <!-- CC -->
-      <div style="margin-bottom:14px;">
-        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">CC (opcional)</label>
-        <input id="outlook-cc" type="email" placeholder="copia@institución.cl"
-          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
-          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
-      </div>
-
-      <!-- Asunto -->
-      <div style="margin-bottom:14px;">
-        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Asunto</label>
-        <input id="outlook-subject" type="text"
-          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:9px 10px;font-size:13px;font-family:inherit;box-sizing:border-box;color:var(--tx);background:var(--wh);transition:border .15s;"
-          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"/>
-      </div>
-
-      <!-- Preview del cuerpo -->
-      <div style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;">Cuerpo del mensaje</label>
-          <button onclick="regenerateOutlookBody()" style="background:none;border:1.5px solid var(--g3);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer;color:var(--g4);font-family:inherit;" title="Regenerar desde el formulario">↺ Regenerar</button>
-        </div>
-        <textarea id="outlook-body" rows="14"
-          style="width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:10px;font-size:11.5px;font-family:'DM Sans',system-ui,sans-serif;line-height:1.6;color:var(--tx);background:var(--wh);box-sizing:border-box;resize:vertical;transition:border .15s;"
-          onfocus="this.style.borderColor='#0078d4'" onblur="this.style.borderColor='var(--g3)'"></textarea>
-        <div style="font-size:10px;color:var(--g4);margin-top:4px;">Puedes editar el mensaje antes de enviar. Los cambios no se guardan en el formulario.</div>
-      </div>
-
-      <!-- Info box -->
-      <div style="background:#f0f6ff;border:1.5px solid #c0d8f5;border-radius:7px;padding:10px 12px;font-size:11px;color:#1a4a8a;margin-bottom:16px;line-height:1.6;">
-        <strong>¿Cómo funciona?</strong> Al hacer clic en "Abrir en Outlook", se abrirá tu cliente de correo con el mensaje pre-completado. El documento AOA deberás adjuntarlo manualmente si es necesario.
-      </div>
-
-      <!-- Actions -->
-      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
-        <button onclick="closeOutlookModal()" class="btn-s" style="font-size:12px;">Cancelar</button>
-        <button onclick="copyOutlookBody()" class="btn-s" style="font-size:12px;border-color:#0078d4;color:#0078d4;">📋 Copiar mensaje</button>
-        <button onclick="sendOutlook()" style="background:#0078d4;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;"
-          onmouseover="this.style.background='#005fa3'" onmouseout="this.style.background='#0078d4'">
-          <span id="send-btn-label">📤 Abrir en Outlook</span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- PDF OVERLAY — sin popups -->
-<div id="pdf-overlay">
-  <div id="pdf-spinner-wrap" style="display:flex;flex-direction:column;align-items:center;gap:16px;">
-    <div class="pdf-spinner"></div>
-    <div class="pdf-overlay-txt">Generando AOA...</div>
-    <div class="pdf-overlay-sub">Preparando el documento</div>
-  </div>
-  <div id="pdf-dl-box" class="pdf-dl-box" style="display:none;">
-    <div class="pdf-dl-icon">📄</div>
-    <div class="pdf-dl-title">AOA listo para descargar</div>
-    <div class="pdf-dl-sub">Haz clic en el botón para descargar el PDF.<br>Luego podrás enviarlo por correo.</div>
-    <a id="pdf-dl-link" class="pdf-dl-btn" download="AOA.pdf">⬇ Descargar PDF</a>
-    <button class="pdf-dl-btn secondary" onclick="closePdfOverlay()">Cerrar</button>
-  </div>
-</div>
-
-<!-- FIRMA DIGITAL MODAL -->
-<div id="firma-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9100;display:none;align-items:center;justify-content:center;">
-  <div style="background:var(--wh);border-radius:12px;width:500px;max-width:96vw;box-shadow:0 8px 32px rgba(0,0,0,.25);overflow:hidden;">
-    <div style="background:#111;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;border-radius:12px 12px 0 0;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:20px;">✍️</span>
-        <div>
-          <div style="font-size:13px;font-weight:800;">Firma Digital del Receptor</div>
-          <div style="font-size:10px;opacity:.7;">Firma con el dedo o mouse en el área de abajo</div>
-        </div>
-      </div>
-      <button onclick="closeFirmaModal()" style="background:none;border:1.5px solid rgba(255,255,255,.3);color:#fff;width:26px;height:26px;border-radius:4px;cursor:pointer;font-size:13px;">✕</button>
-    </div>
-    <div style="padding:18px;">
-      <div style="margin-bottom:10px;">
-        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firmante</label>
-        <div style="font-size:13px;font-weight:600;color:var(--tx);" id="firma-firmante">—</div>
-      </div>
-      <div style="margin-bottom:8px;">
-        <label style="font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:5px;">Firma</label>
-        <canvas id="firma-canvas" width="460" height="160"></canvas>
-        <div class="firma-status" id="firma-status">Dibuja la firma aquí arriba</div>
-      </div>
-      <div class="firma-actions">
-        <button onclick="clearFirma()" class="btn-s" style="font-size:12px;">🗑 Borrar</button>
-        <button onclick="saveFirma()" class="btn-p green" style="flex:1;font-size:12px;">✓ Guardar Firma</button>
-      </div>
-      <div id="firma-saved-preview" style="display:none;margin-top:12px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;color:var(--gd);margin-bottom:6px;">✓ Firma guardada</div>
-        <img id="firma-preview-img" style="border:1px solid var(--g3);border-radius:6px;max-width:100%;height:80px;object-fit:contain;background:#fff;"/>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="toast-container"></div>
-
-<!-- TEMPLATE MODAL -->
-<div id="tpl-modal">
-  <div class="tpl-box">
-    <div class="tpl-head">
-      <h3>📋 Plantillas guardadas</h3>
-      <button class="btn-rm" onclick="closeTplModal()" title="Cerrar">✕</button>
-    </div>
-    <div class="tpl-body" id="tpl-list"></div>
-  </div>
-</div>
-
-<!-- VALIDATION MODAL -->
-<div id="val-modal">
-  <div class="val-box">
-    <div class="val-title">⛔ Revisar antes de generar</div>
-    <ul class="val-list" id="val-list"></ul>
-    <div class="val-actions">
-      <button class="btn-s" onclick="closeValModal()">Corregir</button>
-      <button class="btn-p green" onclick="closeValModal();genPDFForce()">Generar igual</button>
-    </div>
-  </div>
-</div>
-
-</body></html>`;
+</body></html>`;;
 }
 
 
@@ -6488,6 +6291,9 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
+
+
 
 
 
