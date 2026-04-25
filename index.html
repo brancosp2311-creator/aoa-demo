@@ -731,6 +731,7 @@ body.dark .visit-type-btn{background:var(--s1);}
 
 
 
+
 // ══ DATOS ════════════════════════════════════════════════════════
 const BPS = [
   {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']
@@ -4380,7 +4381,7 @@ let firmaDataExperto  = ''; // base64 firma experto
 let selectedMailClient = 'outlook';
 let isDarkMode = false;
 let isPreviewOpen = false;
-let // _iaQueue removed — using direct async calls
+// _iaQueue removed — using direct async calls
 
 // ── HELPERS ──────────────────────────────────────────────────────
 function gd(){ // Get data from form
@@ -6591,6 +6592,7 @@ async function n8nEnviarInformeSemanal(datosInforme) {
   if(!r.ok) throw new Error('n8n error ' + r.status);
   return r.json();
 }
+
 
 
 
