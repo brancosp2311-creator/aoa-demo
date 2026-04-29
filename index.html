@@ -339,6 +339,18 @@ body.dark .visit-type-btn{background:var(--s1);}
   .preview-panel{width:100%;height:50vh;top:auto;bottom:62px;border-left:none;border-top:1px solid var(--s3);}
   .part-add-row{grid-template-columns:1fr auto;}
 }
+
+/* Daltonism mode */
+body.dalton { --g:#0077BB;--gd:#005599;--gl:#D6EAF8;--err:#CC3311;--warn:#EE7733;--info:#0077BB; }
+body.dalton .dept-btn.sel-gige,body.dalton .sel-gige{background:#0077BB!important;color:#fff!important;}
+body.dalton .sel-red{background:#EE7733!important;color:#fff!important;}
+body.dalton .sel-hye{background:#CC3311!important;color:#fff!important;}
+body.dalton .cnt{background:#0077BB!important;}
+body.dalton .hdr{background:linear-gradient(135deg,#0077BB 0%,#005599 100%)!important;}
+body.dalton.dark .hdr{background:linear-gradient(135deg,#004466 0%,#003344 100%)!important;}
+body.dalton .tab.active{border-color:#0077BB!important;color:#0077BB!important;}
+body.dalton.dark .tab.active{border-color:#33BBEE!important;color:#33BBEE!important;}
+body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
 </style>
 <!-- PDF.js for Salesforce PDF parsing -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -349,6 +361,13 @@ body.dark .visit-type-btn{background:var(--s1);}
 <body>
 
 <!-- PRINT AREA -->
+
+<div class="panel" id="tab-ubicacion" style="width:100%;max-width:100%;padding:16px;">
+  <div class="step-hdr"><span class="step-num" style="background:var(--info);">📍</span> Ubicación del Centro</div>
+  <div id="ubicacion-content" style="padding:8px;">
+    <div style="text-align:center;color:var(--tx3);font-size:13px;padding:20px;">Selecciona un centro en el Paso 1 para ver su ubicación.</div>
+  </div>
+</div>
 <div id="print-area" style="display:none;"></div>
 
 <!-- PDF OVERLAY -->
@@ -464,6 +483,7 @@ body.dark .visit-type-btn{background:var(--s1);}
     <span id="aoa-progress"></span>
     <button class="hdr-btn preview-btn-txt" id="preview-btn" onclick="togglePreview()">👁 Preview</button>
     <button class="hdr-btn" id="dark-btn" onclick="toggleDark()" title="Modo oscuro">🌙</button>
+    <button class="hdr-btn" id="dalton-btn" onclick="toggleDalton()" title="Daltonismo" style="font-size:12px;">👁‍🗨</button>
     <span class="v-badge">v4.0</span>
   </div>
 </div>
@@ -477,6 +497,7 @@ body.dark .visit-type-btn{background:var(--s1);}
   <div class="tab" id="step-tab-hist" onclick="showTab('historial',this)">📋 Historial <span class="cnt" id="hist-cnt" style="background:#555;">0</span></div>
   <div class="tab" id="step-tab-stats" onclick="showTab('stats',this)">📊 KPI</div>
   <div class="tab" id="step-tab-acts-mes" onclick="showTab('acts-mes',this)">📅 Actividades</div>
+  <div class="tab" id="step-tab-ubicacion" onclick="showTab('ubicacion',this)">📍 Ubicación</div>
 </div>
 
 <!-- PASO 1: CENTRO -->
@@ -743,6 +764,11 @@ body.dark .visit-type-btn{background:var(--s1);}
 
 
 
+
+
+
+
+
 // ══ DATOS ════════════════════════════════════════════════════════
 const BPS = [
   {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']
@@ -880,6 +906,15 @@ function toggleDark(){
   localStorage.setItem('aoa_dark', isDarkMode ? '1' : '0');
   el('dark-btn').textContent = isDarkMode ? '☀️' : '🌙';
 }
+function toggleDalton(){
+  document.body.classList.toggle('dalton');
+  var btn = el('dalton-btn');
+  if(btn) btn.textContent = document.body.classList.contains('dalton') ? '👁' : '👁‍🗨';
+  try{ localStorage.setItem('aoa-dalton', document.body.classList.contains('dalton')?'1':'0'); }catch(e){}
+}
+// Restore daltonism on load
+try{ if(localStorage.getItem('aoa-dalton')==='1'){ document.body.classList.add('dalton'); }}catch(e){}
+
 
 // ── PREVIEW ──────────────────────────────────────────────────────
 function togglePreview(){
@@ -921,7 +956,7 @@ function renderLivePreview(){
 
 // ── TABS / WIZARD ────────────────────────────────────────────────
 const STEP_TABS = {1:'tab-datos', 2:'tab-firmas', 3:'tab-acts', 4:'tab-gen', 5:'tab-historial', 6:'tab-stats', 7:'tab-acts-mes'};
-const PANEL_IDS = ['tab-datos','tab-firmas','tab-acts','tab-gen','tab-historial','tab-stats','tab-acts-mes'];
+const PANEL_IDS = ['tab-datos','tab-firmas','tab-acts','tab-gen','tab-historial','tab-stats','tab-acts-mes','tab-ubicacion'];
 
 function goStep(n){
   currentStep = n;
@@ -953,6 +988,7 @@ function showTab(name, tabEl){
   if(name==='historial') renderHistory();
   if(name==='stats') renderStats();
   if(name==='acts-mes') renderActsMes();
+  if(name==='ubicacion') renderUbicacion();
   window.scrollTo(0,0);
 }
 
@@ -1363,7 +1399,7 @@ function onSubChange(id, skipReset){
 }
 
 function triggerIA(id, mCode, subCode){
-  if(!mCode){ return; }
+  if(!mCode) return;
   var status = el('ia-status-' + id);
   if(status){ status.textContent = ' · IA...'; status.style.color = 'var(--tx3)'; }
   var d = gd();
@@ -1375,23 +1411,47 @@ function triggerIA(id, mCode, subCode){
   var mLabel = (mEntry && mEntry.label) || mCode || '';
   var sEntry = mEntry && mEntry.subs && mEntry.subs.find(function(s){ return s.code === subCode; });
   var sLabel = (sEntry && sEntry.label) || subCode || '';
+
+  // Context fields for THIS activity
   var area  = (el('ctx-area-' + id)  && el('ctx-area-' + id).value)  || '';
   var fecha = (el('ctx-fecha-' + id) && el('ctx-fecha-' + id).value) || '';
   var extra = (el('ctx-extra-' + id) && el('ctx-extra-' + id).value) || '';
-  var ctx = [area, fecha, extra].filter(Boolean).join(' | ');
-  var prompt = 'Centro: ' + centro + ' (BP ' + (d.bp||'—') + ')' +
-    ' | Fecha: ' + (d.fecha_a||'—') +
+
+  // Build context of OTHER activities already filled in this AOA
+  var otherActs = [];
+  acts.forEach(function(a){
+    if(a.id === id) return; // skip current
+    var otherMot = el('am'+a.id)?.getAttribute('data-mot') || '';
+    var otherSub = el('as'+a.id)?.value || '';
+    var otherDesc = (el('ad'+a.id)?.value || '').trim();
+    if(!otherMot && !otherDesc) return;
+    var otherDept = cardDept[a.id] || 'GIGE';
+    var otherLib = BIBLIOTECA[otherDept] || BIBLIOTECA.GIGE || [];
+    var otherMEntry = otherLib.find(function(m){ return m.code === otherMot; });
+    var otherMLabel = otherMEntry ? otherMEntry.label : otherMot;
+    var otherSEntry = otherMEntry && otherMEntry.subs && otherMEntry.subs.find(function(s){ return s.code === otherSub; });
+    var otherSLabel = otherSEntry ? otherSEntry.label : otherSub;
+    var line = (otherMLabel || '') + (otherSLabel ? ' > ' + otherSLabel : '');
+    if(otherDesc) line += ': ' + otherDesc.substring(0, 120);
+    otherActs.push(line);
+  });
+
+  var prompt = 'Centro: ' + centro + ' (BP ' + (d.bp||'') + ')' +
+    ' | Fecha: ' + (d.fecha_a||'') +
     ' | Modalidad: ' + (d.mod||'Presencial') +
-    ' | Experto: ' + (d.enombre||'Branco Sandoval Palma') +
-    ' | Receptor: ' + (d.rnombre||'—') +
-    ' | Dept: ' + dept +
+    ' | Receptor: ' + (d.rnombre||'') + (d.rcargo ? ' (' + d.rcargo + ')' : '') +
     ' | Motivo: ' + mLabel +
-    ' | Submotivo: ' + sLabel +
-    (ctx ? ' | ' + ctx : '');
+    ' | Submotivo: ' + sLabel;
+  if(area)  prompt += ' | Area: ' + area;
+  if(fecha) prompt += ' | Periodo: ' + fecha;
+  if(extra) prompt += ' | ' + extra;
+  if(otherActs.length > 0){
+    prompt += ' | Otras actividades de esta visita: ' + otherActs.join('; ');
+  }
 
   n8nMejorarDescripcion(mCode + '|' + subCode, dept, '', prompt).then(function(res){
     if(!res){
-      if(status){ status.textContent = ' · Error IA'; status.style.color = '#dc2626'; }
+      if(status){ status.textContent = ' · Sin IA'; status.style.color = 'var(--tx3)'; }
       return;
     }
     var txt = (typeof res === 'string') ? res : (res.descripcion_mejorada || res.descripcion || '');
@@ -1406,9 +1466,11 @@ function triggerIA(id, mCode, subCode){
       ar(el('aa' + id));
     }
     if(status){
-      status.textContent = txt ? ' · ✓' : ' · Reintenta';
+      status.textContent = txt ? ' · OK' : ' · Reintenta';
       status.style.color = txt ? 'var(--gd)' : 'var(--tx3)';
     }
+    isDirty = true;
+    renderLivePreview();
   }).catch(function(err){
     console.warn('triggerIA error:', err);
     if(status){ status.textContent = ' · Error'; status.style.color = '#dc2626'; }
@@ -2041,7 +2103,7 @@ function _runGenPDF(){
           ida:         el('aid'+a.id)?.value || '',
           motivo:      motivoTitle,
           desc:        finalDesc,
-          acuerdo:     acuerdo,
+          acuer:       acuerdo,
           responsable: d.enombre || 'Branco Sandoval Palma',
           cargo_resp:  'Experto ACHS',
           fcump:       d.fcump,
@@ -2698,31 +2760,373 @@ function retriggerIAWithCtx(id){
 }
 
 // ── ACTIVIDADES DEL MES ──────────────────────────────────────────
+
+// ── PONDERACIÓN OFICIAL ACHS (Diccionario Submotivos GIGE v1 · Abril 2026) ──
+// p=presencial, r=remoto, t=tipo(1=cierre mensual obligatorio,2=flexible), o=O/F
+var PONDERACION = {
+  // ── PPP (Programa Propio) ──
+  'AAD01': {p:1.0,r:1.0,t:1,o:'F'},
+  'AAD02': {p:1.0,r:0.5,t:2,o:'F'},
+  'AAD03': {p:0.2,r:0.2,t:2,o:'F'},
+  'AAD04': {p:0.0,r:0.5,t:2,o:'O'},
+  'AAD05': {p:0.0,r:0.5,t:2,o:'O'},
+  'AAD06': {p:1.0,r:0.5,t:2,o:'F'},
+  'AAD07': {p:1.0,r:0.5,t:2,o:'F'},
+  'AAD08': {p:1.0,r:0.5,t:2,o:'F'},
+  'AAD09': {p:0.0,r:0.0,t:2,o:'F'},
+  'AAD10': {p:0.0,r:0.0,t:2,o:'F'},
+  'AAD11': {p:0.0,r:0.0,t:2,o:'F'},
+  'AAG01': {p:1.0,r:0.5,t:1,o:'F'},
+  'AAG03': {p:1.0,r:1.0,t:2,o:'F'},
+  'AAG04': {p:1.0,r:0.5,t:2,o:'F'},
+  'ACO01': {p:1.0,r:1.0,t:2,o:'F'},
+  'ACO02': {p:1.0,r:1.0,t:2,o:'F'},
+  'ACO03': {p:1.0,r:0.5,t:2,o:'F'},
+  'ACO04': {p:1.0,r:0.5,t:2,o:'F'},
+  'ACO05': {p:1.0,r:1.0,t:2,o:'F'},
+  'ACO06': {p:1.0,r:0.5,t:2,o:'F'},
+  'ACO07': {p:1.0,r:0.5,t:2,o:'F'},
+  'ACO08': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGC01': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGC02': {p:0.0,r:0.5,t:2,o:'O'},
+  'AGP01': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGP03': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGP04': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS02': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS03': {p:0.5,r:0.5,t:2,o:'F'},
+  'AGS05': {p:0.5,r:0.5,t:2,o:'F'},
+  'AGS06': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS08': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS09': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS10': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS11': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS12': {p:1.0,r:0.0,t:2,o:'O'},
+  'AGS13': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS14': {p:1.0,r:0.5,t:1,o:'F'},
+  'AGS15': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGS16': {p:1.0,r:0.5,t:1,o:'F'},
+  'AGS17': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARE01': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARE02': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARE03': {p:1.0,r:0.0,t:2,o:'O'},
+  'ARE05': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARE06': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARE07': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARS02': {p:1.0,r:0.5,t:1,o:'F'},
+  'ARS03': {p:1.0,r:0.5,t:2,o:'F'},
+  'ARS04': {p:1.0,r:0.5,t:1,o:'F'},
+  'ATS01': {p:1.0,r:0.5,t:2,o:'F'},
+  'ATS02': {p:1.0,r:0.5,t:1,o:'F'},
+  'ATS03': {p:1.0,r:0.5,t:2,o:'F'},
+  'ATS04': {p:1.0,r:0.5,t:2,o:'F'},
+  'AUD01': {p:1.0,r:0.5,t:2,o:'F'},
+  'AUD02': {p:1.0,r:0.5,t:2,o:'F'},
+  'AUD03': {p:1.0,r:0.5,t:2,o:'F'},
+  'CIN01': {p:1.0,r:0.5,t:2,o:'F'},
+  'CPH01': {p:1.0,r:0.5,t:2,o:'F'},
+  'CPH02': {p:1.0,r:0.5,t:2,o:'F'},
+  'CPH03': {p:1.0,r:1.0,t:2,o:'F'},
+  'CPH04': {p:1.0,r:1.0,t:2,o:'F'},
+  'CPH05': {p:1.0,r:0.5,t:2,o:'F'},
+  'FTG01': {p:2.5,r:0.0,t:1,o:'O'},
+  'FTG02': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG03': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG04': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG05': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG06': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG07': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG08': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG09': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG10': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG11': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG12': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG13': {p:1.5,r:0.0,t:1,o:'O'},
+  'FTG14': {p:0.0,r:0.0,t:2,o:'F'},
+  'FTG15': {p:0.0,r:0.0,t:1,o:'O'},
+  'FTG16': {p:0.0,r:0.0,t:1,o:'O'},
+  'FTG17': {p:0.0,r:0.0,t:1,o:'O'},
+  'FTG18': {p:0.0,r:0.0,t:1,o:'O'},
+  'FTG19': {p:0.0,r:0.0,t:1,o:'O'},
+  'FTG20': {p:0.0,r:0.0,t:1,o:'O'},
+  'GLK01': {p:0.25,r:0.25,t:2,o:'F'},
+  'GLK02': {p:0.5,r:0.5,t:2,o:'F'},
+  'GLK03': {p:0.5,r:0.5,t:2,o:'F'},
+  'GLK04': {p:0.0,r:0.17,t:2,o:'O'},
+  'GLK05': {p:0.0,r:0.17,t:2,o:'O'},
+  'GLK06': {p:0.5,r:0.5,t:2,o:'F'},
+  'ITC101': {p:1.0,r:1.0,t:1,o:'F'},
+  'ITC102': {p:1.0,r:0.5,t:1,o:'F'},
+  'ITC103': {p:1.0,r:1.0,t:1,o:'F'},
+  'ITC104': {p:1.0,r:0.5,t:1,o:'F'},
+  'ITC105': {p:1.0,r:1.0,t:1,o:'F'},
+  'ITC106': {p:1.0,r:0.5,t:1,o:'F'},
+  'ITC108': {p:1.0,r:0.5,t:2,o:'F'},
+  'ITC109': {p:1.0,r:0.5,t:2,o:'F'},
+  'ITC110': {p:1.0,r:0.5,t:2,o:'F'},
+  'ITC111': {p:1.0,r:0.5,t:2,o:'F'},
+  'ITC112': {p:1.0,r:0.5,t:2,o:'F'},
+  'ITC113': {p:1.0,r:0.5,t:1,o:'F'},
+  'ITC30': {p:0.5,r:0.5,t:1,o:'F'},
+  'ITC31': {p:0.0,r:0.5,t:2,o:'O'},
+  'ITC32': {p:0.5,r:0.5,t:2,o:'F'},
+  'ITC33': {p:1.0,r:0.5,t:1,o:'F'},
+  'SOP01': {p:0.5,r:0.5,t:2,o:'F'},
+  'SOP02': {p:1.0,r:0.5,t:2,o:'F'},
+  'SOP03': {p:1.0,r:0.5,t:2,o:'F'},
+  'SOP04': {p:1.0,r:0.5,t:2,o:'F'},
+  'SOP06': {p:1.0,r:0.5,t:2,o:'F'},
+  'SOP07': {p:1.0,r:0.5,t:2,o:'F'},
+  'SOP08': {p:0.0,r:0.5,t:2,o:'O'},
+  'SOP09': {p:1.0,r:0.5,t:2,o:'F'},
+  'TUP01': {p:0.5,r:0.0,t:2,o:'O'},
+  // ── HYE (Higiene y Ergonomía) ──
+  'AGB01': {p:1.0,r:0.0,t:1,o:'O'},
+  'AGB02': {p:1.0,r:0.5,t:2,o:'F'},
+  'AGB03': {p:1.0,r:0.5,t:1,o:'F'},
+  'AGB20': {p:0.0,r:0.0,t:2,o:'O'},
+  'AGB99': {p:1.0,r:0.5,t:2,o:'F'},
+  'APD04': {p:1.0,r:0.0,t:2,o:'O'},
+  'APD06': {p:1.0,r:0.5,t:2,o:'F'},
+  'APD20': {p:0.0,r:0.0,t:2,o:'O'},
+  'APD21': {p:1.0,r:0.5,t:2,o:'F'},
+  'APD99': {p:1.0,r:0.5,t:2,o:'F'},
+  'ASB01': {p:1.0,r:0.5,t:2,o:'F'},
+  'ASB04': {p:1.0,r:0.0,t:2,o:'O'},
+  'ASB07': {p:1.0,r:0.5,t:2,o:'F'},
+  'ASB11': {p:1.0,r:0.5,t:1,o:'F'},
+  'ASB20': {p:0.0,r:0.0,t:2,o:'O'},
+  'ASB99': {p:1.0,r:0.5,t:2,o:'F'},
+  'CAL01': {p:1.0,r:0.5,t:2,o:'F'},
+  'CAL03': {p:1.0,r:0.0,t:2,o:'O'},
+  'CAL04': {p:1.0,r:0.5,t:2,o:'F'},
+  'CAL08': {p:1.0,r:0.5,t:2,o:'F'},
+  'CAL20': {p:0.0,r:0.0,t:2,o:'O'},
+  'CAL99': {p:1.0,r:0.5,t:2,o:'F'},
+  'CTS01': {p:1.0,r:0.5,t:2,o:'F'},
+  'CTS02': {p:1.0,r:0.5,t:2,o:'F'},
+  'CTS04': {p:1.0,r:0.0,t:2,o:'O'},
+  'CTS05': {p:1.0,r:0.5,t:2,o:'F'},
+  'CTS08': {p:1.0,r:0.5,t:2,o:'F'},
+  'CTS20': {p:0.0,r:0.0,t:2,o:'O'},
+  'CTS99': {p:1.0,r:0.5,t:2,o:'F'},
+  'CVH01': {p:0.5,r:0.5,t:2,o:'F'},
+  'CVH02': {p:0.5,r:0.5,t:2,o:'F'},
+  'CVH03': {p:0.5,r:0.5,t:2,o:'F'},
+  'CVH04': {p:1.0,r:0.0,t:2,o:'O'},
+  'EPE01': {p:1.5,r:1.5,t:1,o:'F'},
+  'EPE02': {p:1.0,r:0.0,t:1,o:'O'},
+  'EPE03': {p:1.0,r:0.5,t:1,o:'F'},
+  'EPE04': {p:1.0,r:0.5,t:1,o:'F'},
+  'FAT01': {p:1.0,r:0.5,t:2,o:'F'},
+  'FAT02': {p:1.0,r:0.5,t:2,o:'F'},
+  'FIQ02': {p:1.0,r:0.0,t:2,o:'O'},
+  'FIQ03': {p:1.0,r:0.5,t:2,o:'F'},
+  'FIQ04': {p:1.0,r:1.0,t:2,o:'F'},
+  'FIQ06': {p:1.0,r:0.5,t:2,o:'F'},
+  'FIQ20': {p:0.0,r:0.0,t:2,o:'O'},
+  'FIQ99': {p:1.0,r:0.5,t:2,o:'F'},
+  'FRI01': {p:1.0,r:0.5,t:2,o:'F'},
+  'FRI03': {p:1.0,r:0.0,t:2,o:'O'},
+  'FRI04': {p:1.0,r:0.5,t:2,o:'F'},
+  'FRI08': {p:1.0,r:0.5,t:2,o:'F'},
+  'FRI20': {p:0.0,r:0.0,t:2,o:'O'},
+  'FRI99': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIE01': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIE02': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIE04': {p:1.0,r:0.0,t:1,o:'F'},
+  'HIE06': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIE08': {p:1.0,r:0.5,t:1,o:'F'},
+  'HIE09': {p:0.0,r:0.0,t:2,o:'O'},
+  'HIE11': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIE99': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIO02': {p:0.5,r:0.5,t:2,o:'F'},
+  'HIO04': {p:1.0,r:0.0,t:2,o:'O'},
+  'HIO05': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIO07': {p:1.0,r:0.5,t:1,o:'F'},
+  'HIO09': {p:1.0,r:0.5,t:1,o:'F'},
+  'HIO10': {p:0.0,r:0.5,t:2,o:'O'},
+  'HIO11': {p:1.0,r:0.5,t:2,o:'F'},
+  'HIO99': {p:1.0,r:0.5,t:2,o:'F'},
+  'ILU01': {p:1.0,r:0.0,t:2,o:'O'},
+  'ILU02': {p:1.0,r:0.5,t:2,o:'F'},
+  'ILU04': {p:1.0,r:0.5,t:2,o:'F'},
+  'ILU06': {p:1.0,r:0.5,t:2,o:'F'},
+  'ILU20': {p:0.0,r:0.0,t:2,o:'O'},
+  'ILU99': {p:1.0,r:0.5,t:2,o:'F'},
+  'INE01': {p:0.5,r:0.5,t:1,o:'F'},
+  'INE02': {p:1.0,r:0.5,t:1,o:'F'},
+  'MPS01': {p:1.0,r:0.5,t:1,o:'F'},
+  'MPS04': {p:1.0,r:0.0,t:1,o:'F'},
+  'MPS06': {p:1.0,r:0.5,t:2,o:'F'},
+  'MPS10': {p:1.0,r:0.5,t:1,o:'F'},
+  'MPS11': {p:0.5,r:0.5,t:2,o:'F'},
+  'MPS20': {p:0.0,r:0.0,t:2,o:'O'},
+  'MPS99': {p:1.0,r:0.5,t:2,o:'F'},
+  'OAE05': {p:1.0,r:0.5,t:2,o:'F'},
+  'OAQ01': {p:1.0,r:0.5,t:2,o:'F'},
+  'OAQ04': {p:1.0,r:0.0,t:1,o:'O'},
+  'OAQ05': {p:1.0,r:0.5,t:2,o:'F'},
+  'OAQ09': {p:1.0,r:0.5,t:2,o:'F'},
+  'OAQ20': {p:0.0,r:0.0,t:2,o:'O'},
+  'OAQ99': {p:1.0,r:0.5,t:2,o:'F'},
+  'PLA01': {p:1.0,r:0.5,t:2,o:'F'},
+  'PLA02': {p:1.0,r:0.5,t:2,o:'F'},
+  'PLA03': {p:0.0,r:0.0,t:2,o:'O'},
+  'PLA04': {p:1.0,r:0.0,t:2,o:'O'},
+  'PLA06': {p:1.0,r:0.5,t:1,o:'F'},
+  'PLA07': {p:1.0,r:0.5,t:2,o:'F'},
+  'PLA20': {p:0.0,r:0.0,t:2,o:'O'},
+  'PLA21': {p:1.0,r:0.0,t:2,o:'O'},
+  'PLA99': {p:1.0,r:0.5,t:2,o:'F'},
+  'RIO01': {p:1.0,r:0.5,t:2,o:'F'},
+  'RIO03': {p:1.0,r:0.0,t:2,o:'O'},
+  'RIO04': {p:1.0,r:0.5,t:2,o:'F'},
+  'RIO08': {p:1.0,r:0.5,t:2,o:'F'},
+  'RIO20': {p:0.0,r:0.0,t:2,o:'O'},
+  'RIO99': {p:1.0,r:0.5,t:2,o:'F'},
+  'RUI01': {p:1.0,r:0.5,t:1,o:'F'},
+  'RUI02': {p:1.0,r:0.5,t:1,o:'F'},
+  'RUI03': {p:1.0,r:1.0,t:1,o:'F'},
+  'RUI06': {p:1.0,r:0.0,t:1,o:'O'},
+  'RUI11': {p:0.0,r:0.0,t:1,o:'O'},
+  'RUI12': {p:1.0,r:0.5,t:1,o:'F'},
+  'RUI13': {p:0.0,r:0.0,t:1,o:'O'},
+  'RUI16': {p:0.5,r:0.5,t:2,o:'F'},
+  'RUI20': {p:0.0,r:0.0,t:2,o:'O'},
+  'RUI21': {p:0.0,r:0.5,t:2,o:'O'},
+  'RUI22': {p:1.0,r:0.0,t:2,o:'O'},
+  'RUI98': {p:0.0,r:0.0,t:2,o:'F'},
+  'RUI99': {p:1.0,r:0.5,t:1,o:'F'},
+  'RUV04': {p:1.0,r:0.0,t:2,o:'O'},
+  'RUV06': {p:1.0,r:0.5,t:2,o:'F'},
+  'RUV07': {p:1.0,r:0.5,t:2,o:'F'},
+  'RUV08': {p:1.0,r:0.5,t:2,o:'F'},
+  'RUV20': {p:0.0,r:0.0,t:2,o:'O'},
+  'RUV99': {p:1.0,r:0.5,t:2,o:'F'},
+  'SIL01': {p:0.5,r:0.5,t:1,o:'F'},
+  'SIL02': {p:1.0,r:0.5,t:2,o:'F'},
+  'SIL04': {p:1.15,r:1.15,t:1,o:'F'},
+  'SIL05': {p:1.15,r:1.15,t:1,o:'F'},
+  'SIL09': {p:1.0,r:0.5,t:2,o:'F'},
+  'SIL15': {p:1.0,r:0.5,t:1,o:'F'},
+  'SIL16': {p:0.5,r:0.5,t:2,o:'F'},
+  'SIL20': {p:0.0,r:0.0,t:2,o:'O'},
+  'SIL98': {p:0.0,r:0.0,t:2,o:'F'},
+  'SIL99': {p:1.0,r:0.5,t:1,o:'F'},
+  'TBC01': {p:1.0,r:0.5,t:2,o:'F'},
+  'TBC02': {p:1.0,r:0.5,t:2,o:'F'},
+  'TBC04': {p:1.0,r:0.0,t:2,o:'O'},
+  'TBC07': {p:1.0,r:0.5,t:1,o:'F'},
+  'TBC20': {p:0.0,r:0.0,t:2,o:'O'},
+  'TBC99': {p:1.0,r:0.5,t:2,o:'F'},
+  'TUR01': {p:0.0,r:1.0,t:1,o:'F'},
+  'UIV01': {p:1.0,r:0.0,t:1,o:'O'},
+  'UIV02': {p:1.0,r:0.5,t:2,o:'F'},
+  'UIV03': {p:1.0,r:0.5,t:2,o:'F'},
+  'UIV05': {p:1.0,r:0.5,t:2,o:'F'},
+  'UIV06': {p:1.0,r:0.5,t:2,o:'F'},
+  'UIV20': {p:0.0,r:0.0,t:2,o:'O'},
+  'UIV99': {p:1.0,r:0.5,t:2,o:'F'},
+  'VEN01': {p:1.0,r:0.75,t:2,o:'F'},
+  'VEN02': {p:1.0,r:0.5,t:2,o:'F'}
+};
+
+function getPonderacion(subCode){
+  var e = PONDERACION[subCode];
+  if(!e) return {p:0.5, r:0.5, t:2, o:'F'};
+  return e;
+}
+
+
+
 function renderActsMes(){
   var content = el('acts-mes-content');
   var title = el('acts-mes-title');
   if(!content) return;
-
   var d = gd();
-  var bpEntry = BPS.find(function(b){ return b.bp===d.bp; });
   var now = new Date();
   var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var mesLabel = months[now.getMonth()] + ' ' + now.getFullYear();
   if(title) title.textContent = 'Actividades ' + mesLabel;
 
   if(!sfIds.length){
-    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce en el Paso 3 para ver las asesorías.</div>';
+    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el PDF o Excel de Salesforce en el Paso 3 para ver las asesorías del mes.</div>';
     return;
   }
 
   var pool = d.bp ? sfIds.filter(function(s){ return !s.bp || s.bp===d.bp; }) : sfIds;
   if(!pool.length){
-    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">No hay asesorías para el centro seleccionado en el archivo cargado.</div>';
+    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">No hay asesorías para el centro seleccionado.</div>';
     return;
   }
 
-  var rows = pool.map(function(s, i){
+  // Weighted progress using official presencial values
+  var totalPond = 0, assignedPond = 0, tipo1Total = 0, tipo1Done = 0;
+  pool.forEach(function(s){
+    var subCode = (s.sCodes && s.sCodes.length) ? s.sCodes[0] : '';
+    var info = getPonderacion(subCode);
+    totalPond += info.p;
+    if(info.t === 1){ tipo1Total++; }
+    if(sfUsedIds.has(s.id)){
+      assignedPond += info.p;
+      if(info.t === 1) tipo1Done++;
+    }
+  });
+  var totalCount = pool.length;
+  var assignedCount = pool.filter(function(s){ return sfUsedIds.has(s.id); }).length;
+  var pendingCount = totalCount - assignedCount;
+  var pct = totalPond > 0 ? Math.round(assignedPond * 100 / totalPond) : 0;
+  var tipo1Pending = tipo1Total - tipo1Done;
+
+  var barColor = pct === 100 ? 'var(--g)' : pct >= 50 ? '#EE7733' : 'var(--err)';
+  var html = '';
+
+  // Tipo 1 warning banner
+  if(tipo1Pending > 0){
+    html += '<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:var(--r2);padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;">';
+    html += '<span style="font-size:20px;">⚠️</span>';
+    html += '<div><strong style="color:#92400e;font-size:12px;">'+tipo1Pending+' actividad'+(tipo1Pending>1?'es':'')+' Tipo 1 pendiente'+(tipo1Pending>1?'s':'')+'</strong>';
+    html += '<div style="font-size:11px;color:#92400e;">Tipo 1 = cierre mensual obligatorio. Deben completarse antes de fin de mes.</div>';
+    html += '</div></div>';
+  }
+
+  // Progress section
+  html += '<div style="background:var(--s1);border-radius:var(--r2);padding:16px;margin-bottom:16px;">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+  html += '<span style="font-weight:700;font-size:14px;color:var(--tx);">Avance ponderado</span>';
+  html += '<span style="font-size:22px;font-weight:800;color:'+barColor+';">'+pct+'%</span>';
+  html += '</div>';
+  html += '<div style="background:var(--s3);border-radius:6px;height:12px;overflow:hidden;margin-bottom:12px;">';
+  html += '<div style="background:'+barColor+';height:100%;width:'+pct+'%;border-radius:6px;transition:width 0.4s;"></div>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  var stats = [
+    {v:totalCount,l:'Total',c:'var(--tx)'},
+    {v:assignedCount,l:'Asignados',c:'var(--g)'},
+    {v:pendingCount,l:'Pendientes',c:pendingCount>0?'var(--warn)':'var(--g)'},
+    {v:assignedPond.toFixed(1)+'/'+totalPond.toFixed(1),l:'Hrs pond.',c:'var(--info)'}
+  ];
+  stats.forEach(function(st){
+    html += '<div style="flex:1;min-width:65px;background:var(--wh);border-radius:var(--r);padding:8px;text-align:center;border:1px solid var(--s3);">';
+    html += '<div style="font-size:17px;font-weight:800;color:'+st.c+';">'+st.v+'</div>';
+    html += '<div style="font-size:8px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;">'+st.l+'</div></div>';
+  });
+  html += '</div></div>';
+
+  // Table
+  html += '<div style="overflow-x:auto;">';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+  html += '<thead><tr style="background:var(--tx);color:#fff;">';
+  ['N°','Motivo / Submotivo','Hrs','Tipo','Estado',''].forEach(function(h){
+    var w = h==='N°'?'width:85px;':h==='Hrs'?'width:40px;text-align:center;':h==='Tipo'?'width:50px;text-align:center;':h==='Estado'?'width:65px;text-align:center;':h===''?'width:60px;text-align:center;':'';
+    html += '<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;text-align:left;'+w+'">'+h+'</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  pool.forEach(function(s, i){
     var asignado = sfUsedIds.has(s.id);
+    var subCode = (s.sCodes && s.sCodes.length) ? s.sCodes[0] : '';
+    var info = getPonderacion(subCode);
     var sLabel = '';
     if(s.sCodes && s.sCodes.length){
       var depts = ['GIGE','RED','HYE'];
@@ -2731,9 +3135,9 @@ function renderActsMes(){
         for(var mi=0;mi<mots.length;mi++){
           var m2=mots[mi];
           if(!m2.subs) continue;
-          for(var si=0;si<m2.subs.length;si++){
-            if(s.sCodes.indexOf(m2.subs[si].code)>=0){
-              sLabel = m2.label + ' › ' + m2.subs[si].label + ' (' + m2.subs[si].code + ')';
+          for(var si2=0;si2<m2.subs.length;si2++){
+            if(s.sCodes.indexOf(m2.subs[si2].code)>=0){
+              sLabel = m2.subs[si2].label;
               break outer;
             }
           }
@@ -2741,32 +3145,50 @@ function renderActsMes(){
       }
     }
     if(!sLabel && s.sCodes && s.sCodes.length) sLabel = s.sCodes.join(', ');
-    var bg = i%2===0?'var(--s2)':'var(--wh)';
+    if(!sLabel) sLabel = '—';
+
+    var bg = i%2===0?'var(--s1)':'var(--wh)';
+    var tipoBadge = info.t===1
+      ? '<span style="background:#fef3c7;color:#92400e;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;" title="Cierre mensual obligatorio">T1⚠</span>'
+      : '<span style="background:var(--s2);color:var(--tx3);font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;">T2</span>';
     var badge = asignado
-      ? '<span style="background:#dcfce7;color:#166534;font-size:9px;font-weight:800;padding:2px 7px;border-radius:3px;white-space:nowrap;">✓ ASIGNADO</span>'
-      : '<span style="background:#fef9c3;color:#854d0e;font-size:9px;font-weight:800;padding:2px 7px;border-radius:3px;white-space:nowrap;">PENDIENTE</span>';
-    return '<tr style="background:'+bg+';">'
-      + '<td style="padding:8px 12px;font-family:monospace;font-weight:800;font-size:12px;white-space:nowrap;">'+s.id+'</td>'
-      + '<td style="padding:8px 12px;font-size:11px;color:var(--tx3);white-space:nowrap;">'+s.centro+'</td>'
-      + '<td style="padding:8px 12px;font-size:11px;">'+sLabel+'</td>'
-      + '<td style="padding:8px 12px;text-align:center;">'+badge+'</td>'
-      + '<td style="padding:8px 12px;text-align:center;">'
-        + (asignado ? '' : '<button onclick="assignSiglaFromMes(\"' + s.id + '\")" style="font-size:10px;padding:3px 9px;background:var(--g);color:#fff;border:none;border-radius:3px;cursor:pointer;">Asignar</button>')
-      + '</td>'
-      + '</tr>';
+      ? '<span style="background:#dcfce7;color:#166534;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;">✓</span>'
+      : '<span style="background:#fef9c3;color:#854d0e;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;">PEND</span>';
+    var actionBtn = asignado
+      ? ''
+      : '<button onclick="sfAssignFromPanel(\''+s.id+'\')" style="background:var(--g);color:#fff;border:none;padding:2px 7px;border-radius:var(--r);font-size:9px;font-weight:700;cursor:pointer;">Asignar</button>';
+    // Highlight Tipo 1 pending rows
+    var rowStyle = (info.t===1 && !asignado) ? 'background:#fef3c7;' : 'background:'+bg+';';
+    html += '<tr style="'+rowStyle+'border-bottom:1px solid var(--s2);">';
+    html += '<td style="padding:5px 8px;font-weight:600;font-family:monospace;font-size:11px;">'+s.id+'</td>';
+    html += '<td style="padding:5px 8px;color:var(--tx2);font-size:10px;">'+sLabel+'</td>';
+    html += '<td style="padding:5px 8px;text-align:center;font-weight:700;font-size:10px;color:var(--info);">'+info.p+'</td>';
+    html += '<td style="padding:5px 8px;text-align:center;">'+tipoBadge+'</td>';
+    html += '<td style="padding:5px 8px;text-align:center;">'+badge+'</td>';
+    html += '<td style="padding:5px 8px;text-align:center;">'+actionBtn+'</td>';
+    html += '</tr>';
   });
 
-  content.innerHTML = '<table style="width:100%;border-collapse:collapse;font-family:inherit;">'
-    + '<thead><tr style="background:var(--hdr,#111);">'
-    + '<th style="padding:8px 12px;text-align:left;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;">N° Asesoría</th>'
-    + '<th style="padding:8px 12px;text-align:left;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Centro</th>'
-    + '<th style="padding:8px 12px;text-align:left;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Motivo / Submotivo</th>'
-    + '<th style="padding:8px 12px;text-align:center;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Estado</th>'
-    + '<th style="padding:8px 12px;text-align:center;font-size:10px;color:#fff;text-transform:uppercase;letter-spacing:.5px;">Acción</th>'
-    + '</tr></thead>'
-    + '<tbody>' + rows.join('') + '</tbody>'
-    + '</table>'
-    + '<div style="padding:10px 12px;font-size:10px;color:var(--tx3);">Total: '+pool.length+' | Asignados: '+pool.filter(function(s){return sfUsedIds.has(s.id);}).length+' | Pendientes: '+pool.filter(function(s){return !sfUsedIds.has(s.id);}).length+'</div>';
+  html += '</tbody></table></div>';
+  content.innerHTML = html;
+}
+
+function sfAssignFromPanel(sfId){
+  if(sfUsedIds.has(sfId)) return;
+  // Find first act without an ID and assign this one
+  for(var i=0; i<acts.length; i++){
+    var inp = el('aid'+acts[i].id);
+    if(inp && !inp.value.trim()){
+      inp.value = sfId;
+      sfUsedIds.add(sfId);
+      isDirty = true;
+      sfRenderIds();
+      renderActsMes();
+      return;
+    }
+  }
+  // If no empty act, show a toast
+  toast('Agrega una actividad primero (Paso 3) y luego asigna el ID.','warn');
 }
 
 function assignSiglaFromMes(id){
@@ -3249,6 +3671,56 @@ async function n8nEnviarInformeSemanal(datosInforme) {
 
 
 
+
+
+
+
+
+
+// ── UBICACIÓN ──────────────────────────────────────────────
+var BPS_UBICACION = {
+  '2000294182': {nombre:'Hospital del Salvador', dir:'Av. Salvador 364, Providencia', lat:-33.4406, lng:-70.6195},
+  '2000294183': {nombre:'Hospital Luis Calvo Mackenna', dir:'Antonio Varas 360, Providencia', lat:-33.4393, lng:-70.6219},
+  '2000294185': {nombre:'Instituto de Neurocirugía', dir:'Av. José Manuel Infante 553, Providencia', lat:-33.4415, lng:-70.6230},
+  '2000294186': {nombre:'Instituto Nacional del Tórax', dir:'Av. José Manuel Infante 717, Providencia', lat:-33.4435, lng:-70.6243},
+  '2000294187': {nombre:'Instituto Nacional de Geriatría', dir:'Av. José Manuel Infante 370, Providencia', lat:-33.4400, lng:-70.6220},
+  '2000294188': {nombre:'Hospital Tisné Brousse', dir:'Av. Las Torres 5150, Peñalolén', lat:-33.4764, lng:-70.5564},
+  '2000294189': {nombre:'INRPAC', dir:'Av. Pedro de Valdivia 3245, Peñalolén', lat:-33.4741, lng:-70.5705},
+  '2000294191': {nombre:'Hospital Hanga Roa', dir:'Simón Paoa s/n, Isla de Pascua', lat:-27.1483, lng:-109.4333},
+  '2000294193': {nombre:'Dirección SSMO', dir:'Av. Salvador 365, Providencia', lat:-33.4408, lng:-70.6198},
+  '2000477573': {nombre:'Hospital Metropolitano', dir:'Av. Américo Vespucio 765, Las Condes', lat:-33.3893, lng:-70.5723}
+};
+
+function renderUbicacion(){
+  var content = el('ubicacion-content');
+  if(!content) return;
+  var d = gd();
+  var bp = d.bp || '';
+  var info = BPS_UBICACION[bp];
+  if(!bp || !info){
+    content.innerHTML = '<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Selecciona un centro en el Paso 1 para ver su ubicación.</div>';
+    return;
+  }
+  var mapUrl = 'https://www.google.com/maps?q='+encodeURIComponent(info.dir)+'&output=embed';
+  var mapsLink = 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(info.dir);
+  content.innerHTML =
+    '<div style="background:var(--s1);border-radius:var(--r2);padding:16px;margin-bottom:12px;">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
+        '<span style="font-size:24px;">🏥</span>' +
+        '<div>' +
+          '<div style="font-weight:700;font-size:15px;color:var(--tx);">' + info.nombre + '</div>' +
+          '<div style="font-size:12px;color:var(--tx3);">BP ' + bp + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--tx2);margin-bottom:12px;">' +
+        '<span>📍</span> ' + info.dir +
+      '</div>' +
+      '<a href="' + mapsLink + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:var(--g);color:#fff;padding:8px 16px;border-radius:var(--r);text-decoration:none;font-size:12px;font-weight:600;">🗺 Abrir en Google Maps</a>' +
+    '</div>' +
+    '<div style="border-radius:var(--r2);overflow:hidden;border:1px solid var(--s3);">' +
+      '<iframe src="' + mapUrl + '" width="100%" height="350" style="border:0;display:block;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>' +
+    '</div>';
+}
 
 
 
