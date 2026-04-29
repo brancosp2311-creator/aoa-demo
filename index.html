@@ -828,7 +828,8 @@ const N8N = {
     registro: 'aoa-registro',
     drive:    'aoa-drive',
     ia:       'aoa-ia-descripcion',
-    correo:   'aoa-correo-resumen'
+    correo:   'aoa-correo-resumen',
+    dashboard:'aoa-dashboard'
   },
   url(k){ return this.base + '/' + this.endpoints[k]; }
 };
@@ -2143,6 +2144,7 @@ function _runGenPDF(){
       // n8n (silent, non-blocking)
       n8nRegistrarAOA(d);
       n8nGuardarDrive(d, html);
+      n8nDashboard(d);
 
       // History
       setTimeout(()=>{ if(d.bp||d.razon){ saveToHistory(d); updateHistBadge(); } }, 500);
@@ -2605,6 +2607,34 @@ async function n8nRegistrarAOA(d){
       })
     });
   }catch(e){ console.warn('n8n registro:', e); }
+}
+
+async function n8nDashboard(d){
+  if(!N8N.enabled) return;
+  try{
+    var centro = BPS.find(function(b){return b.bp===d.bp;})?.centro || d.razon || '';
+    var isRemoto = (d.mod||'').toUpperCase()==='REMOTO';
+    var ptsTotal = 0;
+    var motivosList = [];
+    acts.forEach(function(a){
+      var subCode = el('as'+a.id)?.getAttribute('data-sub') || el('as'+a.id)?.value || '';
+      var mCode = el('am'+a.id)?.getAttribute('data-mot') || '';
+      if(mCode) motivosList.push(subCode || mCode);
+      var info = getPonderacion(subCode);
+      ptsTotal += isRemoto ? info.r : info.p;
+    });
+    await fetch(N8N.url('dashboard'),{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        bp: d.bp, centro: centro, fecha: d.fecha_a,
+        modalidad: d.mod, experto: d.enombre,
+        actividades: acts.length, pts_total: ptsTotal,
+        motivos: motivosList.join(','),
+        receptor: d.rnombre,
+        timestamp: new Date().toISOString()
+      })
+    });
+  }catch(e){ console.warn('n8n dashboard:', e); }
 }
 
 async function n8nGuardarDrive(d, htmlContent){
