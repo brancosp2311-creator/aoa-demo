@@ -732,7 +732,7 @@ body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
   <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" style="opacity:.4;cursor:not-allowed;" title="Genera el PDF primero">📧 Enviar</button>
 
 <!-- PASO 7: ACTIVIDADES DEL MES -->
-<div class="panel" id="tab-acts-mes" style="width:100%;max-width:100%;padding:16px;"><div class="step-hdr"><div class="step-icon">📅</div><div><div class="step-t" id="acts-mes-title">Actividades del Mes</div><div class="step-sub">Asesorías cargadas desde Salesforce — filtradas por BP</div></div></div><div id="acts-mes-content" style="overflow-x:auto;padding:8px;"><div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce y selecciona un centro.</div></div></div>
+<div class="panel" id="tab-acts-mes" style="padding:16px;box-sizing:border-box;"><div class="step-hdr"><div class="step-icon">📅</div><div><div class="step-t" id="acts-mes-title">Actividades del Mes</div><div class="step-sub">Asesorías cargadas desde Salesforce — filtradas por BP</div></div></div><div id="acts-mes-content" style="overflow-x:auto;padding:8px;"><div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce y selecciona un centro.</div></div></div>
 </div>
 
 <script>
@@ -3060,15 +3060,17 @@ function renderActsMes(){
     return;
   }
 
-  // Weighted progress using official presencial values
+  // Weighted progress using modalidad-aware values
+  var isRemoto = (d.mod || '').toUpperCase() === 'REMOTO';
   var totalPond = 0, assignedPond = 0, tipo1Total = 0, tipo1Done = 0;
   pool.forEach(function(s){
     var subCode = (s.sCodes && s.sCodes.length) ? s.sCodes[0] : '';
     var info = getPonderacion(subCode);
-    totalPond += info.p;
+    var pts = isRemoto ? info.r : info.p;
+    totalPond += pts;
     if(info.t === 1){ tipo1Total++; }
     if(sfUsedIds.has(s.id)){
-      assignedPond += info.p;
+      assignedPond += pts;
       if(info.t === 1) tipo1Done++;
     }
   });
@@ -3093,7 +3095,8 @@ function renderActsMes(){
   // Progress section
   html += '<div style="background:var(--s1);border-radius:var(--r2);padding:16px;margin-bottom:16px;">';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
-  html += '<span style="font-weight:700;font-size:14px;color:var(--tx);">Avance ponderado</span>';
+  html += '<div><span style="font-weight:700;font-size:14px;color:var(--tx);">Avance ponderado</span>';
+  html += '<span style="font-size:9px;color:var(--tx3);margin-left:8px;font-weight:600;">('+(isRemoto?'Remoto':'Presencial')+')</span></div>';
   html += '<span style="font-size:22px;font-weight:800;color:'+barColor+';">'+pct+'%</span>';
   html += '</div>';
   html += '<div style="background:var(--s3);border-radius:6px;height:12px;overflow:hidden;margin-bottom:12px;">';
@@ -3104,7 +3107,7 @@ function renderActsMes(){
     {v:totalCount,l:'Total',c:'var(--tx)'},
     {v:assignedCount,l:'Asignados',c:'var(--g)'},
     {v:pendingCount,l:'Pendientes',c:pendingCount>0?'var(--warn)':'var(--g)'},
-    {v:assignedPond.toFixed(1)+'/'+totalPond.toFixed(1),l:'Hrs pond.',c:'var(--info)'}
+    {v:assignedPond.toFixed(1)+'/'+totalPond.toFixed(1),l:'Pts pond.',c:'var(--info)'}
   ];
   stats.forEach(function(st){
     html += '<div style="flex:1;min-width:65px;background:var(--wh);border-radius:var(--r);padding:8px;text-align:center;border:1px solid var(--s3);">';
@@ -3114,11 +3117,12 @@ function renderActsMes(){
   html += '</div></div>';
 
   // Table
-  html += '<div style="overflow-x:auto;">';
-  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+  html += '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">';
+  html += '<colgroup><col style="width:90px;"><col><col style="width:42px;"><col style="width:50px;"><col style="width:60px;"><col style="width:65px;"></colgroup>';
   html += '<thead><tr style="background:var(--tx);color:#fff;">';
-  ['N°','Motivo / Submotivo','Hrs','Tipo','Estado',''].forEach(function(h){
-    var w = h==='N°'?'width:85px;':h==='Hrs'?'width:40px;text-align:center;':h==='Tipo'?'width:50px;text-align:center;':h==='Estado'?'width:65px;text-align:center;':h===''?'width:60px;text-align:center;':'';
+  ['N°','Motivo / Submotivo','Pts','Tipo','Estado',''].forEach(function(h){
+    var w = h==='N°'?'':h==='Pts'?'text-align:center;':h==='Tipo'?'text-align:center;':h==='Estado'?'text-align:center;':h===''?'text-align:center;':'';
     html += '<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;text-align:left;'+w+'">'+h+'</th>';
   });
   html += '</tr></thead><tbody>';
@@ -3160,9 +3164,9 @@ function renderActsMes(){
     // Highlight Tipo 1 pending rows
     var rowStyle = (info.t===1 && !asignado) ? 'background:#fef3c7;' : 'background:'+bg+';';
     html += '<tr style="'+rowStyle+'border-bottom:1px solid var(--s2);">';
-    html += '<td style="padding:5px 8px;font-weight:600;font-family:monospace;font-size:11px;">'+s.id+'</td>';
-    html += '<td style="padding:5px 8px;color:var(--tx2);font-size:10px;">'+sLabel+'</td>';
-    html += '<td style="padding:5px 8px;text-align:center;font-weight:700;font-size:10px;color:var(--info);">'+info.p+'</td>';
+    html += '<td style="padding:5px 8px;font-weight:600;font-family:monospace;font-size:10px;word-break:break-all;">'+s.id+'</td>';
+    html += '<td style="padding:5px 8px;color:var(--tx2);font-size:10px;word-break:break-word;overflow-wrap:break-word;">'+sLabel+'</td>';
+    html += '<td style="padding:5px 8px;text-align:center;font-weight:700;font-size:10px;color:var(--info);">'+(isRemoto ? info.r : info.p)+'</td>';
     html += '<td style="padding:5px 8px;text-align:center;">'+tipoBadge+'</td>';
     html += '<td style="padding:5px 8px;text-align:center;">'+badge+'</td>';
     html += '<td style="padding:5px 8px;text-align:center;">'+actionBtn+'</td>';
