@@ -329,6 +329,8 @@ body.dark .visit-type-btn{background:var(--s1);}
 .act-compact-del:hover{color:var(--err);}
 
 /* MISC */
+.sf-act-btn{background:var(--gl);color:var(--gd);border:1px solid rgba(19,192,99,.2);border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .14s;padding:0;}
+.sf-act-btn:hover{background:var(--g);color:#fff;border-color:var(--g);}
 .empty{text-align:center;padding:24px 14px;color:var(--tx3);font-size:11px;font-style:italic;}
 @media(max-width:600px){
   .hdr-sub,.preview-btn-txt{display:none;}
@@ -363,7 +365,10 @@ body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
 <!-- PRINT AREA -->
 
 <div class="panel" id="tab-ubicacion" style="width:100%;max-width:100%;padding:16px;">
-  <div class="step-hdr"><span class="step-num" style="background:var(--info);">📍</span> Ubicación del Centro</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div class="step-hdr" style="margin:0;"><span class="step-num" style="background:var(--info);">📍</span> Ubicación del Centro</div>
+    <button class="btn-s" onclick="goStep(currentStep)" style="font-size:11px;padding:5px 14px;">← Volver</button>
+  </div>
   <div id="ubicacion-content" style="padding:8px;">
     <div style="text-align:center;color:var(--tx3);font-size:13px;padding:20px;">Selecciona un centro en el Paso 1 para ver su ubicación.</div>
   </div>
@@ -484,7 +489,8 @@ body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
     <button class="hdr-btn preview-btn-txt" id="preview-btn" onclick="togglePreview()">👁 Preview</button>
     <button class="hdr-btn" id="dark-btn" onclick="toggleDark()" title="Modo oscuro">🌙</button>
     <button class="hdr-btn" id="dalton-btn" onclick="toggleDalton()" title="Daltonismo" style="font-size:12px;">👁‍🗨</button>
-    <span class="v-badge">v4.0</span>
+    <button class="hdr-btn" id="n8n-toggle" onclick="toggleN8N()" title="Notificaciones n8n" style="font-size:11px;position:relative;">⚡<span id="n8n-dot" style="position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:#13C063;"></span></button>
+    <span class="v-badge">v4.1</span>
   </div>
 </div>
 
@@ -700,14 +706,20 @@ body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
 
 <!-- HISTORIAL -->
 <div class="panel" id="tab-historial">
-  <div class="stitle">Historial de AOAs</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div class="stitle" style="margin:0;">Historial de AOAs</div>
+    <button class="btn-s" onclick="goStep(currentStep)" style="font-size:11px;padding:5px 14px;">← Volver</button>
+  </div>
   <div id="hist-list"><div class="empty">Sin historial aún.</div></div>
   <button class="btn-s" onclick="clearHistory()" style="margin-top:10px;font-size:10px;color:var(--err);border-color:var(--err);">🗑 Borrar historial</button>
 </div>
 
 <!-- STATS -->
 <div class="panel" id="tab-stats">
-  <div class="stitle">KPI por BP</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div class="stitle" style="margin:0;">KPI por BP</div>
+    <button class="btn-s" onclick="goStep(currentStep)" style="font-size:11px;padding:5px 14px;">← Volver</button>
+  </div>
   <div id="stats-content"><div class="empty">Sin datos aún.</div></div>
 </div>
 
@@ -726,49 +738,16 @@ body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
 
 <!-- ABAR -->
 <div class="abar">
-  <button class="btn-s" onclick="resetF()" title="Nueva AOA">↺ Nueva</button>
-  <button class="btn-s" onclick="saveDraft()">💾 Borrador</button>
-  <button class="btn-p green" id="gen-pdf-btn" onclick="genPDF()" style="flex:3;font-size:13px;font-weight:800;">📄 Generar PDF</button>
-  <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" style="opacity:.4;cursor:not-allowed;" title="Genera el PDF primero">📧 Enviar</button>
+  <button class="btn-s" onclick="resetF()" title="Nueva AOA" style="flex-shrink:0;">↺ Nueva</button>
+  <button class="btn-s" onclick="saveDraft()" style="flex-shrink:0;">💾 Borrador</button>
+  <button class="btn-p green" id="gen-pdf-btn" onclick="genPDF()" style="flex:1;min-width:0;font-size:13px;font-weight:800;">📄 Generar PDF</button>
+  <button class="btn-s" id="outlook-btn" onclick="openOutlookModal()" style="opacity:.35;cursor:not-allowed;flex-shrink:0;border-style:dashed;" disabled title="Genera el PDF primero">📧 Enviar</button>
 
 <!-- PASO 7: ACTIVIDADES DEL MES -->
-<div class="panel" id="tab-acts-mes" style="padding:16px;box-sizing:border-box;"><div class="step-hdr"><div class="step-icon">📅</div><div><div class="step-t" id="acts-mes-title">Actividades del Mes</div><div class="step-sub">Asesorías cargadas desde Salesforce — filtradas por BP</div></div></div><div id="acts-mes-content" style="overflow-x:auto;padding:8px;"><div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce y selecciona un centro.</div></div></div>
+<div class="panel" id="tab-acts-mes" style="padding:16px;box-sizing:border-box;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div class="step-hdr" style="margin:0;"><div class="step-icon">📅</div><div><div class="step-t" id="acts-mes-title">Actividades del Mes</div><div class="step-sub">Asesorías cargadas desde Salesforce — filtradas por BP</div></div></div><button class="btn-s" onclick="goStep(currentStep)" style="font-size:11px;padding:5px 14px;flex-shrink:0;">← Volver</button></div><div id="acts-mes-content" style="overflow-x:auto;padding:8px;"><div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px;">Carga el archivo de Salesforce y selecciona un centro.</div></div></div>
 </div>
 
 <script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ══ DATOS ════════════════════════════════════════════════════════
 const BPS = [
   {bp:'2000294185', centro:'INSTITUTO NACIONAL DEL TORAX', referentes:['Miguel Rodriguez']
@@ -822,7 +801,7 @@ const BIBLIOTECA = {
 
 // ── N8N CONFIG ───────────────────────────────────────────────────
 const N8N = {
-  enabled: true,
+  enabled: localStorage.getItem('n8n_enabled') !== 'false',
   base: 'https://null2311.app.n8n.cloud/webhook',
   endpoints: {
     registro: 'aoa-registro',
@@ -833,6 +812,20 @@ const N8N = {
   },
   url(k){ return this.base + '/' + this.endpoints[k]; }
 };
+
+function toggleN8N(){
+  N8N.enabled = !N8N.enabled;
+  localStorage.setItem('n8n_enabled', N8N.enabled);
+  var dot = el('n8n-dot');
+  if(dot) dot.style.background = N8N.enabled ? '#13C063' : '#D93025';
+  toast(N8N.enabled ? '⚡ Notificaciones n8n activadas' : '⚡ Notificaciones n8n desactivadas', N8N.enabled ? 'ok' : 'warn', 2500);
+}
+
+// Init n8n dot on load
+document.addEventListener('DOMContentLoaded', function(){
+  var dot = document.getElementById('n8n-dot');
+  if(dot) dot.style.background = N8N.enabled ? '#13C063' : '#D93025';
+});
 
 // ── ESTADO GLOBAL ────────────────────────────────────────────────
 let acts = [];          // actividades actuales
@@ -1065,8 +1058,8 @@ function bpSelect(bpNum){
     el('fcump').value = d.toISOString().slice(0,10);
   }
   // Auto-add experto to participantes if not already there
-  const enombre = el('enombre')?.value || 'Branco Sandoval Palma';
-  if(!participantes.find(p=>p.nombre===enombre)){
+  const enombre = (el('enombre')?.value || 'Branco Sandoval Palma').trim();
+  if(!participantes.some(p=>(p.nombre||'').trim().toLowerCase()===enombre.toLowerCase())){
     participantes.push({nombre: enombre, cargo: 'Experto en Prevención ACHS'});
     renderChips();
   }
@@ -1090,6 +1083,9 @@ function addParticipante(){
   const nombre = v('pnew-nombre');
   const cargo  = v('pnew-cargo');
   if(!nombre){ toast('Escribe el nombre del participante', 'warn'); return; }
+  if(participantes.some(p=>(p.nombre||'').trim().toLowerCase()===nombre.toLowerCase())){
+    toast('Participante ya agregado', 'warn'); return;
+  }
   participantes.push({nombre, cargo});
   if(el('pnew-nombre')) el('pnew-nombre').value = '';
   if(el('pnew-cargo'))  el('pnew-cargo').value  = '';
@@ -1208,10 +1204,12 @@ function renderActs(){
         </select>
         <!-- DESCRIPCION -->
         <div class="f">
-          <label>Descripción de la actividad
-            <span class="sub-note" id="ia-status-${a.id}"></span>
-            <button onclick="retriggerIA(${a.id})" style="margin-left:8px;font-size:9px;font-weight:700;background:var(--g);color:#fff;border:none;border-radius:3px;padding:1px 7px;cursor:pointer;font-family:inherit;">↺ IA</button>
-          </label>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <label style="margin-bottom:0;">Descripción de la actividad
+              <span class="sub-note" id="ia-status-${a.id}"></span>
+            </label>
+            <button onclick="retriggerIA(${a.id})" style="font-size:9px;font-weight:700;background:var(--g);color:#fff;border:none;border-radius:3px;padding:2px 8px;cursor:pointer;font-family:inherit;flex-shrink:0;">↺ IA</button>
+          </div>
           <textarea id="ad${a.id}" rows="4" placeholder="Describe la actividad realizada..." oninput="ar(this);isDirty=true;checkBrackets(${a.id});"></textarea>
         </div>
         <!-- CONTEXTO OPCIONAL -->
@@ -2120,6 +2118,12 @@ function _runGenPDF(){
         toast('Error: print-area no encontrado', 'err');
         return;
       }
+      // Set document title for PDF filename (browser uses <title> as default PDF name)
+      var centro = BPS.find(function(b){return b.bp===d.bp;})?.centro || '';
+      var centroShort = centro.replace(/HOSPITAL\s+(DEL?\s+)?/i,'').replace(/INST\.\s*NAC\.\s*/i,'').replace(/INSTITUTO\s+(NACIONAL\s+)?(DE\s+)?/i,'').split(' ').slice(0,2).join('_') || 'AOA';
+      var pdfDate = (d.fecha_a||'').replace(/-/g,'');
+      document.title = 'AOA_' + centroShort + '_BP' + (d.bp||'') + '_' + pdfDate;
+
       printArea.innerHTML = html;
       printArea.style.display = 'block';
 
@@ -2131,6 +2135,7 @@ function _runGenPDF(){
         // Clean up after print dialog
         setTimeout(()=>{
           if(printArea){ printArea.innerHTML=''; printArea.style.display='none'; }
+          document.title = 'AOA Generator — ACHS';
         }, 2000);
       }, 300);
 
@@ -2164,10 +2169,14 @@ function updateSendBtn(){
   if(pdfGenerated){
     btn.style.opacity='1';
     btn.style.cursor='pointer';
+    btn.style.borderStyle='solid';
+    btn.disabled=false;
     btn.title='Enviar AOA por correo';
   } else {
-    btn.style.opacity='.4';
+    btn.style.opacity='.35';
     btn.style.cursor='not-allowed';
+    btn.style.borderStyle='dashed';
+    btn.disabled=true;
     btn.title='Genera el PDF primero';
   }
 }
@@ -2179,7 +2188,9 @@ function downloadPdfFile(){
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url;
-  a.download = `AOA_BP${d.bp}_${(d.fecha_a||'').replace(/-/g,'')}.html`;
+  var centro = BPS.find(function(b){return b.bp===d.bp;})?.centro || '';
+  var centroShort = centro.replace(/HOSPITAL\s+(DEL?\s+)?/i,'').replace(/INST\.\s*NAC\.\s*/i,'').replace(/INSTITUTO\s+(NACIONAL\s+)?(DE\s+)?/i,'').split(' ').slice(0,2).join('_') || 'AOA';
+  a.download = `AOA_${centroShort}_BP${d.bp}_${(d.fecha_a||'').replace(/-/g,'')}.html`;
   a.click();
   setTimeout(()=>URL.revokeObjectURL(url), 3000);
 }
@@ -2497,26 +2508,24 @@ function buildOutlookSubject(){
 function buildOutlookBody(){
   const d = gd();
   const centro = BPS.find(b=>b.bp===d.bp)?.centro || d.razon || '—';
-  const actsLines = acts.map((a,i)=>{
-    const motivo = el('am'+a.id)?.getAttribute('data-mot')||'Actividad '+(i+1);
-    const acuerdo= el('aa'+a.id)?.value||'—';
-    return `${i+1}. ${motivo}\n   Acuerdo: ${acuerdo}`;
-  }).join('\n');
+  const nActs = acts.length;
+  const modalidad = (d.mod||'PRESENCIAL').toLowerCase();
+
+  // Build a brief summary of topics covered (motivo names, deduplicated)
+  var temas = [];
+  acts.forEach(function(a){
+    var motLabel = el('am'+a.id)?.options?.[el('am'+a.id).selectedIndex]?.text || '';
+    if(motLabel && motLabel !== '— Selecciona el motivo —' && temas.indexOf(motLabel) < 0) temas.push(motLabel);
+  });
+  var temasText = temas.length ? temas.join(', ') : 'actividades de prevención y seguridad';
+
   return `Estimado/a ${d.rnombre||'Receptor/a'},
 
-Adjunto encontrará el registro de la Asesoría de Organismo Administrador (AOA) correspondiente a la visita realizada el ${fd(d.fecha_a)||'—'} en ${centro}.
+Adjunto el registro de la asesoría realizada el ${fd(d.fecha_a)||'—'} en ${centro} (modalidad ${modalidad}), en la cual se abordaron ${nActs} actividad${nActs>1?'es':''} relacionadas con ${temasText}.
 
-ACTIVIDADES REALIZADAS:
-${actsLines}
+Los compromisos adquiridos tienen fecha límite el ${fd(d.fcump)||'—'}. Se adjunta el documento AOA para su revisión y respaldo.
 
-Los compromisos adquiridos tienen fecha límite el ${fd(d.fcump)||'—'}.
-
-Quedo disponible ante cualquier consulta.
-
-Saludos,
-${d.enombre||'—'}
-Experto en Prevención ACHS
-${d.eemail||'—'}`;
+Quedo atento ante cualquier consulta.`;
 }
 
 function regenerateOutlookBody(){
@@ -2634,7 +2643,7 @@ async function n8nDashboard(d){
         timestamp: new Date().toISOString()
       })
     });
-  }catch(e){ console.warn('n8n dashboard:', e); }
+  }catch(e){ console.warn('n8n dashboard:', e); toast('Dashboard: sin conexión n8n','warn',3000); }
 }
 
 async function n8nGuardarDrive(d, htmlContent){
@@ -3148,12 +3157,11 @@ function renderActsMes(){
 
   // Table
   html += '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">';
-  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed;">';
-  html += '<colgroup><col style="width:90px;"><col><col style="width:42px;"><col style="width:50px;"><col style="width:60px;"><col style="width:65px;"></colgroup>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;min-width:500px;">';
   html += '<thead><tr style="background:var(--tx);color:#fff;">';
   ['N°','Motivo / Submotivo','Pts','Tipo','Estado',''].forEach(function(h){
-    var w = h==='N°'?'':h==='Pts'?'text-align:center;':h==='Tipo'?'text-align:center;':h==='Estado'?'text-align:center;':h===''?'text-align:center;':'';
-    html += '<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;text-align:left;'+w+'">'+h+'</th>';
+    var w = h==='N°'?'width:80px;':h==='Pts'?'width:38px;text-align:center;':h==='Tipo'?'width:46px;text-align:center;':h==='Estado'?'width:55px;text-align:center;':h===''?'width:60px;text-align:center;':'';
+    html += '<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;text-align:left;white-space:nowrap;'+w+'">'+h+'</th>';
   });
   html += '</tr></thead><tbody>';
 
@@ -3183,19 +3191,19 @@ function renderActsMes(){
 
     var bg = i%2===0?'var(--s1)':'var(--wh)';
     var tipoBadge = info.t===1
-      ? '<span style="background:#fef3c7;color:#92400e;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;" title="Cierre mensual obligatorio">T1⚠</span>'
+      ? '<span style="background:var(--warn);color:#fff;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;" title="Cierre mensual obligatorio">T1⚠</span>'
       : '<span style="background:var(--s2);color:var(--tx3);font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;">T2</span>';
     var badge = asignado
-      ? '<span style="background:#dcfce7;color:#166534;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;">✓</span>'
-      : '<span style="background:#fef9c3;color:#854d0e;font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;">PEND</span>';
+      ? '<span style="background:var(--gl);color:var(--gd);font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;">✓</span>'
+      : '<span style="background:var(--s2);color:var(--warn);font-size:8px;font-weight:800;padding:1px 5px;border-radius:3px;">PEND</span>';
     var actionBtn = asignado
       ? ''
       : '<button onclick="sfAssignFromPanel(\''+s.id+'\')" style="background:var(--g);color:#fff;border:none;padding:2px 7px;border-radius:var(--r);font-size:9px;font-weight:700;cursor:pointer;">Asignar</button>';
     // Highlight Tipo 1 pending rows
-    var rowStyle = (info.t===1 && !asignado) ? 'background:#fef3c7;' : 'background:'+bg+';';
+    var rowStyle = (info.t===1 && !asignado) ? 'background:rgba(232,146,10,.12);' : 'background:'+bg+';';
     html += '<tr style="'+rowStyle+'border-bottom:1px solid var(--s2);">';
-    html += '<td style="padding:5px 8px;font-weight:600;font-family:monospace;font-size:10px;word-break:break-all;">'+s.id+'</td>';
-    html += '<td style="padding:5px 8px;color:var(--tx2);font-size:10px;word-break:break-word;overflow-wrap:break-word;">'+sLabel+'</td>';
+    html += '<td style="padding:5px 8px;font-weight:600;font-family:monospace;font-size:10px;">'+s.id+'</td>';
+    html += '<td style="padding:5px 8px;color:var(--tx2);font-size:10px;">'+sLabel+'</td>';
     html += '<td style="padding:5px 8px;text-align:center;font-weight:700;font-size:10px;color:var(--info);">'+(isRemoto ? info.r : info.p)+'</td>';
     html += '<td style="padding:5px 8px;text-align:center;">'+tipoBadge+'</td>';
     html += '<td style="padding:5px 8px;text-align:center;">'+badge+'</td>';
@@ -3715,14 +3723,14 @@ async function n8nEnviarInformeSemanal(datosInforme) {
 var BPS_UBICACION = {
   '2000294182': {nombre:'Hospital del Salvador', dir:'Av. Salvador 364, Providencia', lat:-33.4406, lng:-70.6195},
   '2000294183': {nombre:'Hospital Luis Calvo Mackenna', dir:'Antonio Varas 360, Providencia', lat:-33.4393, lng:-70.6219},
-  '2000294185': {nombre:'Instituto de Neurocirugía', dir:'Av. José Manuel Infante 553, Providencia', lat:-33.4415, lng:-70.6230},
-  '2000294186': {nombre:'Instituto Nacional del Tórax', dir:'Av. José Manuel Infante 717, Providencia', lat:-33.4435, lng:-70.6243},
-  '2000294187': {nombre:'Instituto Nacional de Geriatría', dir:'Av. José Manuel Infante 370, Providencia', lat:-33.4400, lng:-70.6220},
+  '2000294184': {nombre:'Instituto de Neurocirugía', dir:'Av. José Manuel Infante 553, Providencia', lat:-33.4415, lng:-70.6230},
+  '2000294185': {nombre:'Instituto Nacional del Tórax', dir:'Av. José Manuel Infante 717, Providencia', lat:-33.4435, lng:-70.6243},
+  '2000294186': {nombre:'Instituto Nacional de Geriatría', dir:'Av. José Manuel Infante 370, Providencia', lat:-33.4400, lng:-70.6220},
+  '2000294187': {nombre:'INRPAC', dir:'Av. Pedro de Valdivia 3245, Peñalolén', lat:-33.4741, lng:-70.5705},
   '2000294188': {nombre:'Hospital Tisné Brousse', dir:'Av. Las Torres 5150, Peñalolén', lat:-33.4764, lng:-70.5564},
-  '2000294189': {nombre:'INRPAC', dir:'Av. Pedro de Valdivia 3245, Peñalolén', lat:-33.4741, lng:-70.5705},
-  '2000294191': {nombre:'Hospital Hanga Roa', dir:'Simón Paoa s/n, Isla de Pascua', lat:-27.1483, lng:-109.4333},
-  '2000294193': {nombre:'Dirección SSMO', dir:'Av. Salvador 365, Providencia', lat:-33.4408, lng:-70.6198},
-  '2000477573': {nombre:'Hospital Metropolitano', dir:'Av. Américo Vespucio 765, Las Condes', lat:-33.3893, lng:-70.5723}
+  '2000294189': {nombre:'Hospital Hanga Roa', dir:'Simón Paoa s/n, Isla de Pascua', lat:-27.1483, lng:-109.4333},
+  '2000574070': {nombre:'Dirección SSMO', dir:'Av. Salvador 365, Providencia', lat:-33.4408, lng:-70.6198},
+  '2000906772': {nombre:'Hospital Metropolitano', dir:'Av. Américo Vespucio 765, Las Condes', lat:-33.3893, lng:-70.5723}
 };
 
 function renderUbicacion(){
