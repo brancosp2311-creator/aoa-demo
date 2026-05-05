@@ -490,7 +490,7 @@ body.dalton.dark{--g:#33BBEE;--gd:#33BBEE;--gl:#0D2233;}
     <button class="hdr-btn preview-btn-txt" id="preview-btn" onclick="togglePreview()">👁 Preview</button>
     <button class="hdr-btn" id="dark-btn" onclick="toggleDark()" title="Modo oscuro">🌙</button>
     <button class="hdr-btn" id="dalton-btn" onclick="toggleDalton()" title="Daltonismo" style="font-size:12px;">👁‍🗨</button>
-    <button class="hdr-btn" id="n8n-toggle" onclick="toggleN8N()" title="Notificaciones n8n" style="font-size:11px;position:relative;">⚡<span id="n8n-dot" style="position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:#13C063;"></span></button>
+    <button class="hdr-btn" id="n8n-toggle" onclick="toggleN8N()" title="Activar/desactivar IA y notificaciones n8n" style="font-size:9px;font-weight:800;position:relative;letter-spacing:.3px;padding:4px 10px;">IA<span id="n8n-dot" style="position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:#13C063;"></span></button>
     <span class="v-badge">v4.1</span>
   </div>
 </div>
@@ -3162,12 +3162,12 @@ function renderActsMes(){
   html += '</div></div>';
 
   // Table
-  html += '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">';
-  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;min-width:500px;">';
-  html += '<thead><tr style="background:var(--tx);color:#fff;">';
+  html += '<div style="overflow-x:auto;overflow-y:auto;max-height:60vh;-webkit-overflow-scrolling:touch;border:1px solid var(--s2);border-radius:var(--r2);">';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;min-width:520px;">';
+  html += '<thead><tr style="background:var(--tx);color:#fff;position:sticky;top:0;z-index:2;">';
   ['N°','Motivo / Submotivo','Pts','Tipo','Estado',''].forEach(function(h){
-    var w = h==='N°'?'width:80px;':h==='Pts'?'width:38px;text-align:center;':h==='Tipo'?'width:46px;text-align:center;':h==='Estado'?'width:55px;text-align:center;':h===''?'width:60px;text-align:center;':'';
-    html += '<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;text-align:left;white-space:nowrap;'+w+'">'+h+'</th>';
+    var w = h==='N°'?'width:85px;':h==='Pts'?'width:38px;text-align:center;':h==='Tipo'?'width:46px;text-align:center;':h==='Estado'?'width:55px;text-align:center;':h===''?'width:65px;text-align:center;':'';
+    html += '<th style="padding:6px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;text-align:left;white-space:nowrap;background:var(--tx);'+w+'">'+h+'</th>';
   });
   html += '</tr></thead><tbody>';
 
