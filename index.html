@@ -1401,6 +1401,10 @@ function onSubChange(id, skipReset){
 function triggerIA(id, mCode, subCode){
   if(!mCode) return;
   var status = el('ia-status-' + id);
+  if(!N8N.enabled){
+    if(status){ status.textContent = ' · n8n off'; status.style.color = '#E8920A'; }
+    return;
+  }
   if(status){ status.textContent = ' · IA...'; status.style.color = 'var(--tx3)'; }
   var d = gd();
   var bpEntry = BPS.find(function(b){ return b.bp===d.bp; }) || {};
@@ -1473,7 +1477,8 @@ function triggerIA(id, mCode, subCode){
     renderLivePreview();
   }).catch(function(err){
     console.warn('triggerIA error:', err);
-    if(status){ status.textContent = ' · Error'; status.style.color = '#dc2626'; }
+    if(status){ status.textContent = ' · Error: ' + (err.message||'red'); status.style.color = '#dc2626'; }
+    toast('IA: ' + (err.message||'Error de conexión'), 'err', 4000);
   });
 }
 
@@ -2659,7 +2664,7 @@ async function n8nGuardarDrive(d, htmlContent){
 }
 
 async function n8nMejorarDescripcion(tipo, dept, descActual, contextoCompleto){
-  if(!N8N.enabled) return null;
+  if(!N8N.enabled){ console.log('n8n disabled, skipping IA'); return null; }
   var d = gd();
   var bpEntry = BPS.find(function(b){ return b.bp===d.bp; }) || {};
   var centro = bpEntry.centro || d.razon || '';
